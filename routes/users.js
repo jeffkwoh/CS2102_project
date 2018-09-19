@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
 router.post('/create', function(req, res, next) {
   const user_name = req.body.name_field
   // add user to db here
-  res.redirect('/')
+  res.redirect('/users')
 });
 
 
