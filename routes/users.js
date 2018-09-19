@@ -3,7 +3,13 @@ var router = express.Router()
 
 /* GET users listing page. */
 router.get('/', function(req, res, next) {
-  res.render('users', { user: {name: "Alison Burger"} });
+  const mockUsers = [
+    { name: "alison" },
+    { name: "burgers" },
+    { name: "constantine" },
+    { name: "diplo" },
+  ]
+  res.render('users', { users: mockUsers });
 });
 
 
