@@ -9,9 +9,8 @@ router.get('/', function(req, res, next) {
 
 /* POST user creation. */
 router.post('/create', function(req, res, next) {
-  // add user to db here
   const user_name = req.body.name_field
-  console.log(user_name)
+  // add user to db here
   res.redirect('/')
 });
 
