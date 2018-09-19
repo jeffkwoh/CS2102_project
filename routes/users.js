@@ -6,4 +6,14 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-module.exports = router;
+
+/* POST user creation. */
+router.post('/create', function(req, res, next) {
+  // add user to db here
+  const user_name = req.body.name_field
+  console.log(user_name)
+  res.redirect('/')
+});
+
+
+module.exports = router
