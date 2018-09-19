@@ -1,10 +1,26 @@
+
 var express = require('express');
 var router = express.Router();
-var db = require("../model/db.js");
+var db = require("../model/db.js")
 
-/* GET users listing. */
+/* GET users listing page. */
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+  const mockUsers = [
+    { name: "alison" },
+    { name: "burgers" },
+    { name: "constantine" },
+    { name: "diplo" },
+  ]
+  res.render('users', { users: mockUsers });
 });
 
-module.exports = router;
+
+/* POST user creation. */
+router.post('/create', function(req, res, next) {
+  const user_name = req.body.name_field
+  // add user to db here
+  res.redirect('/users')
+});
+
+
+module.exports = router
