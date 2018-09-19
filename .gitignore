@@ -63,3 +63,13 @@ typings/
 # generated css
 *.css 
 *.css.map
+
+# config files
+config.js
+
+# Webstorm Files
+.idea/workspace.xml
+.idea/vcs.xml
+.idea/modules.xml
+.idea/misc.xml
+.idea/2102project.iml
