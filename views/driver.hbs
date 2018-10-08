@@ -1,0 +1,18 @@
+<h1> Driver View </h1>
+
+<h2> Create User </h2>
+<form action="/users/create" method="post">
+    <label for="user_name">Enter name: </label>
+    <input id="user_name" type="text" name="name_field" value="Alison Burgers.">
+    <input type="submit" value="OK">
+</form>
+
+<hr />
+
+<h2> List of Rides under current user </h2>
+{{#each rides}}
+    <p>A ride on {{this.date}}</p>
+{{/each}}
+
+
+
