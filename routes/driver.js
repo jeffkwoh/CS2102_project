@@ -4,6 +4,10 @@ var router = express.Router();
 
 /* GET car rides listing page. */
 router.get('/', function(req, res, next) {
+  // fetch:
+  // 1) car rides that are pending
+  //   - Bids for these car rdies
+  // 2) car rides that are confirmed
   const mockCarRides = [
     { date: "1st" },
     { date: "2nd" },
@@ -14,11 +18,11 @@ router.get('/', function(req, res, next) {
 });
 
 
-/* POST user creation. */
+/* POST car ride creation. */
 router.post('/create', function(req, res, next) {
   const user_name = req.body.name_field
   // add user to db here
-  res.redirect('/users')
+  res.redirect('/driver')
 });
 
 
