@@ -20,8 +20,8 @@ router.get('/', function(req, res, next) {
 
 /* POST car ride creation. */
 router.post('/create', function(req, res, next) {
+  // change to bid details instead of name
   const user_name = req.body.name_field
-  // add user to db here
   res.redirect('/driver')
 });
 
