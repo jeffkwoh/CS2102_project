@@ -4,16 +4,20 @@ const pgp = require('pg-promise')({
 const cn = require('../config/config.js')
 const db = pgp(cn)
 
-const initTable = (query, tableName) =>
+
+const runQuery = (query, log) => 
   db.none(query)
     .then(() => {
       // success;
-      console.log(`Created ${tableName} table!`);
+      console.log(log);
     })
     .catch(error => {
       // error;
       console.log(error);
     });
+
+const initTable = (query, tableName) => runQuery(query, `Created ${tableName} table!`)
+const dropTable = (query, tableName) => runQuery(query, `Dropped ${tableName} table!`)
 
 /* Databse initialisation */
 const initDb = () => {
@@ -65,6 +69,10 @@ const initDb = () => {
       PRIMARY KEY(bidder, driver, date, time, origin, destination) 
     );`, 'CarRide')
 }
+
+const dropTables = () => {
+}
+
 
 /* DB helpers to be exported */
 const user = require('./user.js')
