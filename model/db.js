@@ -15,23 +15,22 @@ const runQuery = (query, log) =>
       // error;
       console.log(error);
     });
-
-const initTable = (query, tableName) => runQuery(query, `Created ${tableName} table!`)
-const dropTable = (query, tableName) => runQuery(query, `Dropped ${tableName} table!`)
+const initTableQuery = (query, tableName) => runQuery(query, `Created ${tableName} table!`)
+const dropTableQuery = (query, tableName) => runQuery(query, `Dropped ${tableName} table!`)
 
 /* Databse initialisation */
 const initDb = () => {
   // Users
-  initTable(`
+  initTableQuery(`
     CREATE TABLE IF NOT EXISTS appUserAccount (
       userID SERIAL PRIMARY KEY,
       email VARCHAR(128) UNIQUE NOT NULL,
       contactNumber VARCHAR(15) NOT NULL,
       name VARCHAR(64) NOT NULL,
       password VARCHAR(32) NOT NULL
-    );`, 'Users')
+    );`, 'appUserAccount')
 
-  initTable(`
+  initTableQuery(`
     CREATE TABLE IF NOT EXISTS userOwnsACar (
       licensePlate VARCHAR(10) PRIMARY KEY, 
       owner INTEGER NOT NULL,
@@ -39,9 +38,9 @@ const initDb = () => {
       carModel VARCHAR (64) NOT NULL, 
       numSeats INTEGER NOT NULL CHECK (numSeats > 0),
       FOREIGN KEY (owner) REFERENCES appUserAccount(userID)
-    );`, 'Cars')
+    );`, 'userOwnsACar')
 
-  initTable(`
+  initTableQuery(`
     CREATE TABLE IF NOT EXISTS advertisedCarRide (
       driver INTEGER REFERENCES appUserAccount(userID), 
       car VARCHAR(10) REFERENCES userOwnsAcar(licensePlate), 
@@ -50,9 +49,9 @@ const initDb = () => {
       origin VARCHAR(128) NOT NULL, 
       destination VARCHAR(128) NOT NULL, 
       PRIMARY KEY (driver, date, time, origin, destination) 
-    );`, 'CarRide')
+    );`, 'advertisedCarRide')
 
-  initTable(`
+  initTableQuery(`
     CREATE TABLE IF NOT EXISTS bid (
       bidStatus CHAR(12) CHECK(bidStatus = 'pending' OR bidStatus ='unsuccessful' 
         OR bidStatus = 'successful') NOT NULL, 
@@ -67,10 +66,14 @@ const initDb = () => {
       FOREIGN KEY(driver, date, time, origin, destination)  
       REFERENCES advertisedCarRide(driver, date, time, origin, destination), 
       PRIMARY KEY(bidder, driver, date, time, origin, destination) 
-    );`, 'CarRide')
+    );`, 'bid')
 }
 
-const dropTables = () => {
+const deinitDb = () => {
+  dropTableQuery(`DROP TABLE IF EXISTS bid;`, 'bid')
+  dropTableQuery(`DROP TABLE IF EXISTS advertisedCarRide;`, 'advertisedCarRide')
+  dropTableQuery(`DROP TABLE IF EXISTS userOwnsACar;`, 'userOwnsACar')
+  dropTableQuery(`DROP TABLE IF EXISTS appUserAccount;`, 'appUserAccount')
 }
 
 
@@ -78,6 +81,7 @@ const dropTables = () => {
 const user = require('./user.js')
 module.exports = {
   initDb,
+  deinitDb,
   user,
   exposedInstance : db
 };
