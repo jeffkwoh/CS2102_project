@@ -1,9 +1,3 @@
-const pgp = require('pg-promise')({
-  // initialisation options.
-});
-const cn = require('../config/config.js');
-const db = pgp(cn);
-
 const addUser = (user_name) =>  {
   db.none('INSERT INTO Users(name) VALUES($1)', [user_name])
     .then(() => {
