@@ -8,13 +8,21 @@ router.get('/', function(req, res, next) {
   // 1) car rides that are pending
   //   - Bids for these car rdies
   // 2) car rides that are confirmed
-  const mockCarRides = [
+  const confirmedRides = [
     { date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
     { date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
     { date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
     { date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
   ]
-  res.render('driver', { confirmedRides: mockCarRides, pendingRides: mockCarRides });
+  const pendingRides = confirmedRides.map(ride => {
+    ride.bids = [
+      { userId: "asdf", userName: "name", bid: 30.4},
+      { userId: "asdf", userName: "name", bid: 30.4},
+      { userId: "asdf", userName: "name", bid: 30.4}
+    ]
+    return ride
+  })
+  res.render('driver', { confirmedRides, pendingRides });
 });
 
 
