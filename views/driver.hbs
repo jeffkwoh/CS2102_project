@@ -19,7 +19,7 @@
 
 <hr />
 
-<h2> List of Rides under current user </h2>
+<h2> Confirmed Rides </h2>
 <table>
   <tr>
     <td> Date </td>
@@ -27,7 +27,7 @@
     <td> Trip start Location </td>
     <td> Destination </td>
   </tr>
-{{#each rides}}
+{{#each confirmedRides}}
   <tr>
     <td>{{this.date}}</td>
     <td>{{this.time}}</td>
@@ -37,5 +37,20 @@
 {{/each}}
 </table>
 
-
-
+<h2> Pending Rides </h2>
+<table>
+  <tr>
+    <td> Date </td>
+    <td> Time </td>
+    <td> Trip start Location </td>
+    <td> Destination </td>
+  </tr>
+{{#each pendingRides}}
+  <tr>
+    <td>{{this.date}}</td>
+    <td>{{this.time}}</td>
+    <td>{{this.startLocation}}</td>
+    <td>{{this.endLocation}}</td>
+  </tr>
+{{/each}}
+</table>

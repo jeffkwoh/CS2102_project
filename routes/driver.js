@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
     { date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
     { date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
   ]
-  res.render('driver', { rides: mockCarRides });
+  res.render('driver', { confirmedRides: mockCarRides, pendingRides: mockCarRides });
 });
 
 
