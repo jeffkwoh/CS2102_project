@@ -4,21 +4,38 @@
 <form action="/driver/create" method="post">
     <label for="date">Date: </label>
     <input id="date" type="date" name="date_field" value="2018-10-30">
+
     <label for="time">Time: </label>
     <input id="time" type="time" name="time_field" value="14:30">
+
     <label for="origin">Starting location: </label>
     <input id="origin" type="text" name="origin_field" value="Suntec City">
+
     <label for="destination">Destination: </label>
     <input id="destination" type="text" name="destination_field" value="M.A.A.D City">
+
     <input type="submit" value="OK">
 </form>
 
 <hr />
 
 <h2> List of Rides under current user </h2>
+<table>
+  <tr>
+    <td> Date </td>
+    <td> Time </td>
+    <td> Trip start Location </td>
+    <td> Destination </td>
+  </tr>
 {{#each rides}}
-    <p>A ride on {{this.date}}</p>
+  <tr>
+    <td>{{this.date}}</td>
+    <td>{{this.time}}</td>
+    <td>{{this.startLocation}}</td>
+    <td>{{this.endLocation}}</td>
+  </tr>
 {{/each}}
+</table>
 
 
 
