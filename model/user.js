@@ -1,5 +1,5 @@
-<<<<<<< HEAD
 const addAppUserAccount = (userEmail, userContactNumber, userName, userPassword) =>  {
+    console.log("Hello");
     db.none('INSERT INTO appUserAccount(email, contactNumber, name, password) ' +
                         'VALUES($1, $2, $3, $4)', [userEmail, userContactNumber, userName, userPassword])
         .then(() => {
@@ -37,10 +37,9 @@ const advertiseACarRide = (driver, car, date, time, origin, destination) =>  {
             // error;
         });
 };
-/*
-const listAdvertisedCarRides = (driver, car, date, time, origin, destination) =>  {
-    db.any('SELECT * FROM advertisedCarRide(driver, car, date, time, origin, destination) ' +
-        'VALUES($1, $2, $3, $4, $5)', [driver, car, date, time, origin, destination])
+
+const listAdvertisedCarRides = () =>  {
+    db.any('SELECT * FROM advertisedCarRide')
         .then(() => {
             console.log("success!");
             // success;
@@ -50,9 +49,13 @@ const listAdvertisedCarRides = (driver, car, date, time, origin, destination) =>
             // error;
         });
 };
-*/
+
+
+
 
 module.exports = {
-    addUser,
-    getAllUsers
+    addAppUserAccount,
+    addCarToUser,
+    advertiseACarRide,
+    listAdvertisedCarRides
 };
