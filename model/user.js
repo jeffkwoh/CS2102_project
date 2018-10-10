@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const addAppUserAccount = (userEmail, userContactNumber, userName, userPassword) =>  {
     db.none('INSERT INTO appUserAccount(email, contactNumber, name, password) ' +
                         'VALUES($1, $2, $3, $4)', [userEmail, userContactNumber, userName, userPassword])
