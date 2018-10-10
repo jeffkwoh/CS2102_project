@@ -5,6 +5,12 @@ const cn = require('../config/config.js')
 const db = pgp(cn)
 
 
+/**
+ * Runs a query asynchronously, with given log message.[
+ *
+ * @param query{string} the query to be run
+ * @param log{string} the log message to be displayed when query is successful
+ */
 const runQuery = (query, log) => 
   db.none(query)
     .then(() => {
