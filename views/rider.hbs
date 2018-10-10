@@ -1,0 +1,25 @@
+<h1> Rider View </h1>
+
+<!-- TODO change to a "bidding" form -->
+<h2> Create Bid </h2>
+<form action="/driver/create" method="post">
+    <label for="date">Date: </label>
+    <input id="date" type="date" name="date_field" value="310318">
+    <label for="time">Time: </label>
+    <input id="time" type="time" name="time_field" value="0800">
+    <label for="origin">Starting location: </label>
+    <input id="origin" type="text" name="origin_field" value="Suntec City">
+    <label for="destination">Destination: </label>
+    <input id="destination" type="text" name="destination_field" value="M.A.A.D City">
+    <input type="submit" value="OK">
+</form>
+
+<hr />
+
+<h2> List of Confirmed car rides for this user </h2>
+{{#each rides}}
+    <p>A ride on {{this.date}}</p>
+{{/each}}
+
+
+
