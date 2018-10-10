@@ -28,7 +28,7 @@ const runQuery = (query, log) =>
  */
 const initDb = () => {
   const query = `
-  BEGIN
+  BEGIN;
 
   CREATE TABLE IF NOT EXISTS appUserAccount (
     userID SERIAL PRIMARY KEY,
@@ -72,6 +72,7 @@ const initDb = () => {
     REFERENCES advertisedCarRide(driver, date, time, origin, destination),
     PRIMARY KEY(bidder, driver, date, time, origin, destination)
   );
+
   COMMIT;`
 
   runQuery(query, 'Initialised all tables!')
