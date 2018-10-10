@@ -10,7 +10,6 @@ router.get('/', function(req, res, next) {
     { name: "constantine" },
     { name: "diplo" },
   ]
-    db.user.addAppUserAccount('tom@tom.com', '91923312', 'tommy koh', 'password');
   res.render('users', { users: mockUsers });
 });
 
