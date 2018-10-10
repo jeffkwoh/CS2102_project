@@ -109,7 +109,7 @@ const updateUserBid = (user, bidAmount, driver, date, time, origin, destination,
         });
 };
 
-// Updates the bid of a User
+// Deletes the bid of a User
 const deleteUserBid = (user, driver, date, time, origin, destination, db) =>  {
     db.none('DELETE FROM bid b WHERE b.bidder = $1 AND b.driver = $2 AND b.date = $3 ' +
         'AND b.time = $4 AND b.origin = $5 AND b.destination = $6 ', [user, driver, date, time, origin, destination])
@@ -136,9 +136,9 @@ const listBidsAUserHas = (user, db) =>  {
         });
 };
 
-// Updates an existing bid in the table Bid as unsuccessful
+// Updates an existing bid in the table Bid as successful
 const setBidAsSuccessful = (successfulBidder, driver, date, time, origin, destination, db) =>  {
-    db.none('UPDATE bid SET bidStatus = $1 FROM bid b WHERE b.bidder = $2 ' +
+    db.none('UPDATE bid SET b.bidStatus = $1 FROM bid b WHERE b.bidder = $2 ' +
         'AND b.driver = $3 AND b.date = $4 AND b.time = $5 AND b.origin = $6 AND b.destination = $7, ', +
         ['successful', successfulBidder, driver, date, time, origin, destination])
         .then(() => {
@@ -152,10 +152,10 @@ const setBidAsSuccessful = (successfulBidder, driver, date, time, origin, destin
 };
 
 // Updates an existing bid in the table Bid as unsuccessful
-const setBidAsUnsuccessful = (successfulBidder, driver, date, time, origin, destination, db) =>  {
-    db.none('UPDATE bid SET bidStatus = $1 FROM bid b WHERE b.bidder = $2 ' +
+const setBidAsUnsuccessful = (unsuccessfulBidder, driver, date, time, origin, destination, db) =>  {
+    db.none('UPDATE bid SET b.bidStatus = $1 FROM bid b WHERE b.bidder = $2 ' +
         'AND b.driver = $3 AND b.date = $4 AND b.time = $5 AND b.origin = $6 AND b.destination = $7, ', +
-        ['successful', successfulBidder, driver, date, time, origin, destination])
+        ['unsuccessful', unsuccessfulBidder, driver, date, time, origin, destination])
         .then(() => {
             console.log("success!");
             // success;
