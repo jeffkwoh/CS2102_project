@@ -9,10 +9,10 @@ router.get('/', function(req, res, next) {
   //   - Bids for these car rdies
   // 2) car rides that are confirmed
   const mockCarRides = [
-    { date: "1st" },
-    { date: "2nd" },
-    { date: "3rd" },
-    { date: "4rth" },
+    { date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
+    { date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
+    { date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
+    { date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
   ]
   res.render('driver', { rides: mockCarRides });
 });
