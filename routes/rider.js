@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-// var db = require("../model/db.js")
+var db = require("../model/db.js")
 
 /* GET user-rider's rides/bids listing page. */
 router.get('/', function(req, res, next) {
