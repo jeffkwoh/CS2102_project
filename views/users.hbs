@@ -16,9 +16,36 @@
 <hr />
 
 <h2> List of Users </h2>
+<table>
+  <tr>
+    <td>UserID</td>
+    <td>Name</td>
+    <td>Email</td>
+    <td>Contact</td>
+    <td>View Driver</td>
+    <td>View Rider</td>
+  </tr>
 {{#each users}} 
-    <p>{{this.name}}</p>
+  <tr>
+    <td>{{this.userid}}</td>
+    <td>{{this.name}}</td>
+    <td>{{this.email}}</td>
+    <td>{{this.contactnumber}}</td>
+    <td>
+      <form action="/driver" method="get">
+        <input id="driver_user_id" type="number" name="user_id_field" value="{{this.userid}}" hidden="true">
+        <input type="submit" value="Driver">
+      </form>
+    </td>
+    <td>
+      <form action="/rider" method="get">
+        <input id="rider_user_id" type="number" name="user_id_field" value="{{this.userid}}" hidden="true">
+        <input type="submit" value="Rider">
+      </form>
+    </td>
+  </tr>
 {{/each}}
+</table>
 
 
 

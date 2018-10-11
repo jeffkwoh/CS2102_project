@@ -21,10 +21,10 @@ const createUserAppAccount = async (userEmail, userContactNumber, userName, user
 // Lists out the names and emails of everyone in userAppAccounts
 const listUserAppAccount = async (db) =>  {
   return db.any(`
-        SELECT a.name, a.email 
+        SELECT a.userID, a.contactNumber, a.name, a.email 
         FROM appUserAccount a;`)
   .then((result) => {
-    console.log(`List user success:\n ${result}`);
+    console.log(`List user success:\n ${JSON.stringify(result)}`);
     // success;
     return result;
   })
