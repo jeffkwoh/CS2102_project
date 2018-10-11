@@ -35,9 +35,28 @@ const listAvailableAdvertisedCarRides = async (db) =>  {
 };
 
 /**
- * List car rides that user will be a rider in, that are upcoming and available.
+ * List car rides that user will be a rider in, that are confirmed.
  */
 const listConfirmedRidesForRider = async (user, db) =>  {
+  return db.any(`
+    SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
+    NATURAL JOIN bid b
+    WHERE bidStatus = 'successful'
+      AND bidder = $1;
+    `, user)
+    .then((result) => {
+      console.log(`Retrived all confirmed car rides for rider ${user}!`)
+      return result
+    })
+    .catch(error => {
+      console.log(error);
+    });
+};
+
+/**
+ * List car rides that user will be a driver for, that are confirmed.
+ */
+const listConfirmedRidesForDriver = async (user, db) =>  {
   return db.any(`
     SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
     NATURAL JOIN bid b
@@ -56,5 +75,5 @@ const listConfirmedRidesForRider = async (user, db) =>  {
 module.exports = {
   advertiseCarRide,
   listConfirmedRidesForRider,
-  listConfirmedRidesForUser
+  listConfirmedRidesForDriver
 };
