@@ -113,6 +113,13 @@ const populateDb = () => {
   user.advertiseCarRide('2', 'SBB0000B', '2010-03-20', '15:00:00', 'PlaceC1', 'PlaceC2', db);
   user.advertiseCarRide('4', 'SDD0000D', '2010-04-20', '16:00:00', 'PlaceD1', 'PlaceD2', db);
 
+  bid.createUserBid('3', '100', '1', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
+  bid.createUserBid('4', '200', '1', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
+  bid.createUserBid('1', '100', '2', '2010-03-20', '15:00:00', 'PlaceC1', 'PlaceC2', db);
+  bid.createUserBid('5', '500', '1', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
+  bid.createUserBid('5', '120', '2', '2010-03-20', '15:00:00', 'PlaceC1', 'PlaceC2', db);
+  bid.createUserBid('5', '345', '4', '2010-04-20', '16:00:00', 'PlaceD1', 'PlaceD2', db);
+
   console.log("Populated all tables!")
 }
 
