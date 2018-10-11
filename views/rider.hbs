@@ -33,6 +33,7 @@
     <td> Time </td>
     <td> Trip start Location </td>
     <td> Destination </td>
+    <td> Current bid </td>
   </tr>
   {{#each biddedRides}}
     <tr>
@@ -40,9 +41,10 @@
       <td>{{this.time}}</td>
       <td>{{this.startLocation}}</td>
       <td>{{this.endLocation}}</td>
+      <td>{{this.bidAmount}}</td>
       <td>
-        <!-- TODO change to /udpate -->
-        <form action="/bidding/create" method="post">
+        <!-- TODO change to /update -->
+        <form action="/bidding/update" method="post">
           <input type="number" name="bidder_field" value="{{4}}" hidden="true">
           <input type="number" name="driver_field" value="{{4}}" hidden="true">
           <input type="text" name="date_field" value="{{4}}" hidden="true">
