@@ -25,16 +25,16 @@ router.post('/create', function(req, res, next) {
     destination : req.body.destination_field
   };
 
-  db.bid.createUserBid(
-      primary_key.bidder,
-      req.body.bid_amount_field,
-      primary_key.driver,
-      primary_key.date,
-      primary_key.time,
-      primary_key.origin,
-      primary_key.destination,
-      db.exposedInstance
-      );
+  db.user.createUserBid(
+    primary_key.bidder,
+    req.body.bid_amount_field,
+    primary_key.driver,
+    primary_key.date,
+    primary_key.time,
+    primary_key.origin,
+    primary_key.destination,
+    db.exposedInstance
+  );
 
   res.redirect('/rider')
 });
