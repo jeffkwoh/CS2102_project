@@ -30,10 +30,11 @@ router.post('/create', function(req, res, next) {
     req.body.date_field,
     req.body.time_field,
     req.body.origin_field,
-    req.body.destination_field
+    req.body.destination_field,
+    db.exposedInstance
   ]
 
-  await db.ride.advertisedCarRide(...params);
+  db.ride.advertiseCarRide(...params);
 
   res.redirect('/driver')
 });
