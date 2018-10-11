@@ -22,13 +22,4 @@ router.get('/', function(req, res, next) {
   res.render('driver', { confirmedRides, pendingRides });
 });
 
-
-/* POST car ride creation. */
-router.post('/create', function(req, res, next) {
-  // change to bid details instead of name
-  const user_name = req.body.name_field
-  res.redirect('/driver')
-});
-
-
 module.exports = router
