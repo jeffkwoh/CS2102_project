@@ -9,7 +9,7 @@ router.get('/', async function(req, res, next) {
   // 2) bids (for car rides) that are pending
   // 3) All upcoming car rides that can be bid for
   const confirmedRides = await db.ride.listConfirmedRidesForUser(1, db.exposedInstance)
-  const pendingBids = 1;
+  const pendingBids = await db.bid.listPendingBidsForUser(1, db.exposedInstance);
   const availableRides = await db.ride.listAvailableAdvertisedCarRides(db.exposedInstance)
   console.log(availableRides)
   res.render('rider', { confirmedRides, biddedRides: availableRides, availableRides });
