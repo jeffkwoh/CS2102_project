@@ -1,5 +1,5 @@
 // Allows creation of usr account
-const createUserAppAccount = (userEmail, userContactNumber, userName, userPassword, db) =>  {
+const createUserAppAccount = async (userEmail, userContactNumber, userName, userPassword, db) =>  {
   return db.none(`
         INSERT INTO appUserAccount(email, contactNumber, name, password) 
         VALUES(
@@ -19,7 +19,7 @@ const createUserAppAccount = (userEmail, userContactNumber, userName, userPasswo
 };
 
 // Lists out the names and emails of everyone in userAppAccounts
-const listUserAppAccount = (db) =>  {
+const listUserAppAccount = async (db) =>  {
   return db.any(`
         SELECT a.name, a.email 
         FROM appUserAccount a;`)
@@ -35,7 +35,7 @@ const listUserAppAccount = (db) =>  {
 };
 
 // Adds a car to a specific user
-const addCarToUser = (owner, licensePlate, carBrand, carModel, numSeats, db) =>  {
+const addCarToUser = async (owner, licensePlate, carBrand, carModel, numSeats, db) =>  {
   return db.none(`
         INSERT INTO userOwnsACar(licensePlate, owner, carBrand, carModel, numSeats) 
         VALUES(
@@ -57,7 +57,7 @@ const addCarToUser = (owner, licensePlate, carBrand, carModel, numSeats, db) => 
 
 // listCarUserOwns(arg1, arg2).then((res) => ...) use case
 // lists all the cars owned by a user
-const listCarUserOwns = (owner, db) =>  {
+const listCarUserOwns = async (owner, db) =>  {
   return db.any(`
       SELECT c.licensePlate, c.carBrand, c.carModel 
       FROM userOwnsACar c 
@@ -75,7 +75,7 @@ const listCarUserOwns = (owner, db) =>  {
 };
 
 // Creates a bid for a user
-const createUserBid = (user, bidAmount, driver, date, time, origin, destination, db) =>  {
+const createUserBid = async (user, bidAmount, driver, date, time, origin, destination, db) =>  {
     db.none('INSERT INTO bid(bidder, bidStatus, bidAmount, driver, date, time, origin, destination) ' +
         'VALUES($1, $2, $3, $4, $5, $6, $7, $8)', [user, 'pending', bidAmount, driver, date, time, origin, destination])
         .then(() => {
@@ -89,7 +89,7 @@ const createUserBid = (user, bidAmount, driver, date, time, origin, destination,
 };
 
 // Updates the bid of a User
-const updateUserBid = (user, bidAmount, driver, date, time, origin, destination, db) =>  {
+const updateUserBid = async (user, bidAmount, driver, date, time, origin, destination, db) =>  {
     db.none('UPDATE bid SET b.bidAmount = $1 FROM bid b WHERE b.bidder = $2 ' +
         'AND b.driver = $3 AND b.date = $4 AND b.time = $5 AND b.origin = $6 AND b.destination = $7, ', +
         [bidAmount, user, driver, date, time, origin, destination])
@@ -104,7 +104,7 @@ const updateUserBid = (user, bidAmount, driver, date, time, origin, destination,
 };
 
 // Deletes the bid of a User
-const deleteUserBid = (user, driver, date, time, origin, destination, db) =>  {
+const deleteUserBid = async (user, driver, date, time, origin, destination, db) =>  {
     db.none('DELETE FROM bid b WHERE b.bidder = $1 AND b.driver = $2 AND b.date = $3 ' +
         'AND b.time = $4 AND b.origin = $5 AND b.destination = $6 ', [user, driver, date, time, origin, destination])
         .then(() => {
@@ -118,7 +118,7 @@ const deleteUserBid = (user, driver, date, time, origin, destination, db) =>  {
 };
 
 // List all bids a user has made
-const listBidsAUserHas = (user, db) =>  {
+const listBidsAUserHas = async (user, db) =>  {
     db.any('SELECT b.date, b.time, b.origin, b.destination, b.bidAmount FROM bid b WHERE b.bidder = $1', [user])
         .then(() => {
             console.log("success!");
@@ -131,7 +131,7 @@ const listBidsAUserHas = (user, db) =>  {
 };
 
 // Updates an existing bid in the table Bid as successful
-const setBidAsSuccessful = (successfulBidder, driver, date, time, origin, destination, db) =>  {
+const setBidAsSuccessful = async (successfulBidder, driver, date, time, origin, destination, db) =>  {
     db.none('UPDATE bid SET b.bidStatus = $1 FROM bid b WHERE b.bidder = $2 ' +
         'AND b.driver = $3 AND b.date = $4 AND b.time = $5 AND b.origin = $6 AND b.destination = $7, ', +
         ['successful', successfulBidder, driver, date, time, origin, destination])
@@ -146,7 +146,7 @@ const setBidAsSuccessful = (successfulBidder, driver, date, time, origin, destin
 };
 
 // Updates an existing bid in the table Bid as unsuccessful
-const setBidAsUnsuccessful = (unsuccessfulBidder, driver, date, time, origin, destination, db) =>  {
+const setBidAsUnsuccessful = async (unsuccessfulBidder, driver, date, time, origin, destination, db) =>  {
     db.none('UPDATE bid SET b.bidStatus = $1 FROM bid b WHERE b.bidder = $2 ' +
         'AND b.driver = $3 AND b.date = $4 AND b.time = $5 AND b.origin = $6 AND b.destination = $7, ', +
         ['unsuccessful', unsuccessfulBidder, driver, date, time, origin, destination])
