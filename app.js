@@ -58,6 +58,7 @@ app.use(function(err, req, res, next) {
 
 // initialise database
 db.initDb();
+db.populateDb();
 
 module.exports = app;
 

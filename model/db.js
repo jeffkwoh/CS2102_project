@@ -3,7 +3,8 @@ const pgp = require('pg-promise')({
 })
 const cn = require('../config/config.js')
 const db = pgp(cn)
-
+const user = require('./user.js')
+const bid = require('./bid.js')
 
 /**
  * Runs a query asynchronously, with given log message.[
@@ -92,13 +93,34 @@ const deinitDb = () => {
   runQuery(query, 'Dropped all tables!')
 }
 
+const populateDb = () => {
+  
+  user.createUserAppAccount('one@a.com', '98765432', 'one', 'one', db);
+  user.createUserAppAccount('two@a.com', '88765432', 'two', 'two', db);
+  user.createUserAppAccount('thr@a.com', '78765432', 'thr', 'thr', db);
+  user.createUserAppAccount('fou@a.com', '68765432', 'fou', 'fou', db);
+  user.createUserAppAccount('fiv@a.com', '58765432', 'fiv', 'fiv', db);
+
+  user.addCarToUser('1', 'SAA0000A', 'BrandA', 'ModelA', '1', db);
+  user.addCarToUser('1', 'SAA1111A', 'BrandA', 'ModelA', '1', db);
+  user.addCarToUser('1', 'SAA2222A', 'BrandA', 'ModelA', '1', db);
+  user.addCarToUser('2', 'SBB0000B', 'BrandB', 'ModelB', '2', db);
+  user.addCarToUser('3', 'SCC0000C', 'BrandC', 'ModelC', '3', db);
+  user.addCarToUser('4', 'SDD0000D', 'BrandD', 'ModelD', '4', db);
+
+  user.advertiseCarRide('1', 'SAA0000A', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
+  user.advertiseCarRide('1', 'SAA2222A', '2010-02-20', '14:00:00', 'PlaceB1', 'PlaceB2', db);
+  user.advertiseCarRide('2', 'SBB0000B', '2010-03-20', '15:00:00', 'PlaceC1', 'PlaceC2', db);
+  user.advertiseCarRide('4', 'SDD0000D', '2010-04-20', '16:00:00', 'PlaceD1', 'PlaceD2', db);
+
+  console.log("Populated all tables!")
+}
 
 /* DB helpers to be exported */
-const user = require('./user.js')
-const bid = require('./bid.js')
 module.exports = {
   initDb,
   deinitDb,
+  populateDb,
   user,
   bid,
   exposedInstance : db
