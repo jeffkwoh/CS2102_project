@@ -7,6 +7,11 @@ var router = express.Router();
  * Only 1 car ride listing is to be viewed at a time.
  */
 router.get('/', function(req, res, next) {
+  const id = req.param.id
+  /** Prevent numebrs from being processed */
+  if (!Number.isInteger(id))
+    res.redirect('/')
+  // Get ride here
   const ride = { id: 0, date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" }
   res.render('carRide', { ride });
 });
