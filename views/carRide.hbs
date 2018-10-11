@@ -1,0 +1,20 @@
+<h1> Car Ride {{ride.id}} </h1>
+
+<hr />
+
+<table>
+  <tr>
+    <td> Date </td>
+    <td> Time </td>
+    <td> Trip start Location </td>
+    <td> Destination </td>
+  </tr>
+{{#with ride}}
+  <tr>
+    <td>{{date}}</td>
+    <td>{{time}}</td>
+    <td>{{startLocation}}</td>
+    <td>{{endLocation}}</td>
+  </tr>
+{{/with}}
+</table>
