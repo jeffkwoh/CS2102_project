@@ -20,7 +20,8 @@
  */
 const listAvailableAdvertisedCarRides = async (db) =>  {
   return db.any(`
-    SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
+    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car
+    FROM advertisedCarRide a
     NATURAL JOIN bid b
     GROUP BY a.driver, a.date, a.time, a.origin, a.destination
     HAVING COUNT(DISTINCT b.bidStatus) <= 1;
@@ -39,7 +40,8 @@ const listAvailableAdvertisedCarRides = async (db) =>  {
  */
 const listConfirmedRidesForUser = async (user, db) =>  {
   return db.any(`
-    SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
+    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car, b.bidAmount
+    FROM advertisedCarRide a
     NATURAL JOIN bid b
     WHERE bidStatus = 'successful'
       AND bidder = $1;
