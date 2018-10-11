@@ -20,11 +20,14 @@
  */
 const listAvailableAdvertisedCarRides = async (db) =>  {
   return db.any(`
-    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car
-    FROM advertisedCarRide a
-    NATURAL JOIN bid b
+    SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
+    LEFT OUTER JOIN bid b ON a.driver = b.driver
+      AND a.date = b.date
+      AND a.time = b.time
+      AND a.origin = b.origin
+      AND a.destination = b.destination
+    WHERE b.bidStatus = 'pending'
     GROUP BY a.driver, a.date, a.time, a.origin, a.destination
-    HAVING COUNT(DISTINCT b.bidStatus) <= 1;
     `)
     .then((result) => {
       console.log(`Retrived all upcoming car rides!`)
