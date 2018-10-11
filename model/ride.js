@@ -79,11 +79,12 @@ const listPendingRidesForDriver = async (user, db) =>  {
   return db.any(`
     SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
     NATURAL JOIN bid b
-    WHERE b.bidStatus = 'successful'
-      AND a.driver = $1;
+    WHERE a.driver = 1
+      AND b.bidStatus  = 'pending'
+    GROUP BY a.driver, a.date, a.time, a.origin, a.destination;
     `, [user])
     .then((result) => {
-      console.log(`Retrived all confirmed car rides for driver ${user}!`)
+      console.log(`Retrived all pending car rides for driver ${user}!`)
       return result
     })
     .catch(error => {
