@@ -7,11 +7,6 @@ var db = require("../model/db.js")
  * Only 1 car ride listing is to be viewed at a time.
  */
 router.get('/', function(req, res, next) {
-  const id = Number.parseInt(req.query.id)
-  /** Prevent numebrs from being processed */
-  if (!Number.isInteger(id))
-    return res.redirect('/')
-  // TODO Get ride here
   const ride = { id: 0, date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" }
   res.render('carRide', { ride });
 });
