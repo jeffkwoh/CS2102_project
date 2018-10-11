@@ -1,5 +1,5 @@
 // Creates a bid for a user
-const createUserBid = (user, bidAmount, driver, date, time, origin, destination, db) =>  {
+const createUserBid = async (user, bidAmount, driver, date, time, origin, destination, db) =>  {
   return db.none(
       `
         INSERT INTO bid(bidder, bidStatus, bidAmount, driver, date, time, origin, destination) 
@@ -25,7 +25,7 @@ const createUserBid = (user, bidAmount, driver, date, time, origin, destination,
 };
 
 // Updates the bid of a User
-const updateUserBid = (user, bidAmount, driver, date, time, origin, destination, db) =>  {
+const updateUserBid = async (user, bidAmount, driver, date, time, origin, destination, db) =>  {
   return db.none(`
         UPDATE bid 
         SET b.bidAmount = $1 
@@ -48,7 +48,7 @@ const updateUserBid = (user, bidAmount, driver, date, time, origin, destination,
 };
 
 // Deletes the bid of a User
-const deleteUserBid = (user, driver, date, time, origin, destination, db) =>  {
+const deleteUserBid = async (user, driver, date, time, origin, destination, db) =>  {
   return db.none(`
         DELETE FROM bid b 
         WHERE b.bidder = $1
@@ -69,7 +69,7 @@ const deleteUserBid = (user, driver, date, time, origin, destination, db) =>  {
 };
 
 // List all bids a user has made
-const listBidsAUserHas = (user, db) =>  {
+const listBidsAUserHas = async (user, db) =>  {
   return db.any(`
         SELECT b.date, b.time, b.origin, b.destination, b.bidAmount 
         FROM bid b WHERE b.bidder = $1;`
@@ -86,7 +86,7 @@ const listBidsAUserHas = (user, db) =>  {
 };
 
 // Updates an existing bid in the table Bid as successful
-const setBidAsSuccessful = (successfulBidder, driver, date, time, origin, destination, db) =>  {
+const setBidAsSuccessful = async (successfulBidder, driver, date, time, origin, destination, db) =>  {
   return db.none(`
         UPDATE bid 
         SET b.bidStatus = 'successful' 
@@ -109,7 +109,7 @@ const setBidAsSuccessful = (successfulBidder, driver, date, time, origin, destin
 };
 
 // Updates an existing bid in the table Bid as unsuccessful
-const setBidAsUnsuccessful = (unsuccessfulBidder, driver, date, time, origin, destination, db) =>  {
+const setBidAsUnsuccessful = async (unsuccessfulBidder, driver, date, time, origin, destination, db) =>  {
   return db.none(`
         UPDATE bid 
         SET b.bidStatus = 'unsuccessful' 
