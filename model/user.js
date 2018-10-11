@@ -1,7 +1,7 @@
 // Allows creation of usr account
 const createUserAppAccount = (userEmail, userContactNumber, userName, userPassword, db) =>  {
-    db.none('INSERT INTO appUserAccount(email, contactNumber, name, password) ' +
-        'VALUES($1, $2, $3, $4)', [userEmail, userContactNumber, userName, userPassword])
+    db.none(`INSERT INTO appUserAccount(email, contactNumber, name, password) ' +
+        'VALUES(${userEmail}, ${userContactNumber}, ${userName}, ${userPassword}`)
         .then(() => {
             console.log("success!");
             // success;
