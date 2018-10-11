@@ -25,8 +25,8 @@ router.get('/', function(req, res, next) {
 router.post('/create', async function(req, res, next) {
   // TODO pass in user and car here
   const params = [
-    2,
-    3,
+    1,
+    1,
     req.body.date_field,
     req.body.time_field,
     req.body.origin_field,
