@@ -27,8 +27,8 @@ const listUserAppAccount = (db) =>  {
 
 // Adds a car to a specific user
 const addCarToUser = (owner, licensePlate, carBrand, carModel, numSeats, db) =>  {
-    db.none('INSERT INTO userOwnsACar(licensePlate, owner, carBrand, carModel, numSeats) ' +
-        'VALUES($1, $2, $3, $4, $5)', [licensePlate, owner, carBrand, carModel, numSeats])
+    db.none(`INSERT INTO userOwnsACar(licensePlate, owner, carBrand, carModel, numSeats) ' +
+        'VALUES(${licensePlate}, ${owner}, ${carBrand}, ${carModel}, ${numSeats})`)
         .then(() => {
             console.log("success!");
             // success;
@@ -42,7 +42,7 @@ const addCarToUser = (owner, licensePlate, carBrand, carModel, numSeats, db) => 
 // listCarUserOwns(arg1, arg2).then((res) => ...) use case
 // lists all the cars owned by a user
 const listCarUserOwns = (owner, db) =>  {
-    db.any('SELECT c.licensePlate, c.carBrand, c.carModel FROM userOwnsACar c WHERE c.owner = $1', [owner])
+    db.any(`SELECT c.licensePlate, c.carBrand, c.carModel FROM userOwnsACar c WHERE c.owner = ${owner}`)
         .then(() => {
             console.log("success!");
             // success;
@@ -55,8 +55,8 @@ const listCarUserOwns = (owner, db) =>  {
 
 // Given a user, create a car ride to be advertised
 const advertiseCarRide = (user, car, date, time, origin, destination, db) =>  {
-    db.none('INSERT INTO advertisedCarRide(driver, car, date, time, origin, destination) ' +
-        'VALUES($1, $2, $3, $4, $5)', [user, car, date, time, origin, destination])
+    db.none(`INSERT INTO advertisedCarRide(driver, car, date, time, origin, destination) ' +
+        'VALUES(${user}, ${car}, ${date}, ${time}, ${origin}, ${destination}`)
         .then(() => {
             console.log("success!");
             // success;
@@ -69,7 +69,7 @@ const advertiseCarRide = (user, car, date, time, origin, destination, db) =>  {
 
 // List all the advertised car rides
 const listAdvertisedCarRides = (db) =>  {
-    db.any('SELECT a.origin, a.destination, a.date, a.time FROM advertisedCarRide a')
+    db.any(`SELECT a.origin, a.destination, a.date, a.time FROM advertisedCarRide a`)
         .then(() => {
             console.log("success!");
             // success;
