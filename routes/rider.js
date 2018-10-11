@@ -2,29 +2,27 @@ var express = require('express');
 var router = express.Router();
 // var db = require("../model/db.js")
 
-/* GET bidding listing page. */
+/* GET user-rider's rides/bids listing page. */
 router.get('/', function(req, res, next) {
   // fetch:
-  // 1) Car rides that are confirmed
-  // 2) Pending bids
-  // 3) List of all unconfirmed car rides that 
-  //    user has not bidded for
-  const mockBids = [
-    { date: "1st" },
-    { date: "2nd" },
-    { date: "3rd" },
-    { date: "4rth" },
+  // 1) car rides that are confirmed for this rider
+  // 2) bids (for car rides) that are pending
+  // 3) All upcoming car rides that can be bid for
+  const confirmedRides = [
+    { id: 0, date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" }
   ]
-  res.render('rider', { rides: mockBids });
+  const biddedRides = [
+    { id: 4, date: "2018-10-30", time: "1500", startLocation:"Ivan City", endLocation:"NUS", bid:34.2 },
+    { id: 5, date: "2018-10-30", time: "1500", startLocation:"Ivan City", endLocation:"NUS", bid:34.2 },
+    { id: 6, date: "2018-10-30", time: "1500", startLocation:"Ivan City", endLocation:"NUS", bid:34.2 },
+    { id: 7, date: "2018-10-30", time: "1500", startLocation:"Ivan City", endLocation:"NUS", bid:34.2 },
+  ]
+  const availableRides = [
+    { id: 1, date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
+    { id: 2, date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
+    { id: 3, date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
+  ]
+  res.render('rider', { confirmedRides, biddedRides, availableRides });
 });
-
-
-/* POST Bid creation. */
-router.post('/create', function(req, res, next) {
-  // change to bid details instead of name
-  const user_name = req.body.name_field
-  res.redirect('/rider')
-});
-
 
 module.exports = router
