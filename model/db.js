@@ -8,27 +8,10 @@ const bid = require('./bid.js')
 const ride = require('./ride.js')
 
 /**
- * Runs a query asynchronously, with given log message.[
- *
- * @param query{string} the query to be run
- * @param log{string} the log message to be displayed when query is successful
- */
-const runQuery = (query, log) =>
-  db.none(query)
-    .then(() => {
-      // success;
-      console.log(log);
-    })
-    .catch(error => {
-      // error;
-      console.log(error);
-    });
-
-/**
  * Initialises database, with all the necessary tables specified in the database
  * design of this application.
  */
-const initDb = () => {
+async function initDb() {
   const query = `
   BEGIN;
 
@@ -77,10 +60,18 @@ const initDb = () => {
 
   COMMIT;`
 
-  runQuery(query, 'Initialised all tables!')
+  return db.none(query)
+    .then(() => {
+      // success;
+      console.log('Initialised tables!');
+    })
+    .catch(error => {
+      // error;
+      console.log(error);
+    });
 }
 
-const deinitDb = () => {
+async function deinitDb() {
   const query = `
   BEGIN;
 
@@ -91,7 +82,15 @@ const deinitDb = () => {
 
   COMMIT;`
 
-  runQuery(query, 'Dropped all tables!')
+  return db.none(query)
+    .then(() => {
+      // success;
+      console.log('Dropped all tables!');
+    })
+    .catch(error => {
+      // error;
+      console.log(error);
+    });
 }
 
 const populateDb = () => {
@@ -109,10 +108,10 @@ const populateDb = () => {
   user.addCarToUser('3', 'SCC0000C', 'BrandC', 'ModelC', '3', db);
   user.addCarToUser('4', 'SDD0000D', 'BrandD', 'ModelD', '4', db);
 
-  user.advertiseCarRide('1', 'SAA0000A', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
-  user.advertiseCarRide('1', 'SAA2222A', '2010-02-20', '14:00:00', 'PlaceB1', 'PlaceB2', db);
-  user.advertiseCarRide('2', 'SBB0000B', '2010-03-20', '15:00:00', 'PlaceC1', 'PlaceC2', db);
-  user.advertiseCarRide('4', 'SDD0000D', '2010-04-20', '16:00:00', 'PlaceD1', 'PlaceD2', db);
+  ride.advertiseCarRide('1', 'SAA0000A', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
+  ride.advertiseCarRide('1', 'SAA2222A', '2010-02-20', '14:00:00', 'PlaceB1', 'PlaceB2', db);
+  ride.advertiseCarRide('2', 'SBB0000B', '2010-03-20', '15:00:00', 'PlaceC1', 'PlaceC2', db);
+  ride.advertiseCarRide('4', 'SDD0000D', '2010-04-20', '16:00:00', 'PlaceD1', 'PlaceD2', db);
 
   bid.createUserBid('3', '100', '1', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
   bid.createUserBid('4', '200', '1', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
