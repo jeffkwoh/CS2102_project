@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-// var db = require("../model/db.js")
+var db = require("../model/db.js")
 
 /**
  * GET car rides listing page.
@@ -19,11 +19,22 @@ router.get('/', function(req, res, next) {
 
 /**
  * POST car ride creation.
- * To be called by driver view
+ *
+ * To be called by driver view.
  */
 router.post('/create', function(req, res, next) {
-  // change to bid details instead of name
-  const user_name = req.body.name_field
+  // TODO pass in user and car here
+  const params = [
+    2,
+    3,
+    req.body.date_field,
+    req.body.time_field,
+    req.body.origin_field,
+    req.body.destination_field
+  ]
+
+  await db.ride.advertisedCarRide(...params);
+
   res.redirect('/driver')
 });
 
