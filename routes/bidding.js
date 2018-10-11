@@ -25,7 +25,7 @@ router.post('/create', function(req, res, next) {
     destination : req.body.destination_field
   };
 
-  db.user.createUserBid(
+  db.bid.createUserBid(
       primary_key.bidder,
       req.body.bid_amount_field,
       primary_key.driver,
