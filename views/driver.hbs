@@ -52,22 +52,10 @@
     <td>{{this.startLocation}}</td>
     <td>{{this.endLocation}}</td>
     <td>
-      Bids:
-      <br />
-      <table>
-        <tr>
-          <td> User ID </td>
-          <td> Username </td>
-          <td> Bid Amount </td>
-        </tr>
-        {{#each this.bids}}
-          <tr>
-            <td>{{this.userId}}</td>
-            <td>{{this.userName}}</td>
-            <td>{{this.bid}}</td>
-          </tr>
-        {{/each}}
-      </table>
+      <form action="/rides/{{this.id}}" method="get">
+        <input type="submit" value="Edit ride"
+                             name="Submit" id="frm1_submit" />
+      </form>
     </td>
   </tr>
 {{/each}}
