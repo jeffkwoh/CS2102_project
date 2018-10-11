@@ -4,16 +4,16 @@ const createUserBid = (user, bidAmount, driver, date, time, origin, destination,
       `
         INSERT INTO bid(bidder, bidStatus, bidAmount, driver, date, time, origin, destination) 
         VALUES(
-            ${user}, 
+            $1, 
             'pending', 
-            ${bidAmount}, 
-            ${driver}, 
-            ${date}, 
-            ${time}, 
-            ${origin}, 
-            ${destination}
+            $2, 
+            $3, 
+            $4, 
+            $5, 
+            $6, 
+            $7
         );
-        `)
+        `, [user, bidAmount, driver, date, time, origin, destination])
   .then(() => {
     console.log("success!");
     // success;
@@ -28,15 +28,15 @@ const createUserBid = (user, bidAmount, driver, date, time, origin, destination,
 const updateUserBid = (user, bidAmount, driver, date, time, origin, destination, db) =>  {
   return db.none(`
         UPDATE bid 
-        SET b.bidAmount = ${bidAmount} 
+        SET b.bidAmount = $1 
         FROM bid b 
-        WHERE b.bidder = ${user}
-        AND b.driver = ${driver}
-        AND b.date = ${date}
-        AND b.time = ${time}
-        AND b.origin = ${origin}
-        AND b.destination = ${destination};
-        `)
+        WHERE b.bidder = $2
+        AND b.driver = $3
+        AND b.date = $4
+        AND b.time = $5
+        AND b.origin = $6
+        AND b.destination = $7;
+        `,[bidAmount, user, driver, date, time, origin, destination])
   .then(() => {
     console.log("success!");
     // success;
@@ -51,12 +51,13 @@ const updateUserBid = (user, bidAmount, driver, date, time, origin, destination,
 const deleteUserBid = (user, driver, date, time, origin, destination, db) =>  {
   return db.none(`
         DELETE FROM bid b 
-        WHERE b.bidder = ${user} 
-        AND b.driver = ${driver} 
-        AND b.date = ${date} 
-        AND b.time = ${time} 
-        AND b.origin = ${origin} 
-        AND b.destination = ${destination};`)
+        WHERE b.bidder = $1
+        AND b.driver = $2 
+        AND b.date = $3 
+        AND b.time = $4
+        AND b.origin = $5 
+        AND b.destination = $6;`
+  ,[user, driver, date, time, origin, destination])
   .then(() => {
     console.log("success!");
     // success;
@@ -71,7 +72,8 @@ const deleteUserBid = (user, driver, date, time, origin, destination, db) =>  {
 const listBidsAUserHas = (user, db) =>  {
   return db.any(`
         SELECT b.date, b.time, b.origin, b.destination, b.bidAmount 
-        FROM bid b WHERE b.bidder = ${user};`)
+        FROM bid b WHERE b.bidder = $1;`
+  , [user])
   .then((result) => {
     console.log(`List bids success:\n${result}`);
     // success;
@@ -89,12 +91,13 @@ const setBidAsSuccessful = (successfulBidder, driver, date, time, origin, destin
         UPDATE bid 
         SET b.bidStatus = 'successful' 
         FROM bid b 
-        WHERE b.bidder = ${successfulBidder} 
-        AND b.driver = ${driver} 
-        AND b.date = ${date} 
-        AND b.time = ${time} 
-        AND b.origin = ${origin} 
-        AND b.destination = ${destination};`)
+        WHERE b.bidder = $1
+        AND b.driver = $2 
+        AND b.date = $3 
+        AND b.time = $4 
+        AND b.origin = $5 
+        AND b.destination = $6;`
+  , [successfulBidder, driver, date, time, origin, destination])
   .then(() => {
     console.log("success!");
     // success;
@@ -111,12 +114,13 @@ const setBidAsUnsuccessful = (unsuccessfulBidder, driver, date, time, origin, de
         UPDATE bid 
         SET b.bidStatus = 'unsuccessful' 
         FROM bid b 
-        WHERE b.bidder = ${unsuccessfulBidder} 
-        AND b.driver = ${driver} 
-        AND b.date = ${date} 
-        AND b.time = ${time} 
-        AND b.origin = ${origin}
-        AND b.destination = ${destination};`)
+        WHERE b.bidder = $1 
+        AND b.driver = $2 
+        AND b.date = $3 
+        AND b.time = $4 
+        AND b.origin = $5
+        AND b.destination = $6;`
+  , [unsuccessfulBidder, driver, date, time, origin, destination])
   .then(() => {
     console.log("success!");
     // success;
