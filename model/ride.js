@@ -36,18 +36,60 @@ const listAvailableAdvertisedCarRides = async (db) =>  {
 };
 
 /**
- * List car rides that user will be a rider in, that are upcoming and available.
+ * List car rides that user will be a rider in, that are confirmed.
  */
-const listConfirmedRidesForUser = async (user, db) =>  {
+const listConfirmedRidesForRider = async (user, db) =>  {
   return db.any(`
     SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car, b.bidAmount
     FROM advertisedCarRide a
     NATURAL JOIN bid b
-    WHERE bidStatus = 'successful'
-      AND bidder = $1;
-    `, user)
+    WHERE b.bidStatus = 'successful'
+      AND b.bidder = $1;
+    `, [user])
     .then((result) => {
-      console.log(`Retrived all upcoming car rides!`)
+      console.log(`Retrived all confirmed car rides for rider ${user}!`)
+      return result
+    })
+    .catch(error => {
+      console.log(error);
+    });
+};
+
+/**
+ * List car rides that user will be a driver for, that are confirmed.
+ */
+const listConfirmedRidesForDriver = async (user, db) =>  {
+  return db.any(`
+    SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
+    NATURAL JOIN bid b
+    WHERE b.bidStatus = 'successful'
+      AND a.driver = $1;
+    `, [user])
+    .then((result) => {
+      console.log(`Retrived all confirmed car rides for driver ${user}!`)
+      return result
+    })
+    .catch(error => {
+      console.log(error);
+    });
+};
+
+/**
+ * List car rides that user will be a driver for, that are still pending.
+ */
+const listPendingRidesForDriver = async (user, db) =>  {
+  return db.any(`
+    SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
+    LEFT OUTER JOIN bid b ON a.driver = b.driver
+      AND a.date = b.date
+      AND a.time = b.time
+      AND a.origin = b.origin
+      AND a.destination = b.destination
+    WHERE a.driver = $1
+    GROUP BY a.driver, a.date, a.time, a.origin, a.destination;
+    `, [user])
+    .then((result) => {
+      console.log(`Retrived all pending car rides for driver ${user}!`)
       return result
     })
     .catch(error => {
@@ -58,5 +100,7 @@ const listConfirmedRidesForUser = async (user, db) =>  {
 module.exports = {
   advertiseCarRide,
   listAvailableAdvertisedCarRides,
-  listConfirmedRidesForUser
+  listConfirmedRidesForRider,
+  listConfirmedRidesForDriver,
+  listPendingRidesForDriver
 };
