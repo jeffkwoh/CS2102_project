@@ -41,9 +41,9 @@ const listConfirmedRidesForUser = async (user, db) =>  {
   return db.any(`
     SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
     NATURAL JOIN bid b
-    GROUP BY a.driver, a.date, a.time, a.origin, a.destination
-    HAVING COUNT(DISTINCT b.bidStatus) <= 1;
-    `)
+    WHERE bidStatus = 'successful'
+      AND bidder = $1;
+    `, user)
     .then((result) => {
       console.log(`Retrived all upcoming car rides!`)
       return result
