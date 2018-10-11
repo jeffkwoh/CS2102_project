@@ -41,9 +41,9 @@ const listConfirmedRidesForRider = async (user, db) =>  {
   return db.any(`
     SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
     NATURAL JOIN bid b
-    WHERE bidStatus = 'successful'
-      AND bidder = $1;
-    `, user)
+    WHERE b.bidStatus = 'successful'
+      AND b.bidder = $1;
+    `, [user])
     .then((result) => {
       console.log(`Retrived all confirmed car rides for rider ${user}!`)
       return result
@@ -60,9 +60,9 @@ const listConfirmedRidesForDriver = async (user, db) =>  {
   return db.any(`
     SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
     NATURAL JOIN bid b
-    WHERE bidStatus = 'successful'
-      AND bidder = $1;
-    `, user)
+    WHERE b.bidStatus = 'successful'
+      AND a.driver = $1;
+    `, [user])
     .then((result) => {
       console.log(`Retrived all confirmed car rides for rider ${user}!`)
       return result
