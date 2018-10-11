@@ -15,9 +15,10 @@ const createUserAppAccount = (userEmail, userContactNumber, userName, userPasswo
 // Lists out the names and emails of everyone in userAppAccounts
 const listUserAppAccount = (db) =>  {
     db.any('SELECT a.name, a.email FROM appUserAccount a')
-        .then(() => {
+        .then((result) => {
             console.log("success!");
             // success;
+            return result;
         })
         .catch(error => {
             console.log(error);
@@ -43,9 +44,10 @@ const addCarToUser = (owner, licensePlate, carBrand, carModel, numSeats, db) => 
 // lists all the cars owned by a user
 const listCarUserOwns = (owner, db) =>  {
     db.any('SELECT c.licensePlate, c.carBrand, c.carModel FROM userOwnsACar c WHERE c.owner = $1', [owner])
-        .then(() => {
+        .then((result) => {
             console.log("success!");
             // success;
+            return result;
         })
         .catch(error => {
             console.log(error);
@@ -70,9 +72,10 @@ const advertiseCarRide = (user, car, date, time, origin, destination, db) =>  {
 // List all the advertised car rides
 const listAdvertisedCarRides = (db) =>  {
     db.any('SELECT a.origin, a.destination, a.date, a.time FROM advertisedCarRide a')
-        .then(() => {
+        .then((result) => {
             console.log("success!");
             // success;
+      return result;
         })
         .catch(error => {
             console.log(error);
@@ -126,9 +129,10 @@ const deleteUserBid = (user, driver, date, time, origin, destination, db) =>  {
 // List all bids a user has made
 const listBidsAUserHas = (user, db) =>  {
     db.any('SELECT b.date, b.time, b.origin, b.destination, b.bidAmount FROM bid b WHERE b.bidder = $1', [user])
-        .then(() => {
+        .then((result) => {
             console.log("success!");
             // success;
+      return result;
         })
         .catch(error => {
             console.log(error);
