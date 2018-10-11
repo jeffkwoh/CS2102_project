@@ -5,7 +5,7 @@
 <h2> Confirmed Rides </h2>
 <table>
   <tr>
-    <td> User </td>
+    <td> Driver </td>
     <td> Date </td>
     <td> Time </td>
     <td> Trip start Location </td>
@@ -14,7 +14,7 @@
   </tr>
   {{#each confirmedRides}}
     <tr>
-      <td>{{this.user}}</td>
+      <td>{{this.driver}}</td>
       <td>{{this.date}}</td>
       <td>{{this.time}}</td>
       <td>{{this.origin}}</td>
@@ -33,7 +33,7 @@
 <h2> Rides that you have bid for</h2>
 <table>
   <tr>
-    <td> User </td>
+    <td> Driver </td>
     <td> Date </td>
     <td> Time </td>
     <td> Trip start Location </td>
@@ -43,7 +43,7 @@
   </tr>
   {{#each biddedRides}}
     <tr>
-      <td>{{this.user}}</td>
+      <td>{{this.driver}}</td>
       <td>{{this.date}}</td>
       <td>{{this.time}}</td>
       <td>{{this.origin}}</td>
@@ -70,7 +70,7 @@
 <h2>Upcoming rides</h2>
 <table>
   <tr>
-    <td> User </td>
+    <td> Driver </td>
     <td> Date </td>
     <td> Time </td>
     <td> Trip start Location </td>
@@ -79,7 +79,7 @@
   </tr>
   {{#each availableRides}}
     <tr>
-      <td>{{this.user}}</td>
+      <td>{{this.driver}}</td>
       <td>{{this.date}}</td>
       <td>{{this.time}}</td>
       <td>{{this.origin}}</td>
