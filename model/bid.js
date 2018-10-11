@@ -74,7 +74,7 @@ const listPendingBidsForUser = async (user, db) =>  {
         SELECT b.date, b.time, b.origin, b.destination, b.bidAmount
         FROM bid b
         WHERE b.bidder = $1
-          AND b.bidStatus = "pending";`
+          AND b.bidStatus = 'pending';`
   , [user])
   .then((result) => {
     console.log(`List bids success:\n${result}`);
