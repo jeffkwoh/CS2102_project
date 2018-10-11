@@ -93,32 +93,32 @@ async function deinitDb() {
     });
 }
 
-const populateDb = () => {
-  
-  user.createUserAppAccount('one@a.com', '98765432', 'one', 'one', db);
-  user.createUserAppAccount('two@a.com', '88765432', 'two', 'two', db);
-  user.createUserAppAccount('thr@a.com', '78765432', 'thr', 'thr', db);
-  user.createUserAppAccount('fou@a.com', '68765432', 'fou', 'fou', db);
-  user.createUserAppAccount('fiv@a.com', '58765432', 'fiv', 'fiv', db);
+async function populateDb() {
 
-  user.addCarToUser('1', 'SAA0000A', 'BrandA', 'ModelA', '1', db);
-  user.addCarToUser('1', 'SAA1111A', 'BrandA', 'ModelA', '1', db);
-  user.addCarToUser('1', 'SAA2222A', 'BrandA', 'ModelA', '1', db);
-  user.addCarToUser('2', 'SBB0000B', 'BrandB', 'ModelB', '2', db);
-  user.addCarToUser('3', 'SCC0000C', 'BrandC', 'ModelC', '3', db);
-  user.addCarToUser('4', 'SDD0000D', 'BrandD', 'ModelD', '4', db);
+  await user.createUserAppAccount('one@a.com', '98765432', 'one', 'one', db);
+  await user.createUserAppAccount('two@a.com', '88765432', 'two', 'two', db);
+  await user.createUserAppAccount('thr@a.com', '78765432', 'thr', 'thr', db);
+  await user.createUserAppAccount('fou@a.com', '68765432', 'fou', 'fou', db);
+  await user.createUserAppAccount('fiv@a.com', '58765432', 'fiv', 'fiv', db);
 
-  ride.advertiseCarRide('1', 'SAA0000A', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
-  ride.advertiseCarRide('1', 'SAA2222A', '2010-02-20', '14:00:00', 'PlaceB1', 'PlaceB2', db);
-  ride.advertiseCarRide('2', 'SBB0000B', '2010-03-20', '15:00:00', 'PlaceC1', 'PlaceC2', db);
-  ride.advertiseCarRide('4', 'SDD0000D', '2010-04-20', '16:00:00', 'PlaceD1', 'PlaceD2', db);
+  await user.addCarToUser('1', 'SAA0000A', 'BrandA', 'ModelA', '1', db);
+  await user.addCarToUser('1', 'SAA1111A', 'BrandA', 'ModelA', '1', db);
+  await user.addCarToUser('1', 'SAA2222A', 'BrandA', 'ModelA', '1', db);
+  await user.addCarToUser('2', 'SBB0000B', 'BrandB', 'ModelB', '2', db);
+  await user.addCarToUser('3', 'SCC0000C', 'BrandC', 'ModelC', '3', db);
+  await user.addCarToUser('4', 'SDD0000D', 'BrandD', 'ModelD', '4', db);
 
-  bid.createUserBid('3', '100', '1', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
-  bid.createUserBid('4', '200', '1', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
-  bid.createUserBid('1', '100', '2', '2010-03-20', '15:00:00', 'PlaceC1', 'PlaceC2', db);
-  bid.createUserBid('5', '500', '1', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
-  bid.createUserBid('5', '120', '2', '2010-03-20', '15:00:00', 'PlaceC1', 'PlaceC2', db);
-  bid.createUserBid('5', '345', '4', '2010-04-20', '16:00:00', 'PlaceD1', 'PlaceD2', db);
+  await ride.advertiseCarRide('1', 'SAA0000A', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
+  await ride.advertiseCarRide('1', 'SAA2222A', '2010-02-20', '14:00:00', 'PlaceB1', 'PlaceB2', db);
+  await ride.advertiseCarRide('2', 'SBB0000B', '2010-03-20', '15:00:00', 'PlaceC1', 'PlaceC2', db);
+  await ride.advertiseCarRide('4', 'SDD0000D', '2010-04-20', '16:00:00', 'PlaceD1', 'PlaceD2', db);
+
+  await bid.createUserBid('3', '100', '1', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
+  await bid.createUserBid('4', '200', '1', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
+  await bid.createUserBid('1', '100', '2', '2010-03-20', '15:00:00', 'PlaceC1', 'PlaceC2', db);
+  await bid.createUserBid('5', '500', '1', '2010-01-20', '13:00:00', 'PlaceA1', 'PlaceA2', db);
+  await bid.createUserBid('5', '120', '2', '2010-03-20', '15:00:00', 'PlaceC1', 'PlaceC2', db);
+  await bid.createUserBid('5', '345', '4', '2010-04-20', '16:00:00', 'PlaceD1', 'PlaceD2', db);
 
   console.log("Populated all tables!")
 }
