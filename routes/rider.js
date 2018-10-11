@@ -17,6 +17,7 @@ router.get('/', function(req, res, next) {
     { id: 6, date: "2018-10-30", time: "1500", startLocation:"Ivan City", endLocation:"NUS", bid:34.2 },
     { id: 7, date: "2018-10-30", time: "1500", startLocation:"Ivan City", endLocation:"NUS", bid:34.2 },
   ]
+  const rides = db.ride.listAdvertisedCarRides(db.exposedInstance)
   const availableRides = [
     { id: 1, date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
     { id: 2, date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" },
