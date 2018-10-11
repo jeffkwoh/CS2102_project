@@ -26,13 +26,15 @@
     <td> Time </td>
     <td> Trip start Location </td>
     <td> Destination </td>
+    <td> Car </td>
   </tr>
 {{#each confirmedRides}}
   <tr>
-    <td>{{this.date}}</td>
-    <td>{{this.time}}</td>
-    <td>{{this.startLocation}}</td>
-    <td>{{this.endLocation}}</td>
+      <td>{{this.date}}</td>
+      <td>{{this.time}}</td>
+      <td>{{this.origin}}</td>
+      <td>{{this.destination}}</td>
+      <td>{{this.car}}</td>
     <td>
       <form action="/rides" method="get">
         <input id="ride_id" type="number" name="id" value="{{this.id}}" hidden="true">
@@ -50,13 +52,15 @@
     <td> Time </td>
     <td> Trip start Location </td>
     <td> Destination </td>
+    <td> Car </td>
   </tr>
 {{#each pendingRides}}
   <tr>
-    <td>{{this.date}}</td>
-    <td>{{this.time}}</td>
-    <td>{{this.startLocation}}</td>
-    <td>{{this.endLocation}}</td>
+      <td>{{this.date}}</td>
+      <td>{{this.time}}</td>
+      <td>{{this.origin}}</td>
+      <td>{{this.destination}}</td>
+      <td>{{this.car}}</td>
     <td>
       <form action="/rides" method="get">
         <input id="ride_id" type="number" name="id" value="{{this.id}}" hidden="true">
