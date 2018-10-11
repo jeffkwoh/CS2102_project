@@ -1,6 +1,5 @@
 var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
+var express = require('express'); var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
@@ -57,7 +56,12 @@ app.use(function(err, req, res, next) {
 });
 
 // initialise database
-db.initDb();
+async function dbDriver() {
+  await db.deinitDb();
+  await db.initDb();
+  await db.populateDb();
+}
+dbDriver()
 
 module.exports = app;
 
