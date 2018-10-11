@@ -34,7 +34,27 @@ const listAvailableAdvertisedCarRides = async (db) =>  {
     });
 };
 
+/**
+ * List car rides that user will be a rider in, that are upcoming and available.
+ */
+const listConfirmedRidesForUser = async (user, db) =>  {
+  return db.any(`
+    SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
+    NATURAL JOIN bid b
+    GROUP BY a.driver, a.date, a.time, a.origin, a.destination
+    HAVING COUNT(DISTINCT b.bidStatus) <= 1;
+    `)
+    .then((result) => {
+      console.log(`Retrived all upcoming car rides!`)
+      return result
+    })
+    .catch(error => {
+      console.log(error);
+    });
+};
+
 module.exports = {
   advertiseCarRide,
   listAvailableAdvertisedCarRides,
+  listConfirmedRidesForUser
 };
