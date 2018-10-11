@@ -86,5 +86,5 @@ module.exports = {
     addCarToUser,
     listCarUserOwns,
     advertiseCarRide,
-    listAdvertisedCarRides,
+    listAdvertisedCarRides
 };
