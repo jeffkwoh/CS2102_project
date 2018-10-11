@@ -3,7 +3,13 @@
 <h2> Create User </h2>
 <form action="/users/create" method="post">
     <label for="user_name">Enter name: </label>
-    <input id="user_name" type="text" name="name_field" value="Alison Burgers.">
+    <input id="user_name" type="text" name="name_field" placeholder="Alison Burgers">
+    <label for="user_email">Enter email: </label>
+    <input id="user_email" type="email" name="email_field" placeholder="AlAhan@gmail.com">
+    <label for="user_contact_number">Enter contact number: </label>
+    <input id="user_contact_number" type="tel" name="contact_number_field" placeholder="9082 1934">
+    <label for="user_password">Enter password: </label>
+    <input id="user_password" type="password" name="password_field" placeholder="">
     <input type="submit" value="OK">
 </form>
 
