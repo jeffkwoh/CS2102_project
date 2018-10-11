@@ -95,9 +95,11 @@ const deinitDb = () => {
 
 /* DB helpers to be exported */
 const user = require('./user.js')
+const bid = require('./bid.js')
 module.exports = {
   initDb,
   deinitDb,
   user,
+  bid,
   exposedInstance : db
 };
