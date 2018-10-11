@@ -71,10 +71,10 @@ const deleteUserBid = async (user, driver, date, time, origin, destination, db) 
 // List all bids a user has made
 const listPendingBidsForUser = async (user, db) =>  {
   return db.any(`
-        SELECT b.date, b.time, b.origin, b.destination, b.bidAmount
-        FROM bid b
-        WHERE b.bidder = $1
-          AND b.bidStatus = 'pending';`
+    SELECT b.date, b.time, b.origin, b.destination, b.bidAmount
+    FROM bid b
+    WHERE b.bidder = $1
+    AND b.bidStatus = 'pending';`
   , [user])
   .then((result) => {
     console.log(`List bids success:\n${result}`);
