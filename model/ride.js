@@ -16,10 +16,15 @@
   };
 
 /**
- * List all advertised car rides, that are upcoming.
+ * List all advertised car rides, that are upcoming and available.
  */
-const listAdvertisedCarRides = async (db) =>  {
-  return db.any(`SELECT * FROM advertisedCarRide;`)
+const listAvailableAdvertisedCarRides = async (db) =>  {
+  return db.any(`
+    SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
+    NATURAL JOIN bid b
+    GROUP BY a.driver, a.date, a.time, a.origin, a.destination
+    HAVING COUNT(DISTINCT b.bidStatus) <= 1;
+    `)
     .then((result) => {
       console.log(`Retrived all upcoming car rides!`)
       return result
@@ -31,5 +36,5 @@ const listAdvertisedCarRides = async (db) =>  {
 
 module.exports = {
   advertiseCarRide,
-  listAdvertisedCarRides,
+  listAvailableAdvertisedCarRides,
 };
