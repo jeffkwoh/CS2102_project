@@ -19,7 +19,7 @@
  * List all advertised car rides, that are upcoming.
  */
 const listAdvertisedCarRides = (db) =>  {
-  return db.many('SELECT a.origin, a.destination, a.date, a.time FROM advertisedCarRide a;')
+  return db.any('SELECT a.origin, a.destination, a.date, a.time FROM advertisedCarRide a;')
     .then((result) => {
       console.log(`Retrived all upcoming car rides!`)
       return result
