@@ -68,6 +68,7 @@ typings/
 config.js
 
 # Webstorm Files
+.idea/
 .idea/workspace.xml
 .idea/vcs.xml
 .idea/modules.xml
