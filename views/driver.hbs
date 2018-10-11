@@ -33,6 +33,12 @@
     <td>{{this.time}}</td>
     <td>{{this.startLocation}}</td>
     <td>{{this.endLocation}}</td>
+    <td>
+      <form action="/rides/{{this.id}}" method="get">
+        <input type="submit" value="Edit ride"
+                             name="Submit" id="frm1_submit" />
+      </form>
+    </td>
   </tr>
 {{/each}}
 </table>
