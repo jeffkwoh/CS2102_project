@@ -1,27 +1,28 @@
-// Given a user, create a car ride to be advertised
+/**
+ * Given a user, create a car ride to be advertised
+ */
 const advertiseCarRide = (user, car, date, time, origin, destination, db) =>  {
-    db.none('INSERT INTO advertisedCarRide(driver, car, date, time, origin, destination) ' +
-        'VALUES($1, $2, $3, $4, $5)', [user, car, date, time, origin, destination])
+    db.none(`
+      INSERT INTO advertisedCarRide(driver, car, date, time, origin, destination)
+        VALUES(${user}, ${car}, ${date}, ${time}, ${origin}, ${destination});`)
         .then(() => {
-            console.log("success!");
-            // success;
+            console.log(`Created car ride by User ${user}, on ${date}, ${time}!`);
         })
         .catch(error => {
             console.log(error);
-            // error;
         });
 };
 
-// List all the advertised car rides
+/**
+ * List all advertised car rides, that are upcoming.
+ */
 const listAdvertisedCarRides = (db) =>  {
-    db.any('SELECT a.origin, a.destination, a.date, a.time FROM advertisedCarRide a')
+    db.all('SELECT a.origin, a.destination, a.date, a.time FROM advertisedCarRide a;')
         .then(() => {
-            console.log("success!");
-            // success;
+            console.log(`Retrived all upcoming car rides!`);
         })
         .catch(error => {
             console.log(error);
-            // error;
         });
 };
 
