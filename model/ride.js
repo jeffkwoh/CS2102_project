@@ -74,6 +74,7 @@ const listConfirmedRidesForDriver = async (user, db) =>  {
 
 module.exports = {
   advertiseCarRide,
+  listAvailableAdvertisedCarRides,
   listConfirmedRidesForRider,
   listConfirmedRidesForDriver
 };

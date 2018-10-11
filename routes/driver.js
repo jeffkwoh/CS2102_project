@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-// var db = require("../model/db.js")
+var db = require("../model/db.js")
 
 /* GET car rides listing page. */
 router.get('/', async function(req, res, next) {
