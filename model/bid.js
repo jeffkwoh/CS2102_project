@@ -69,7 +69,7 @@ const deleteUserBid = async (user, driver, date, time, origin, destination, db) 
 };
 
 // List all bids a user has made
-const listBidsAUserHas = async (user, db) =>  {
+const listPendingBidsForUser = async (user, db) =>  {
   return db.any(`
         SELECT b.date, b.time, b.origin, b.destination, b.bidAmount 
         FROM bid b WHERE b.bidder = $1;`
@@ -134,7 +134,7 @@ const setBidAsUnsuccessful = async (unsuccessfulBidder, driver, date, time, orig
 module.exports = {
   createUserBid,
   updateUserBid,
-  listBidsAUserHas,
+  listPendingBidsForUser,
   deleteUserBid,
   setBidAsSuccessful,
   setBidAsUnsuccessful
