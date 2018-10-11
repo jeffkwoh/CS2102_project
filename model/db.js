@@ -5,6 +5,7 @@ const cn = require('../config/config.js')
 const db = pgp(cn)
 const user = require('./user.js')
 const bid = require('./bid.js')
+const ride = require('./ride.js')
 
 /**
  * Runs a query asynchronously, with given log message.[
@@ -130,5 +131,6 @@ module.exports = {
   populateDb,
   user,
   bid,
+  ride,
   exposedInstance : db
 };
