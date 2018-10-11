@@ -72,9 +72,29 @@ const listConfirmedRidesForDriver = async (user, db) =>  {
     });
 };
 
+/**
+ * List car rides that user will be a driver for, that are still pending.
+ */
+const listPendingRidesForDriver = async (user, db) =>  {
+  return db.any(`
+    SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
+    NATURAL JOIN bid b
+    WHERE b.bidStatus = 'successful'
+      AND a.driver = $1;
+    `, [user])
+    .then((result) => {
+      console.log(`Retrived all confirmed car rides for driver ${user}!`)
+      return result
+    })
+    .catch(error => {
+      console.log(error);
+    });
+};
+
 module.exports = {
   advertiseCarRide,
   listAvailableAdvertisedCarRides,
   listConfirmedRidesForRider,
-  listConfirmedRidesForDriver
+  listConfirmedRidesForDriver,
+  listPendingRidesForDriver
 };

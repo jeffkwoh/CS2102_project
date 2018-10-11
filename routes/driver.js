@@ -8,7 +8,7 @@ router.get('/', async function(req, res, next) {
   // 1) car rides that are pending
   // 2) car rides that are confirmed
   const confirmedRides = await db.ride.listConfirmedRidesForDriver(1, db.exposedInstance)
-  const pendingRides = await db.ride.listConfirmedRidesForDriver(1, db.exposedInstance)
+  const pendingRides = await db.ride.listPendingRidesForDriver(1, db.exposedInstance)
   res.render('driver', { confirmedRides, pendingRides });
 });
 

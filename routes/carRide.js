@@ -21,7 +21,7 @@ router.post('/create', async function(req, res, next) {
   // TODO pass in user and car here
   const params = [
     1,
-    1,
+    'SAA0000A',
     req.body.date_field,
     req.body.time_field,
     req.body.origin_field,
