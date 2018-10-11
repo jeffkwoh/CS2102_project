@@ -22,7 +22,7 @@ router.get('/', function(req, res, next) {
  *
  * To be called by driver view.
  */
-router.post('/create', function(req, res, next) {
+router.post('/create', async function(req, res, next) {
   // TODO pass in user and car here
   const params = [
     2,
@@ -34,7 +34,7 @@ router.post('/create', function(req, res, next) {
     db.exposedInstance
   ]
 
-  db.ride.advertiseCarRide(...params);
+  await db.ride.advertiseCarRide(...params);
 
   res.redirect('/driver')
 });
