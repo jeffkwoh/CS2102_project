@@ -34,9 +34,9 @@
     <td>{{this.startLocation}}</td>
     <td>{{this.endLocation}}</td>
     <td>
-      <form action="/rides/{{this.id}}" method="get">
-        <input type="submit" value="View"
-                             name="Submit" id="frm1_submit" />
+      <form action="/rides" method="get">
+        <input id="ride_id" type="number" name="id" value="{{this.id}}" hidden="true">
+        <input type="submit" value="View">
       </form>
     </td>
   </tr>
@@ -58,9 +58,9 @@
     <td>{{this.startLocation}}</td>
     <td>{{this.endLocation}}</td>
     <td>
-      <form action="/rides/{{this.id}}" method="get">
-        <input type="submit" value="Edit"
-                             name="Submit" id="frm1_submit" />
+      <form action="/rides" method="get">
+        <input id="ride_id" type="number" name="id" value="{{this.id}}" hidden="true">
+        <input type="submit" value="Edit">
       </form>
     </td>
   </tr>
