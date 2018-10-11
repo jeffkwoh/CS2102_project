@@ -42,8 +42,14 @@
       <td>{{this.endLocation}}</td>
       <td>
         <form action="/bidding/create" method="post">
-          <input id="ride_id" type="number" name="driver_field" value="{{this.id}}" hidden="true">
-          <input type="submit" value="Edit">
+          <input type="number" name="bidder_field" value="{{4}}" hidden="true">
+          <input type="number" name="driver_field" value="{{4}}" hidden="true">
+          <input type="text" name="date_field" value="{{4}}" hidden="true">
+          <input type="text" name="time_field" value="{{4}}" hidden="true">
+          <input type="text" name="origin_field" value="{{4}}" hidden="true">
+          <input type="text" name="destination_field" value="{{4}}" hidden="true">
+          <input type="number" name="bid_amount_field" value="{{34.0}}">
+          <input type="submit" value="Change bid">
         </form>
       </td>
     </tr>
