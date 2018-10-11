@@ -64,7 +64,7 @@ const listConfirmedRidesForDriver = async (user, db) =>  {
       AND a.driver = $1;
     `, [user])
     .then((result) => {
-      console.log(`Retrived all confirmed car rides for rider ${user}!`)
+      console.log(`Retrived all confirmed car rides for driver ${user}!`)
       return result
     })
     .catch(error => {
