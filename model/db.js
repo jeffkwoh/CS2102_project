@@ -78,7 +78,6 @@ const initDb = () => {
   runQuery(query, 'Initialised all tables!')
 }
 
-
 const deinitDb = () => {
   dropTableQuery(`DROP TABLE IF EXISTS bid;`, 'bid')
   dropTableQuery(`DROP TABLE IF EXISTS advertisedCarRide;`, 'advertisedCarRide')
