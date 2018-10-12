@@ -7,7 +7,12 @@ var db = require("../model/db.js")
  * Only 1 car ride listing is to be viewed at a time.
  */
 router.get('/', function(req, res, next) {
-  const ride = { id: 0, date: "2018-10-30", time: "1500", startLocation:"Suntec City", endLocation:"NUS" }
+  const driver = req.query.driver;
+  const date = req.query.date;
+  const time = req.query.time;
+  const origin = req.query.origin;
+  const destination = req.query.destination;
+  const ride = {driver, date, time, origin, destination}
   res.render('carRide', { ride });
 });
 
