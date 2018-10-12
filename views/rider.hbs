@@ -8,7 +8,7 @@
     <td> Driver </td>
     <td> Date </td>
     <td> Time </td>
-    <td> Trip start Location </td>
+    <td> Origin </td>
     <td> Destination </td>
     <td> Car </td>
   </tr>
@@ -36,9 +36,8 @@
     <td> Driver </td>
     <td> Date </td>
     <td> Time </td>
-    <td> Trip start Location </td>
+    <td> Origin </td>
     <td> Destination </td>
-    <td> Current bid </td>
     <td> Car </td>
   </tr>
   {{#each biddedRides}}
@@ -51,7 +50,6 @@
       <td>{{this.bidamount}}</td>
       <td>{{this.car}}</td>
       <td>
-        <!-- TODO change to /update -->
         <form action="/bidding/update" method="post">
           <input type="number" name="bidder_field" value="{{4}}" hidden="true">
           <input type="number" name="driver_field" value="{{4}}" hidden="true">
@@ -73,7 +71,7 @@
     <td> Driver </td>
     <td> Date </td>
     <td> Time </td>
-    <td> Trip start Location </td>
+    <td> Origin </td>
     <td> Destination </td>
     <td> Car </td>
   </tr>
