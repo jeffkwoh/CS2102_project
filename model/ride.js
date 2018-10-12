@@ -22,20 +22,14 @@ const listAvailableAdvertisedCarRidesForRider = async (user, db) =>  {
   return db.any(`
     -- Car rides the user is not driver for
     SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
-    LEFT OUTER JOIN bid b ON a.driver = b.driver
-      AND a.date = b.date
-      AND a.time = b.time
-      AND a.origin = b.origin
-      AND a.destination = b.destination
-    WHERE b.bidStatus = 'pending'
-      AND a.driver <> 2
+    WHERE a.driver <> $1
     GROUP BY a.driver, a.date, a.time, a.origin, a.destination
 
     EXCEPT
 
     -- Car rides the user has bid
     SELECT b.driver, b.date, b.time, b.origin, b.destination FROM bid b
-    WHERE b.bidder = 2
+    WHERE b.bidder = $1
     GROUP BY b.driver, b.date, b.time, b.origin, b.destination;
     `, [user])
     .then((result) => {
