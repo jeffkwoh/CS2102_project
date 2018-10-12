@@ -29,7 +29,7 @@ const listAvailableAdvertisedCarRidesForRider = async (user, db) =>  {
 
     -- Car rides the user has bid
     SELECT b.driver, b.date, b.time, b.origin, b.destination FROM bid b
-    WHERE b.bidder = $1
+    WHERE b.bidder = $1 OR b.bidStatus <> 'pending'
     GROUP BY b.driver, b.date, b.time, b.origin, b.destination;
     `, [user])
     .then((result) => {
