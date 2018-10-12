@@ -6,12 +6,12 @@ var db = require("../model/db.js")
  * GET car rides listing page.
  * Only 1 car ride listing is to be viewed at a time.
  */
-router.get('/', function(req, res, next) {
-  const driver = req.query.driver;
-  const date = req.query.date;
-  const time = req.query.time;
-  const origin = req.query.origin;
-  const destination = req.query.destination;
+router.post('/', function(req, res, next) {
+  const driver = req.body.driver;
+  const date = req.body.date;
+  const time = req.body.time;
+  const origin = req.body.origin;
+  const destination = req.body.destination;
   const ride = {driver, date, time, origin, destination}
   res.render('carRide', { ride });
 });
