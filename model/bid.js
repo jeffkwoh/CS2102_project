@@ -4,13 +4,13 @@ const createUserBid = async (user, bidAmount, driver, date, time, origin, destin
       `
         INSERT INTO bid(bidder, bidStatus, bidAmount, driver, date, time, origin, destination) 
         VALUES(
-            $1, 
-            'pending', 
-            $2, 
-            $3, 
-            $4, 
-            $5, 
-            $6, 
+            $1,
+            'pending',
+            $2,
+            $3,
+            $4,
+            $5,
+            $6,
             $7
         );
         `, [user, bidAmount, driver, new Date(date), time, origin, destination])
