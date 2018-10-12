@@ -25,11 +25,11 @@ const createUserBid = async (user, bidAmount, driver, date, time, origin, destin
 };
 
 // Updates the bid of a User
+// Note that in Postgres SQL, table alias is not available in SET clause.
 const updateUserBid = async (user, bidAmount, driver, date, time, origin, destination, db) =>  {
   return db.none(`
-        UPDATE bid 
-        SET b.bidAmount = $1 
-        FROM bid b 
+        UPDATE bid b
+        SET bidAmount = $1 
         WHERE b.bidder = $2
         AND b.driver = $3
         AND b.date = $4
@@ -38,11 +38,11 @@ const updateUserBid = async (user, bidAmount, driver, date, time, origin, destin
         AND b.destination = $7;
         `,[bidAmount, user, driver, date, time, origin, destination])
   .then(() => {
-    console.log("success!");
+    console.log(`success! Bidamount:${bidAmount} User:${user}\n`);
     // success;
   })
   .catch(error => {
-    console.log(error);
+    console.log("ERROR:" + error);
     // error;
   });
 };
@@ -77,7 +77,7 @@ const listPendingBidsForUser = async (user, db) =>  {
     AND b.bidStatus = 'pending';`
   , [user])
   .then((result) => {
-    console.log(`List bids success:\n${result}`);
+    console.log(`List bids success:\n${JSON.stringify(result)}`);
     // success;
     return result;
   })
