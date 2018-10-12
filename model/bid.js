@@ -13,7 +13,7 @@ const createUserBid = async (user, bidAmount, driver, date, time, origin, destin
             $6, 
             $7
         );
-        `, [user, bidAmount, driver, date, time, origin, destination])
+        `, [user, bidAmount, driver, new Date(date), time, origin, destination])
   .then(() => {
     console.log("success!");
     // success;
