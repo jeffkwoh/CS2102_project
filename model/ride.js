@@ -16,9 +16,9 @@
   };
 
 /**
- * List all advertised car rides, that are upcoming and available.
+ * List all upcoming advertised car rides that this user can ride in.
  */
-const listAvailableAdvertisedCarRides = async (db) =>  {
+const listAvailableAdvertisedCarRidesForRider = async (user, db) =>  {
   return db.any(`
     SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
     LEFT OUTER JOIN bid b ON a.driver = b.driver
@@ -102,7 +102,7 @@ const listPendingRidesForDriver = async (user, db) =>  {
 
 module.exports = {
   advertiseCarRide,
-  listAvailableAdvertisedCarRides,
+  listAvailableAdvertisedCarRidesForRider,
   listConfirmedRidesForRider,
   listConfirmedRidesForDriver,
   listPendingRidesForDriver

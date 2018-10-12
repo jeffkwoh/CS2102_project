@@ -11,7 +11,7 @@ router.get('/', async function(req, res, next) {
   // 3) All upcoming car rides that can be bid for
   const confirmedRides = await db.ride.listConfirmedRidesForRider(riderId, db.exposedInstance)
   const biddedRides = await db.bid.listPendingBidsForUser(riderId, db.exposedInstance);
-  const availableRides = await db.ride.listAvailableAdvertisedCarRides(db.exposedInstance)
+  const availableRides = await db.ride.listAvailableAdvertisedCarRidesForRider(riderId, db.exposedInstance)
   res.render('rider', { riderId, confirmedRides, biddedRides, availableRides });
 });
 
