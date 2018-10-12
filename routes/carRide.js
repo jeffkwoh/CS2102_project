@@ -20,7 +20,7 @@ router.get('/', function(req, res, next) {
 router.post('/create', async function(req, res, next) {
   // TODO pass in user and car here
   const params = [
-    1,
+    req.body.driver_field,
     'SAA0000A',
     req.body.date_field,
     req.body.time_field,
@@ -31,7 +31,7 @@ router.post('/create', async function(req, res, next) {
 
   await db.ride.advertiseCarRide(...params);
 
-  res.redirect('/driver')
+  res.redirect(`/driver?user_id_field=${req.body.driver_field}`)
 });
 
 
