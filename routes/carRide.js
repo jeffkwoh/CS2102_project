@@ -7,12 +7,7 @@ var db = require("../model/db.js")
  * Only 1 car ride listing is to be viewed at a time.
  */
 router.post('/', function(req, res, next) {
-  const driver = req.body.driver;
-  const date = req.body.date;
-  const time = req.body.time;
-  const origin = req.body.origin;
-  const destination = req.body.destination;
-  const ride = {driver, date, time, origin, destination}
+  const ride = { ...req.body }
   res.render('carRide', { ride });
 });
 
