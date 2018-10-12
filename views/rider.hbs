@@ -39,7 +39,6 @@
     <td> Origin </td>
     <td> Destination </td>
     <td> Car </td>
-    <td> Current Bid </td>
   </tr>
   {{#each biddedRides}}
     <tr>
@@ -49,7 +48,6 @@
       <td>{{this.origin}}</td>
       <td>{{this.destination}}</td>
       <td>{{this.car}}</td>
-      <td>{{this.bidamount}}</td>
       <td>
         <form action="/bidding/update" method="post">
           <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
@@ -58,7 +56,7 @@
           <input type="text" name="time_field" value="{{this.time}}" hidden="true">
           <input type="text" name="origin_field" value="{{this.origin}}" hidden="true">
           <input type="text" name="destination_field" value="{{this.destination}}" hidden="true">
-          <input type="number" name="bid_amount_field" value="{{this.bidamount}}">
+          <input type="number" name="bid_amount_field">
           <input type="submit" value="Change bid">
         </form>
       </td>
