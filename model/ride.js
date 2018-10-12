@@ -16,16 +16,28 @@
   };
 
 /**
- * List all advertised car rides, that are upcoming and available.
+ * List all upcoming advertised car rides that this user can ride in.
  */
-const listAvailableAdvertisedCarRides = async (db) =>  {
+const listAvailableAdvertisedCarRidesForRider = async (user, db) =>  {
   return db.any(`
-    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car
-    FROM advertisedCarRide a
-    NATURAL JOIN bid b
+    -- Car rides the user is not driver for
+    SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
+    LEFT OUTER JOIN bid b ON a.driver = b.driver
+      AND a.date = b.date
+      AND a.time = b.time
+      AND a.origin = b.origin
+      AND a.destination = b.destination
+    WHERE b.bidStatus = 'pending'
+      AND a.driver <> 2
     GROUP BY a.driver, a.date, a.time, a.origin, a.destination
-    HAVING COUNT(DISTINCT b.bidStatus) <= 1;
-    `)
+
+    EXCEPT
+
+    -- Car rides the user has bid
+    SELECT b.driver, b.date, b.time, b.origin, b.destination FROM bid b
+    WHERE b.bidder = 2
+    GROUP BY b.driver, b.date, b.time, b.origin, b.destination;
+    `, [user])
     .then((result) => {
       console.log(`Retrived all upcoming car rides!`)
       return result
@@ -99,7 +111,7 @@ const listPendingRidesForDriver = async (user, db) =>  {
 
 module.exports = {
   advertiseCarRide,
-  listAvailableAdvertisedCarRides,
+  listAvailableAdvertisedCarRidesForRider,
   listConfirmedRidesForRider,
   listConfirmedRidesForDriver,
   listPendingRidesForDriver

@@ -4,16 +4,16 @@ const createUserBid = async (user, bidAmount, driver, date, time, origin, destin
       `
         INSERT INTO bid(bidder, bidStatus, bidAmount, driver, date, time, origin, destination) 
         VALUES(
-            $1, 
-            'pending', 
-            $2, 
-            $3, 
-            $4, 
-            $5, 
-            $6, 
+            $1,
+            'pending',
+            $2,
+            $3,
+            $4,
+            $5,
+            $6,
             $7
         );
-        `, [user, bidAmount, driver, date, time, origin, destination])
+        `, [user, bidAmount, driver, new Date(date), time, origin, destination])
   .then(() => {
     console.log("success!");
     // success;
@@ -71,10 +71,10 @@ const deleteUserBid = async (user, driver, date, time, origin, destination, db) 
 // List all bids a user has made
 const listPendingBidsForUser = async (user, db) =>  {
   return db.any(`
-        SELECT b.date, b.time, b.origin, b.destination, b.bidAmount
-        FROM bid b
-        WHERE b.bidder = $1
-          AND b.bidStatus = 'pending';`
+    SELECT b.driver, b.date, b.time, b.origin, b.destination, b.bidAmount
+    FROM bid b
+    WHERE b.bidder = $1
+    AND b.bidStatus = 'pending';`
   , [user])
   .then((result) => {
     console.log(`List bids success:\n${result}`);
