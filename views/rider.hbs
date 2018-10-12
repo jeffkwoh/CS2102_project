@@ -85,7 +85,7 @@
       <td>{{this.car}}</td>
       <td>
         <form action="/bidding/create" method="post">
-          <input type="number" name="bidder_field" value="{{user}}" hidden="true">
+          <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
           <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
           <input type="text" name="date_field" value="{{this.date}}" hidden="true">
           <input type="text" name="time_field" value="{{this.time}}" hidden="true">
