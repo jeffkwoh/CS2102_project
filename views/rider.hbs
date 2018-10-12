@@ -85,13 +85,13 @@
       <td>{{this.car}}</td>
       <td>
         <form action="/bidding/create" method="post">
-          <input type="number" name="bidder_field" value="{{4}}" hidden="true">
-          <input type="number" name="driver_field" value="{{4}}" hidden="true">
-          <input type="text" name="date_field" value="{{4}}" hidden="true">
-          <input type="text" name="time_field" value="{{4}}" hidden="true">
-          <input type="text" name="origin_field" value="{{4}}" hidden="true">
-          <input type="text" name="destination_field" value="{{4}}" hidden="true">
-          <input type="number" name="bid_amount_field" value={{4}}>
+          <input type="number" name="bidder_field" value="{{user}}" hidden="true">
+          <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
+          <input type="text" name="date_field" value="{{this.date}}" hidden="true">
+          <input type="text" name="time_field" value="{{this.time}}" hidden="true">
+          <input type="text" name="origin_field" value="{{this.origin}}" hidden="true">
+          <input type="text" name="destination_field" value="{{this.destination}}" hidden="true">
+          <input type="number" name="bid_amount_field">
           <input type="submit" value="Bid for this ride">
         </form>
       </td>
