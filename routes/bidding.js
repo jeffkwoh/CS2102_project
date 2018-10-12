@@ -36,7 +36,7 @@ router.post('/create', async function(req, res, next) {
     db.exposedInstance
   );
 
-  res.redirect('/rider')
+  res.redirect(`/rider?user_id_field=${req.body.bidder_field}`)
 });
 
 module.exports = router;
