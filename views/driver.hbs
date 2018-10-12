@@ -2,6 +2,8 @@
 
 <h2> Create Car Ride </h2>
 <form action="/rides/create" method="post">
+    <input type="number" name="driver_field" value="{{driverId}}" hidden="true">
+
     <label for="date">Date: </label>
     <input id="date" type="date" name="date_field" value="2018-10-30">
 
