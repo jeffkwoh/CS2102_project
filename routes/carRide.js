@@ -7,16 +7,15 @@ var db = require("../model/db.js")
  * Only 1 car ride listing is to be viewed at a time.
  */
 router.post('/', async function(req, res, next) {
-  console.log(req.body);
   const driver = req.body.driver;
   const date = req.body.date;
   const time = req.body.time;
   const origin = req.body.origin;
   const destination = req.body.destination;
   const bids = await db.bid.listBidsForRide(driver, date, time, origin, destination, db.exposedInstance)
-  console.log(bids)
   const ride = { bids, driver, date, time, origin, destination }
-  res.render('carRide', { ride });
+  console.log(bids);
+  res.render('carRide', { ride, bids });
 });
 
 
