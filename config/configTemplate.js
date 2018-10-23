@@ -1,3 +1,3 @@
-const cn = 'postgres://username:password@host:port/database';
+const cn = 'postgres://username:password@host:port/database'
 
-module.exports = cn;
+module.exports = cn
