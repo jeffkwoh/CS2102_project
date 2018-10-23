@@ -20,3 +20,18 @@
     </tr>
   {{/with}}
 </table>
+
+<hr />
+
+<table>
+  <tr>
+    <td> Bidder ID </td>
+    <td> Bid amount </td>
+  </tr>
+  {{#each bids }}
+    <tr>
+      <td>{{this.bidder}}</td>
+      <td>{{this.bidamount}}</td>
+    </tr>
+  {{/each}}
+</table>
