@@ -142,7 +142,7 @@ const listBidsForRide = async (driver, date, time, origin, destination, db) =>  
       AND b.time = $3
       AND b.origin = $4
       AND b.destination = $5;`
-    , [driver, date, time, origin, destination])
+    , [driver, new Date(date), time, origin, destination])
   .then((result) => {
     // success;
     console.log("success!")
