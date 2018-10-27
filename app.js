@@ -2,6 +2,9 @@ var createError = require('http-errors')
 var express = require('express')
 var path = require('path')
 var cookieParser = require('cookie-parser')
+var bodyParser = require('body-parser')
+var session = require('express-session')
+var passport = require('./config/passport')
 var logger = require('morgan')
 var sassMiddleware = require('node-sass-middleware')
 
@@ -14,6 +17,7 @@ var driverRouter = require('./routes/driver')
 var riderRouter = require('./routes/rider')
 var carRideRouter = require('./routes/carRide')
 var biddingRouter = require('./routes/bidding')
+var loginRouter = require('./routes/login')
 
 var app = express()
 
@@ -35,12 +39,19 @@ app.use(
 )
 app.use(express.static(path.join(__dirname, 'public')))
 
+//passport
+app.use(session({ secret:"outer-joins-are-useless" }))
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(passport.initialize())
+app.use(passport.session())
+
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
 app.use('/driver', driverRouter)
 app.use('/rider', riderRouter)
 app.use('/rides', carRideRouter)
 app.use('/bidding', biddingRouter)
+app.use('/login', loginRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
