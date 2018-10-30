@@ -1,12 +1,13 @@
 var express = require('express')
 var router = express.Router()
 var db = require('../model/db.js')
+var connect = require('connect-ensure-login')
 
 /**
  * GET car rides listing page.
  * Only 1 car ride listing is to be viewed at a time.
  */
-router.post('/', async function(req, res, next) {
+router.post('/', connect.ensureLoggedIn, async function(req, res, next) {
   const driver = req.body.driver
   const date = req.body.date
   const time = req.body.time
@@ -30,7 +31,7 @@ router.post('/', async function(req, res, next) {
  *
  * To be called by driver view.
  */
-router.post('/create', async function(req, res, next) {
+router.post('/create', connect.ensureLoggedIn(), async function(req, res, next) {
   // TODO pass in user and car here
   const params = [
     req.body.driver_field,
