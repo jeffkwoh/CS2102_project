@@ -78,4 +78,31 @@ router.post('/update', async function(req, res, next) {
   res.redirect(`/rider?user_id_field=${req.body.bidder_field}`)
 })
 
+router.post('/delete', async function(req, res, next) {
+  // Current date returned is in UTCString format (???) PGSQL cannot accept this
+  // Instead, we convert this to a generic LocaleDateString
+  const sanitized_date = new Date(req.body.date_field).toLocaleDateString()
+
+  const primary_key = {
+    bidder: req.body.bidder_field,
+    driver: req.body.driver_field,
+    date: sanitized_date,
+    time: req.body.time_field,
+    origin: req.body.origin_field,
+    destination: req.body.destination_field,
+  }
+
+  await db.bid.deleteUserBid(
+    primary_key.bidder,
+    primary_key.driver,
+    primary_key.date,
+    primary_key.time,
+    primary_key.origin,
+    primary_key.destination,
+    db.exposedInstance
+  )
+
+  res.redirect(`/rider?user_id_field=${req.body.bidder_field}`)
+})
+
 module.exports = router

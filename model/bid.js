@@ -95,7 +95,7 @@ const deleteUserBid = async (
       [user, driver, date, time, origin, destination]
     )
     .then(() => {
-      console.log('success!')
+      console.log('success! user bid deleted.')
       // success;
     })
     .catch(error => {
