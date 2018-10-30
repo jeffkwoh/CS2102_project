@@ -7,18 +7,7 @@
       <p class="lead">Hitch is a car-sharing app with 0 Outer Joins. Sign up, share your car and get driven by others as well.</p>
     </div>
     <div class="col-3">
-        <div class="panel">
-           <h4>Login</h4>
-         </div>
-            <form id="Login" action="/login" method="post">
-                <div class="form-group">
-                    <input type="text" name="username" class="form-control" id="inputEmail" placeholder="Username">
-                </div>
-                <div class="form-group">
-                    <input type="password" name="password" class="form-control" id="inputPassword" placeholder="Password">
-                </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-            </form>
+      {{> login-form }}
     </div>
   </div>
   </main>
