@@ -47,4 +47,23 @@ router.post('/create', async function(req, res, next) {
   res.redirect(`/driver?user_id_field=${req.body.driver_field}`)
 })
 
+router.post('/delete', async function(req, res, next) {
+  const driver = req.body.driver
+  const sanitized_date = new Date(req.body.date).toLocaleDateString()
+  const time = req.body.time
+  const origin = req.body.origin
+  const dest = req.body.destination
+
+  await db.ride.delAdvertisedRide(
+    driver,
+    sanitized_date,
+    time,
+    origin,
+    dest,
+    db.exposedInstance
+  )
+
+  res.redirect(`/driver?user_id_field=${req.body.driver}`)
+})
+
 module.exports = router

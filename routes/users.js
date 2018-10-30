@@ -29,4 +29,15 @@ router.post('/create', async function(req, res, next) {
   res.redirect('/users')
 })
 
+/* POST Delete creation. */
+router.post('/delete', async function(req, res, next) {
+  const userId = req.body.user_id_field
+  await db.user.delUserAcct(
+    userId,
+    db.exposedInstance
+  )
+
+  res.redirect('/users')
+})
+
 module.exports = router

@@ -26,6 +26,38 @@ const advertiseCarRide = async (
 }
 
 /**
+ * Delete a currently advertised ride
+ */
+const delAdvertisedRide = async (
+  driver,
+  date,
+  time,
+  origin,
+  destination,
+  db
+) => {
+  return db
+    .none(
+      `
+      DELETE FROM bid
+      WHERE driver = $1 AND date = $2 AND time = $3
+      AND origin = $4 AND destination = $5; 
+      
+      DELETE FROM advertisedCarRide
+      WHERE driver = $1 AND date = $2 AND time = $3
+      AND origin = $4 AND destination = $5;
+      `,
+      [driver, date, time, origin, destination]
+    )
+    .then(() => {
+      console.log("Delete Success")
+    })
+    .catch(error => {
+      console.log(error)
+    })
+}
+
+/**
  * List all upcoming advertised car rides that this user can ride in.
  */
 const listAvailableAdvertisedCarRidesForRider = async (user, db) => {
@@ -135,4 +167,5 @@ module.exports = {
   listConfirmedRidesForRider,
   listConfirmedRidesForDriver,
   listPendingRidesForDriver,
+  delAdvertisedRide
 }
