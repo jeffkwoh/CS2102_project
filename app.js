@@ -21,6 +21,13 @@ var loginRouter = require('./routes/login')
 
 var app = express()
 
+// local variables
+app.locals = {
+  ...app.locals,
+  title: 'Hitch',
+  description: 'A website to list and go on shared car rides!'
+};
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'hbs')
