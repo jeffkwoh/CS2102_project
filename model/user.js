@@ -158,5 +158,6 @@ module.exports = {
   createUserAppAccount,
   listUserAppAccount,
   addCarToUser,
+  delUserAcct,
   listCarUserOwns,
 }
