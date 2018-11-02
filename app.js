@@ -7,6 +7,8 @@ var session = require('express-session')
 var passport = require('./config/passport')
 var logger = require('morgan')
 var sassMiddleware = require('node-sass-middleware')
+var hbs = require('hbs');
+var fs = require('fs');
 
 // db
 var db = require('./model/db')
@@ -21,9 +23,29 @@ var loginRouter = require('./routes/login')
 
 var app = express()
 
+// local variables
+app.locals = {
+  ...app.locals,
+  title: 'Hitch',
+  description: 'A website to list and go on shared car rides!'
+};
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'hbs')
+// adding partials
+var partialsDir = __dirname + '/views/partials';
+var filenames = fs.readdirSync(partialsDir);
+filenames.forEach(function (filename) {
+  var matches = /^([^.]+).hbs$/.exec(filename);
+  if (!matches) {
+    return;
+  }
+  var name = matches[1];
+  var template = fs.readFileSync(partialsDir + '/' + filename, 'utf8');
+  hbs.registerPartial(name, template);
+});
+
 
 app.use(logger('dev'))
 app.use(express.json())

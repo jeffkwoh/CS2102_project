@@ -4,7 +4,7 @@ var passport = require('../config/passport')
 
 /* GET login page. */
 router.get('/', function(req, res, next) {
-  res.render('login');
+  res.redirect('/');
 });
 
 /* Post data to passport */
