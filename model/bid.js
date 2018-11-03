@@ -127,7 +127,7 @@ const listPendingBidsForUser = async (user, db) => {
 }
 
 // Updates an existing bid in the table Bid as successful
-const setBidAsSuccessful = async (
+const updateBidStatus = async (
   successfulBidder,
   driver,
   date,
@@ -139,15 +139,23 @@ const setBidAsSuccessful = async (
   return db
     .none(
       `
-        UPDATE bid 
-        SET b.bidStatus = 'successful' 
-        FROM bid b 
-        WHERE b.bidder = $1
-        AND b.driver = $2 
-        AND b.date = $3 
-        AND b.time = $4 
-        AND b.origin = $5 
-        AND b.destination = $6;`,
+        UPDATE bid
+        SET bidStatus = 'successful' 
+        WHERE bidder = $1
+        AND driver = $2 
+        AND date = $3 
+        AND time = $4 
+        AND origin = $5 
+        AND destination = $6;
+        
+        UPDATE bid
+        SET bidStatus = 'unsuccessful' 
+        WHERE bidder <> $1 
+        AND driver = $2 
+        AND date = $3 
+        AND time = $4 
+        AND origin = $5
+        AND destination = $6;`,
       [successfulBidder, driver, date, time, origin, destination]
     )
     .then(() => {
@@ -191,6 +199,5 @@ module.exports = {
   listPendingBidsForUser,
   listBidsForRide,
   deleteUserBid,
-  setBidAsSuccessful,
-  setBidAsUnsuccessful,
+  updateBidStatus
 }
