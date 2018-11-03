@@ -160,47 +160,14 @@ const setBidAsSuccessful = async (
     })
 }
 
-// Updates an existing bid in the table Bid as unsuccessful
-const setBidAsUnsuccessful = async (
-  unsuccessfulBidder,
-  driver,
-  date,
-  time,
-  origin,
-  destination,
-  db
-) => {
-  return db
-    .none(
-      `
-    UPDATE bid 
-    SET b.bidStatus = 'unsuccessful' 
-    FROM bid b 
-    WHERE b.bidder = $1 
-    AND b.driver = $2 
-    AND b.date = $3 
-    AND b.time = $4 
-    AND b.origin = $5
-    AND b.destination = $6;`,
-      [unsuccessfulBidder, driver, date, time, origin, destination]
-    )
-    .then(() => {
-      console.log('success!')
-      // success;
-    })
-    .catch(error => {
-      console.log(error)
-      // error;
-    })
-}
 
 const listBidsForRide = async (driver, date, time, origin, destination, db) => {
   return db
     .any(
       `
-    SELECT b.bidder, b.bidAmount
-    FROM bid b
-    WHERE b.driver = $1
+      SELECT *
+      FROM bid b
+      WHERE b.driver = $1
       AND b.date = $2
       AND b.time = $3
       AND b.origin = $4
