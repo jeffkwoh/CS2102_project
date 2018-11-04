@@ -31,6 +31,9 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
     destination,
     db.exposedInstance
   )
+
+    makeReadable(ride)
+
   res.render('carRide', { ride, bids, highestBid })
 })
 
@@ -74,5 +77,19 @@ router.post('/delete', async function(req, res, next) {
 
   res.redirect(`/driver?user_id_field=${req.body.driver}`)
 })
+
+function makeReadable(ride) {
+    ride.date_readable = parseDate(ride.date)
+    ride.time_readable = parseTime(ride.time)
+}
+
+function parseDate(date) {
+  var temp = date.toString().substring(0,15);
+  return temp.substring(0,3) + "," + temp.substring(3,15)
+}
+
+function parseTime(time) {
+  return time.substring(0,5);
+}
 
 module.exports = router
