@@ -47,6 +47,9 @@
 <form action="/rides/create" method="post">
     <input type="number" name="driver_field" value="{{driverId}}" hidden="true">
 
+    <label for="licensePlate">Car License Plate: </label>
+    <input id="licensePlate" type="text" name="licensePlate_field" value="SAA0000A">
+
     <label for="date">Date: </label>
     <input id="date" type="date" name="date_field" value="2018-10-30">
 
@@ -114,16 +117,6 @@
         <input id="origin_id" type="text" name="origin" value="{{this.origin}}" hidden="true">
         <input id="destination_id" type="text" name="destination" value="{{this.destination}}" hidden="true">
         <input type="submit" value="View Bids">
-      </form>
-    </td>
-    <td>
-      <form action="/rides/delete" method="post">
-        <input id="ride_id" type="number" name="driver" value="{{this.driver}}" hidden="true">
-        <input id="date_id" type="text" name="date" value="{{this.date}}" hidden="true">
-        <input id="time_id" type="text" name="time" value="{{this.time}}" hidden="true">
-        <input id="origin_id" type="text" name="origin" value="{{this.origin}}" hidden="true">
-        <input id="destination_id" type="text" name="destination" value="{{this.destination}}" hidden="true">
-        <input type="submit" value="Delete">
       </form>
     </td>
   </tr>

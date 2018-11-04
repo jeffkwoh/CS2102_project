@@ -26,38 +26,6 @@ const advertiseCarRide = async (
 }
 
 /**
- * Delete a currently advertised ride
- */
-const delAdvertisedRide = async (
-  driver,
-  date,
-  time,
-  origin,
-  destination,
-  db
-) => {
-  return db
-    .none(
-      `
-      DELETE FROM bid
-      WHERE driver = $1 AND date = $2 AND time = $3
-      AND origin = $4 AND destination = $5; 
-      
-      DELETE FROM advertisedCarRide
-      WHERE driver = $1 AND date = $2 AND time = $3
-      AND origin = $4 AND destination = $5;
-      `,
-      [driver, date, time, origin, destination]
-    )
-    .then(() => {
-      console.log("Delete Success")
-    })
-    .catch(error => {
-      console.log(error)
-    })
-}
-
-/**
  * List all upcoming advertised car rides that this user can ride in.
  *
  * @param filters An object containing specific filter options. @see rider router
@@ -172,7 +140,8 @@ const listPendingRidesForDriver = async (user, db) => {
   return db
     .any(
       `
-    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car FROM advertisedCarRide a
+    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car 
+    FROM advertisedCarRide a
     LEFT OUTER JOIN bid b ON a.driver = b.driver
       AND a.date = b.date
       AND a.time = b.time
@@ -198,7 +167,5 @@ module.exports = {
   listConfirmedRidesForRider,
   listConfirmedRidesForDriver,
   listPendingRidesForDriver,
-  listCarsUserOwns,
-  delAdvertisedRide,
-  delAdvertisedRide
+  listCarsUserOwns
 }
