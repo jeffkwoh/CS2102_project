@@ -147,7 +147,7 @@ const listPendingRidesForDriver = async (user, db) => {
       AND a.time = b.time
       AND a.origin = b.origin
       AND a.destination = b.destination
-    WHERE a.driver = $1 AND (b.bidStatus LIKE '%pending%' OR b.bidStatus IS NULL)
+    WHERE a.driver = $1 AND (b.bidStatus = 'pending' OR b.bidStatus IS NULL)
     GROUP BY a.driver, a.date, a.time, a.origin, a.destination;
     `,
       [user]
