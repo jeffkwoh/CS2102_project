@@ -20,7 +20,7 @@ async function initDb() {
     email VARCHAR(128) UNIQUE NOT NULL CHECK (email LIKE '%_@_%.__%'),
     contactNumber INTEGER NOT NULL CONSTRAINT valid_contactNumber CHECK (contactNumber > 9999999 AND contactNumber < 100000000),
     name VARCHAR(64) NOT NULL,
-    password VARCHAR(32) NOT NULL
+    password VARCHAR(32) NOT NULL CHECK (LENGTH(password) > 5)
   );
 
   CREATE TABLE IF NOT EXISTS userOwnsACar (
