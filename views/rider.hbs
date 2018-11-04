@@ -25,13 +25,38 @@
 {{#getJsonContext '[
   {
     "type": "text",
-    "name": "penis",
-    "placeholder": "burn"
+    "name": "bidStatusFilter",
+    "placeholder": "bidStatusFilter"
   },
   {
     "type": "text",
-    "name": "penis",
-    "placeholder": "burn"
+    "name": "bidAmountFilter",
+    "placeholder": "bidAmountFilter"
+  },
+  {
+    "type": "text",
+    "name": "bidderFilter",
+    "placeholder": "bidderFilter"
+  },
+  {
+    "type": "text",
+    "name": "driverFilter",
+    "placeholder": "driverFilter"
+  },
+  {
+    "type": "text",
+    "name": "dateFilter",
+    "placeholder": "dateFilter"
+  },
+  {
+    "type": "text",
+    "name": "timeFilter",
+    "placeholder": "timeFilter"
+  },
+  {
+    "type": "text",
+    "name": "originFilter",
+    "placeholder": "originFilter"
   }
 ]'}}
   {{> search-bar  name='ConfirmedRides' getRoute='/rider' searchFields=this}}

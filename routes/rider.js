@@ -7,13 +7,13 @@ const connect = require('connect-ensure-login')
 router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next) {
   const riderId = req.user
   const filters = {
-    driverFilter: req.body.driverFilter,
-    dateFilter: req.body.dateFilter,
-    timeFilter: req.body.timeFilter,
-    originFilter: req.body.originFilter,
-    destinationFilter: req.body.destinationFilter,
-    bidAmountFilter: req.body.bidAmountFilter,
-    bidStatusFilter: req.body.bidStatusFilter
+    driver: req.body.driverFilter || "",
+    date: req.body.dateFilter || "",
+    time: req.body.timeFilter || "",
+    origin: req.body.originFilter || "",
+    destination: req.body.destinationFilter || "",
+    bidAmount: req.body.bidAmountFilter || "",
+    bidStatus: req.body.bidStatusFilter || ""
   }
   // fetch:
   // 1) car rides that are confirmed for this rider

@@ -31,17 +31,17 @@ const advertiseCarRide = async (
  * @param filters An object containing specific filter options. @see rider router
  */
 const listAvailableAdvertisedCarRidesForRider = async (user, filters, db) => {
+  console.log("listAvailableAdvertisedCarRidesForRider")
   return db
     .any(
       `
     -- Car rides the user is not driver for
     SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
     WHERE a.driver <> $1
-      AND a.driver LIKE "%$2%"
-      AND a.date LIKE "%$3%"
-      AND a.time LIKE "%$4%"
-      AND a.origin LIKE "%$5%"
-      AND a.destination LIKE "%$5%"
+      AND CAST(a.date as VARCHAR(25)) LIKE '%${filters.date}%'
+      AND CAST(a.time as VARCHAR(25)) LIKE '%${filters.time}%'
+      AND a.origin LIKE '%${filters.origin}%'
+      AND a.destination LIKE '%${filters.destination}%'
     GROUP BY a.driver, a.date, a.time, a.origin, a.destination
 
     EXCEPT
@@ -50,8 +50,8 @@ const listAvailableAdvertisedCarRidesForRider = async (user, filters, db) => {
     SELECT b.driver, b.date, b.time, b.origin, b.destination FROM bid b
     WHERE b.bidder = $1 OR b.bidStatus <> 'pending'
     GROUP BY b.driver, b.date, b.time, b.origin, b.destination;
-    `,
-      [user, filters.driverFilter, filters.dateFilter, filters.timeFilter, filters.originFilter, filters.destinationFilter]
+    `
+      ,[user, filters.driverFilter, filters.dateFilter, filters.timeFilter, filters.originFilter, filters.destinationFilter]
     )
     .then(result => {
       console.log(`Retrived all upcoming car rides!`)
@@ -76,14 +76,13 @@ const listConfirmedRidesForRider = async (user, filters, db) => {
     NATURAL JOIN bid b
     WHERE b.bidStatus = 'successful'
       AND b.bidder = $1
-      AND b.bidStatus LIKE "%$2%"
-      AND b.bidAmount LIKE "%$3%"
-      AND b.bidder LIKE "%$4%"
-      AND b.driver LIKE "%$5%"
-      AND b.date LIKE "%$6%"
-      AND b.time LIKE "%$7%"
-      AND b.origin LIKE "%$8%"
-      AND b.destination LIKE "%$9%";
+      AND b.bidStatus LIKE '%${filters.bidStatus}%'
+      AND CAST(b.bidAmount as varchar(20)) LIKE '%${filters.bidAmount}%'
+      AND CAST(b.driver as varchar(20)) LIKE '%${filters.driver}%'
+      AND CAST(b.date as varchar(20)) LIKE '%${filters.date}%'
+      AND CAST(b.time as varchar(20)) LIKE '%${filters.time}%'
+      AND b.origin LIKE '%${filters.origin}%'
+      AND b.destination LIKE '%${filters.destination}%"'
     `,
       [user, filters.bidStatusFilter, filters.bidAmountFilter, filters.bidderFilter, filters.driverFilter, filters.dateFilter, filters.timeFilter, filters.originFilter, filters.destinationFilter]
     )
