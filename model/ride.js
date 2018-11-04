@@ -59,14 +59,21 @@ const delAdvertisedRide = async (
 
 /**
  * List all upcoming advertised car rides that this user can ride in.
+ *
+ * @param filters An object containing specific filter options. @see rider router
  */
-const listAvailableAdvertisedCarRidesForRider = async (user, db) => {
+const listAvailableAdvertisedCarRidesForRider = async (user, filters, db) => {
+  console.log("listAvailableAdvertisedCarRidesForRider")
   return db
     .any(
       `
     -- Car rides the user is not driver for
     SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
     WHERE a.driver <> $1
+      AND TO_CHAR(CAST(a.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
+      AND CAST(a.time as VARCHAR(25)) LIKE '%${filters.time}%'
+      AND a.origin LIKE '%${filters.origin}%'
+      AND a.destination LIKE '%${filters.destination}%'
     GROUP BY a.driver, a.date, a.time, a.origin, a.destination
 
     EXCEPT
@@ -75,8 +82,8 @@ const listAvailableAdvertisedCarRidesForRider = async (user, db) => {
     SELECT b.driver, b.date, b.time, b.origin, b.destination FROM bid b
     WHERE b.bidder = $1 OR b.bidStatus <> 'pending'
     GROUP BY b.driver, b.date, b.time, b.origin, b.destination;
-    `,
-      [user]
+    `
+      ,[user]
     )
     .then(result => {
       console.log(`Retrived all upcoming car rides!`)
@@ -89,8 +96,10 @@ const listAvailableAdvertisedCarRidesForRider = async (user, db) => {
 
 /**
  * List car rides that user will be a rider in, that are confirmed.
+ *
+ * @param filters An object containing specific filter options. @see rider router
  */
-const listConfirmedRidesForRider = async (user, db) => {
+const listConfirmedRidesForRider = async (user, filters, db) => {
   return db
     .any(
       `
@@ -98,7 +107,11 @@ const listConfirmedRidesForRider = async (user, db) => {
     FROM advertisedCarRide a
     NATURAL JOIN bid b
     WHERE b.bidStatus = 'successful'
-      AND b.bidder = $1;
+      AND b.bidder = $1
+      AND TO_CHAR(CAST(b.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
+      AND CAST(b.time as varchar(20)) LIKE '%${filters.time}%'
+      AND b.origin LIKE '%${filters.origin}%'
+      AND b.destination LIKE '%${filters.destination}%"'
     `,
       [user]
     )

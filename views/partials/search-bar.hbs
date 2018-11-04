@@ -1,0 +1,15 @@
+<div class="panel searchBar">
+  <form id="{{name}}" action="{{getRoute}}" method="get">
+    <div class="form-group">
+      <div class="input-group">
+        {{#each searchFields}}
+            <div class="input-group-prepend ml-1">
+              <span class="input-group-text" id="basic-addon{{this.name}}{{../name}}">{{this.label}}</span>
+            </div>
+            <input class="form-control" type="{{this.type}}" name="{{this.name}}" id="input{{this.name}}{{../name}}" placeholder="{{this.placeholder}}" aria-describedby="basic-addon{{this.name}}{{../name}}">
+        {{/each}}
+        <button type="submit" class="btn btn-primary ml-1">{{buttonName}}</button>
+      </div>
+    </div>
+  </form>
+</div>
