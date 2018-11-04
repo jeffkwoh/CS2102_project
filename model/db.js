@@ -392,7 +392,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '10',
       'SLL0000D',
-      '2010-04-20',
+      '2030-04-20',
       '09:00:00',
       'PlaceV1',
       'PlaceB2',
@@ -548,7 +548,7 @@ async function populateDb() {
       '2030-01-11',
       '13:00:00',
       'PlaceB1',
-      'PlaceB1',
+      'PlaceB2',
       db
   )
   await ride.advertiseCarRide(
@@ -777,7 +777,7 @@ async function populateDb() {
       '2030-01-11',
       '13:00:00',
       'PlaceB1',
-      'PlaceB1',
+      'PlaceB2',
       db
   )
   await bid.createUserBid(
@@ -787,7 +787,7 @@ async function populateDb() {
       '2030-01-11',
       '13:00:00',
       'PlaceB1',
-      'PlaceB1',
+      'PlaceB2',
       db
   )
   await bid.createUserBid(
