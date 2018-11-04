@@ -69,4 +69,24 @@ router.post('/addCar', async function(req, res, next) {
   res.redirect('/driver')
 })
 
+/* POST Car */
+router.post('/addCar', async function(req, res, next) {
+  const owner_field = req.body.owner_field
+  const licensePlate_field = req.body.licensePlate_field
+  const carBrand_field = req.body.carBrand_field
+  const carModel_field = req.body.carModel_field
+  const numAvailSeats_field = req.body.numAvailSeats_field
+
+  await db.car.addCarToUser(
+    owner_field,
+    licensePlate_field,
+    carBrand_field,
+    carModel_field,
+    numAvailSeats_field,
+    db.exposedInstance
+  )
+
+  res.redirect('/driver')
+})
+
 module.exports = router

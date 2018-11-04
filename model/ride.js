@@ -62,7 +62,6 @@ const listAvailableAdvertisedCarRidesForRider = async (user, currentDate, curren
       return result
     })
     .catch(error => {
-      console.log("Lmao")
       console.log(error)
     })
 }
