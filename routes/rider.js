@@ -23,6 +23,8 @@ router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next)
     db.exposedInstance
   )
 
+  makeReadable(confirmedRides);
+  makeReadable(biddedRides);
   makeReadable(availableRides);
 
   res.render('rider', { riderId, confirmedRides, biddedRides, availableRides })
@@ -32,9 +34,8 @@ function makeReadable(rides) {
   var len = rides.length;
   for (var i = 0; i < len; i++) {
     //console.log(JSON.stringify(rides[i].date))
-    rides[i].date = parseDate(rides[i].date)
-    rides[i].time = parseTime(rides[i].time)
-    console.log(rides[i].date + " -- " + rides[i].time)
+    rides[i].date_readable = parseDate(rides[i].date)
+    rides[i].time_readable = parseTime(rides[i].time)
   }
 }
 

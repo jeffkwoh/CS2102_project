@@ -171,7 +171,9 @@
 
 
 <!-- PENDING BIDS -->
-<h3>Pending Bids</h3>
+
+<!--
+<h3></h3>
 <table>
   <tr>
     <td> Driver </td>
@@ -192,32 +194,81 @@
       <td>{{this.car}}</td>
       <td>{{this.bidamount}}</td>
       <td>
-        <form action="/bidding/update" method="post">
-          <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
-          <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
-          <input type="text" name="date_field" value="{{this.date}}" hidden="true">
-          <input type="text" name="time_field" value="{{this.time}}" hidden="true">
-          <input type="text" name="origin_field" value="{{this.origin}}" hidden="true">
-          <input type="text" name="destination_field" value="{{this.destination}}" hidden="true">
-          <input type="number" name="bid_amount_field" value="{{this.bidamount}}">
+
+
+          <input >
           <input type="submit" value="Change bid">
         </form>
       </td>
       <td>
-        <form action="/bidding/delete" method="post">
-          <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
-          <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
-          <input type="text" name="date_field" value="{{this.date}}" hidden="true">
-          <input type="text" name="time_field" value="{{this.time}}" hidden="true">
-          <input type="text" name="origin_field" value="{{this.origin}}" hidden="true">
-          <input type="text" name="destination_field" value="{{this.destination}}" hidden="true">
-          <input type="submit" value="Delete bid">
-        </form>
+
       </td>
     </tr>
   {{/each}}
 </table>
+-->
 
+
+
+
+<div class="d-flex justify-content-start align-items-baseline mt-4">
+  <div class="p-2">
+    <h3>Pending Bids</h3>
+  </div>
+</div>
+
+<div class="row">
+  {{#if biddedRides}}
+
+    {{#each biddedRides}}
+      <div class="col-md-6">
+        <div class="card border-primary">
+          <div class="card-body">
+            <h5 class="card-title"><b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
+            <form action="/bidding/update" method="post">
+              <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
+              <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
+              <input type="text" name="date_field" value="{{this.date}}" hidden="true">
+              <input type="text" name="time_field" value="{{this.time}}" hidden="true">
+              <input type="text" name="origin_field" value="{{this.origin}}" hidden="true">
+              <input type="text" name="destination_field" value="{{this.destination}}" hidden="true">
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="bid_amount_field">Bid</label>
+                </div>
+                <input type="number" name="bid_amount_field" value="{{this.bidamount}}" class="form-control" placeholder="Change bid">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-primary" type="submit">Change</button>
+                </div>
+              </div>
+            </form>
+
+            <form class="mt-2" action="/bidding/delete" method="post">
+              <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
+              <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
+              <input type="text" name="date_field" value="{{this.date}}" hidden="true">
+              <input type="text" name="time_field" value="{{this.time}}" hidden="true">
+              <input type="text" name="origin_field" value="{{this.origin}}" hidden="true">
+              <input type="text" name="destination_field" value="{{this.destination}}" hidden="true">
+              <button class="btn btn-link" type="submit">Withdraw Bid</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+
+  {{else}}
+    <div class="col-12">
+      <div class="pl-4 pb-4 d-flex justify-content-start align-items-baseline">
+        <div class="text-muted">
+          No available rides
+        </div>
+      </div>
+    </div>
+  {{/if}}
+  
+</div>
 
 
 
@@ -242,67 +293,51 @@
 
 
 <!-- AVAILABLE RIDES -->
-<div class="d-flex justify-content-start align-items-baseline">
+<div class="d-flex justify-content-start align-items-baseline mt-4">
   <div class="p-2">
     <h3> Available Rides </h3>
   </div>
 </div>
 
 <div class="row">
-  {{#each availableRides}}
+  {{#if availableRides}}
 
+    {{#each availableRides}}
+      <div class="col-sm-6 col-md-4 mb-4">
+        <div class="card">
+          <form action="/bidding/create" method="post">
+            <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
+            <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
+            <input type="text" name="date_field" value="{{this.date}}" hidden="true">
+            <input type="text" name="time_field" value="{{this.time}}" hidden="true">
+            <input type="text" name="origin_field" value="{{this.origin}}" hidden="true">
+            <input type="text" name="destination_field" value="{{this.destination}}" hidden="true">
 
-  <div class="col-md-4 mb-4">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">{{this.destination}}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">From {{this.origin}}</h6>
-        <div class="card-text">
-          Time: {{this.date}} @ {{this.time}}
-          From: {{this.origin}}
-          To: {{this.destination}}
+            <div class="card-body">
+              <h5 class="card-title"><b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
+
+              <div class="input-group mt-3">
+                <input type="number" class="form-control" placeholder="Place bid" name="bid_amount_field">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" type="submit">Bid</button>
+                </div>
+              </div>
+
+            </div>
+          </form>
         </div>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
+      </div>
+    {{/each}}
+
+  {{else}}
+    <div class="col-12">
+      <div class="pl-4 pb-4 d-flex justify-content-start align-items-baseline">
+        <div class="text-muted">
+          No available rides
+        </div>
       </div>
     </div>
-  </div>
-
-
-
-  {{/each}}
+  {{/if}}
+  
 </div>
-
-
-<table>
-  <tr>
-    <td> Driver </td>
-    <td> Date </td>
-    <td> Time </td>
-    <td> Origin </td>
-    <td> Destination </td>
-    <td> Car </td>
-  </tr>
-  {{#each availableRides}}
-    <tr>
-      <td>{{this.driver}}</td>
-      <td>{{this.date}}</td>
-      <td>{{this.time}}</td>
-      <td>{{this.origin}}</td>
-      <td>{{this.destination}}</td>
-      <td>{{this.car}}</td>
-      <td>
-        <form action="/bidding/create" method="post">
-          <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
-          <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
-          <input type="text" name="date_field" value="{{this.date}}" hidden="true">
-          <input type="text" name="time_field" value="{{this.time}}" hidden="true">
-          <input type="text" name="origin_field" value="{{this.origin}}" hidden="true">
-          <input type="text" name="destination_field" value="{{this.destination}}" hidden="true">
-          <input type="number" name="bid_amount_field">
-          <input type="submit" value="Bid for this ride">
-        </form>
-      </td>
-    </tr>
-  {{/each}}
-</table>
