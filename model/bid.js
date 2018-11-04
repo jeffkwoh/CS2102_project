@@ -117,11 +117,11 @@ const listPendingBidsForUser = async (user, filters, db) => {
     FROM bid b
     WHERE b.bidder = $1
     AND b.bidStatus = 'pending'
-    AND to_char(CAST(b.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
+    AND TO_CHAR(CAST(b.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
     AND CAST(b.time as VARCHAR(25)) LIKE '%${filters.time}%'
     AND b.origin LIKE '%${filters.origin}%'
     AND b.destination LIKE '%${filters.destination}%';
-      `, [user, filters.bidAmountFilter, filters.driverFilter, filters.dateFilter, filters.timeFilter, filters.originFilter, filters.destinationFilter]
+      `, [user]
     )
     .then(result => {
       console.log(`List bids success:\n${JSON.stringify(result)}`)
