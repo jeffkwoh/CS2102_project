@@ -54,6 +54,73 @@
   </div>
 </div>
 
+<div class="row">
+  <div class="col-md-4 mb-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Driver name</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Car Model</h6>
+        <div class="card-text">
+          Time: 35th Deb @ 1300
+          From: 101A
+          To: Connamon
+        </div>
+        <a href="#" class="card-link">Card link</a>
+        <a href="#" class="card-link">Another link</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card ">
+      <div class="card-body">
+        <h5 class="card-title">Driver name</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Car Model</h6>
+        <div class="card-text">
+          Time: 35th Deb @ 1300
+          From: 101A
+          To: Connamon
+        </div>
+        <a href="#" class="card-link">Card link</a>
+        <a href="#" class="card-link">Another link</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="col-md-4">
+    <div class="card ">
+      <div class="card-body">
+        <h5 class="card-title">Driver name</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Car Model</h6>
+        <div class="card-text">
+          Time: 35th Deb @ 1300
+          From: 101A
+          To: Connamon
+        </div>
+        <a href="#" class="card-link">Card link</a>
+        <a href="#" class="card-link">Another link</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="col-md-4">
+    <div class="card ">
+      <div class="card-body">
+        <h5 class="card-title">Driver name</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Car Model</h6>
+        <div class="card-text">
+          Time: 35th Deb @ 1300
+          From: 101A
+          To: Connamon
+        </div>
+        <a href="#" class="card-link">Card link</a>
+        <a href="#" class="card-link">Another link</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <table>
   <tr>
     <td> Driver </td>
@@ -64,6 +131,12 @@
     <td> Car </td>
   </tr>
   {{#each confirmedRides}}
+
+
+
+
+
+
     <tr>
       <td>{{this.driver}}</td>
       <td>{{this.date}}</td>
@@ -168,8 +241,39 @@
 
 
 
-<!-- UPCOMING RIDES -->
-<h3>Upcoming Rides</h3>
+<!-- AVAILABLE RIDES -->
+<div class="d-flex justify-content-start align-items-baseline">
+  <div class="p-2">
+    <h3> Available Rides </h3>
+  </div>
+</div>
+
+<div class="row">
+  {{#each availableRides}}
+
+
+  <div class="col-md-4 mb-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">{{this.destination}}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">From {{this.origin}}</h6>
+        <div class="card-text">
+          Time: {{this.date}} @ {{this.time}}
+          From: {{this.origin}}
+          To: {{this.destination}}
+        </div>
+        <a href="#" class="card-link">Card link</a>
+        <a href="#" class="card-link">Another link</a>
+      </div>
+    </div>
+  </div>
+
+
+
+  {{/each}}
+</div>
+
+
 <table>
   <tr>
     <td> Driver </td>
