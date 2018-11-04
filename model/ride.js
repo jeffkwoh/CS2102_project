@@ -87,37 +87,6 @@ const listAvailableAdvertisedCarRidesForRider = async (user, db) => {
     })
 }
 
-/**
- * Count all upcoming advertised car rides that this user can ride in.
- */
-const countUpcomingRides = async (user, db) => {
-  return db
-    .any(
-      `
-    SELECT COUNT (*) AS result FROM
-    (
-    SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
-    WHERE a.driver <> $1
-    GROUP BY a.driver, a.date, a.time, a.origin, a.destination
-
-    EXCEPT
-
-    -- Car rides the user has bid
-    SELECT b.driver, b.date, b.time, b.origin, b.destination FROM bid b
-    WHERE b.bidder = $1 OR b.bidStatus <> 'pending'
-    GROUP BY b.driver, b.date, b.time, b.origin, b.destination) AS upcomingRides;
-    `,
-      [user]
-    )
-    .then(result => {
-      console.log(`Counted number of upcoming car rides!`)
-      return result
-    })
-    .catch(error => {
-      console.log(error)
-    })
-}
-
 const listCarsUserOwns = async (user, db) => {
   return db
     .any(
@@ -218,6 +187,5 @@ module.exports = {
   listPendingRidesForDriver,
   listCarsUserOwns,
   delAdvertisedRide,
-  countUpcomingRides,
   delAdvertisedRide
 }

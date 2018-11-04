@@ -28,11 +28,6 @@ router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next)
     db.exposedInstance
   )
 
-  const numUpcomingRides = await db.ride.countUpcomingRides(
-    riderId,
-    db.exposedInstance
-  )
-
   makeReadable(confirmedRides)
   makeReadable(biddedRides)
   makeReadable(unsuccessfulBiddedRides)
