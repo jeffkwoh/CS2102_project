@@ -32,6 +32,7 @@ router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next)
     riderId,
     db.exposedInstance
   )
+
   const availableRides = await db.ride.listAvailableAdvertisedCarRidesForRider(
     riderId,
     filters,
