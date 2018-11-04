@@ -37,7 +37,7 @@ async function initDb() {
     car VARCHAR(10) REFERENCES userOwnsAcar(licensePlate),
     date DATE NOT NULL CHECK ((date > current_date) OR (date = current_date AND time < current_time)),
     time TIME NOT NULL,
-    origin VARCHAR(128) NOT NULL,
+    origin VARCHAR(128) NOT NULL CHECK(origin <> destination),
     destination VARCHAR(128) NOT NULL,
     PRIMARY KEY (driver, date, time, origin, destination)
   );
@@ -46,7 +46,7 @@ async function initDb() {
     bidStatus CHAR(12) CHECK(bidStatus = 'pending' OR bidStatus ='unsuccessful'
       OR bidStatus = 'successful') NOT NULL,
     bidAmount DECIMAL(6,2) NOT NULL CHECK (bidAmount >= 0),
-    bidder INTEGER NOT NULL,
+    bidder INTEGER NOT NULL CHECK (bidder <> driver),
     driver INTEGER NOT NULL,
     date DATE NOT NULL,
     time TIME NOT NULL,
