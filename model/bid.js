@@ -217,6 +217,7 @@ const updateBidStatus = async (
     })
 }
 
+
 const listBidsForRide = async (driver, date, time, origin, destination, db) => {
   return db
     .any(
