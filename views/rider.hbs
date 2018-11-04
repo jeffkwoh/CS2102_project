@@ -1,7 +1,16 @@
-<h1> Rider View </h1>
 
-<hr />
+<!-- HEADER WITH LINK TO DRIVER -->
+<div class="d-flex flex-md-row pt-2 justify-content-start align-items-baseline">
+  <div class="p-2">
+    <h1> Ride </h1>
+  </div>
+  <div class="">
+    | or be a <b> <a href="/driver/">driver</a></b>
+  </div>
+</div>
 
+<!-- EXAMPLE CARD
+<hr />  
 <div class="row">
   <div class="col-4">
     <div class="card ">
@@ -19,8 +28,32 @@
     </div>
   </div>
 </div>
+-->
 
-<h2> Confirmed Rides </h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- CONFIRMED RIDES -->
+
+<div class="d-flex justify-content-start align-items-baseline">
+  <div class="p-2">
+    <h3> Confirmed Rides </h3>
+  </div>
+</div>
+
 <table>
   <tr>
     <td> Driver </td>
@@ -31,12 +64,6 @@
     <td> Car </td>
   </tr>
   {{#each confirmedRides}}
-
-
-
-
-
-
     <tr>
       <td>{{this.driver}}</td>
       <td>{{this.date}}</td>
@@ -54,7 +81,24 @@
   {{/each}}
 </table>
 
-<h2> Rides that you have bid for</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- PENDING BIDS -->
+<h3>Pending Bids</h3>
 <table>
   <tr>
     <td> Driver </td>
@@ -101,7 +145,31 @@
   {{/each}}
 </table>
 
-<h2>Upcoming rides</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- UPCOMING RIDES -->
+<h3>Upcoming Rides</h3>
 <table>
   <tr>
     <td> Driver </td>
