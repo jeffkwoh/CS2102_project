@@ -37,7 +37,7 @@ async function initDb() {
   CREATE TABLE IF NOT EXISTS advertisedCarRide (
     driver INTEGER REFERENCES appUserAccount(userID),
     car VARCHAR(10) REFERENCES userOwnsAcar(licensePlate),
-    date DATE NOT NULL CHECK ((date > current_date) OR (date = current_date AND time < current_time)),
+    date DATE NOT NULL CHECK ((date > current_date) OR (date = current_date AND time > current_time)),
     time TIME NOT NULL,
     origin VARCHAR(128) NOT NULL,
     destination VARCHAR(128) NOT NULL,
