@@ -38,7 +38,7 @@ const listAvailableAdvertisedCarRidesForRider = async (user, filters, db) => {
     -- Car rides the user is not driver for
     SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
     WHERE a.driver <> $1
-      AND CAST(a.date as VARCHAR(25)) LIKE '%${filters.date}%'
+      AND TO_CHAR(CAST(a.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
       AND CAST(a.time as VARCHAR(25)) LIKE '%${filters.time}%'
       AND a.origin LIKE '%${filters.origin}%'
       AND a.destination LIKE '%${filters.destination}%'
@@ -76,7 +76,7 @@ const listConfirmedRidesForRider = async (user, filters, db) => {
     NATURAL JOIN bid b
     WHERE b.bidStatus = 'successful'
       AND b.bidder = $1
-      AND CAST(b.date as varchar(20)) LIKE '%${filters.date}%'
+      AND TO_CHAR(CAST(b.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
       AND CAST(b.time as varchar(20)) LIKE '%${filters.time}%'
       AND b.origin LIKE '%${filters.origin}%'
       AND b.destination LIKE '%${filters.destination}%"'
