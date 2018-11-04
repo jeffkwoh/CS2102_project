@@ -54,73 +54,7 @@
   </div>
 </div>
 
-<div class="row">
-  <div class="col-md-4 mb-4">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Driver name</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Car Model</h6>
-        <div class="card-text">
-          Time: 35th Deb @ 1300
-          From: 101A
-          To: Connamon
-        </div>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-4">
-    <div class="card ">
-      <div class="card-body">
-        <h5 class="card-title">Driver name</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Car Model</h6>
-        <div class="card-text">
-          Time: 35th Deb @ 1300
-          From: 101A
-          To: Connamon
-        </div>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
-      </div>
-    </div>
-  </div>
-
-    <div class="col-md-4">
-    <div class="card ">
-      <div class="card-body">
-        <h5 class="card-title">Driver name</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Car Model</h6>
-        <div class="card-text">
-          Time: 35th Deb @ 1300
-          From: 101A
-          To: Connamon
-        </div>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
-      </div>
-    </div>
-  </div>
-
-    <div class="col-md-4">
-    <div class="card ">
-      <div class="card-body">
-        <h5 class="card-title">Driver name</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Car Model</h6>
-        <div class="card-text">
-          Time: 35th Deb @ 1300
-          From: 101A
-          To: Connamon
-        </div>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
-      </div>
-    </div>
-  </div>
-
-</div>
-
+<!-- OLD VERSION
 <table>
   <tr>
     <td> Driver </td>
@@ -131,11 +65,6 @@
     <td> Car </td>
   </tr>
   {{#each confirmedRides}}
-
-
-
-
-
 
     <tr>
       <td>{{this.driver}}</td>
@@ -153,9 +82,50 @@
     </tr>
   {{/each}}
 </table>
+-->
 
+<div class="row">
+  {{#if confirmedRides}}
 
+    {{#each confirmedRides}}
+      <div class="col-sm-6 col-md-4 mb-4">
+        <div class="card">
+          <form action="/bidding/create" method="post">
+            <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
+            <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
+            <input type="text" name="date_field" value="{{this.date}}" hidden="true">
+            <input type="text" name="time_field" value="{{this.time}}" hidden="true">
+            <input type="text" name="origin_field" value="{{this.origin}}" hidden="true">
+            <input type="text" name="destination_field" value="{{this.destination}}" hidden="true">
 
+            <div class="card-body">
+              <h5 class="card-title"><b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
+
+              <div class="input-group mt-3">
+                <input type="number" class="form-control" placeholder="Place bid" name="bid_amount_field">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" type="submit">Bid</button>
+                </div>
+              </div>
+
+            </div>
+          </form>
+        </div>
+      </div>
+    {{/each}}
+
+  {{else}}
+    <div class="col-12">
+      <div class="pl-4 pb-4 d-flex justify-content-start align-items-baseline">
+        <div class="text-muted">
+          No confirmed rides
+        </div>
+      </div>
+    </div>
+  {{/if}}
+  
+</div>
 
 
 
@@ -224,8 +194,8 @@
       <div class="col-md-6">
         <div class="card border-primary">
           <div class="card-body">
-            <h5 class="card-title"><b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
+            <h5 class="card-title">{{this.i}}) <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} <span class="text-muted">at</span> {{this.time_readable}}</h6>
             <form action="/bidding/update" method="post">
               <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
               <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
@@ -262,7 +232,7 @@
     <div class="col-12">
       <div class="pl-4 pb-4 d-flex justify-content-start align-items-baseline">
         <div class="text-muted">
-          No available rides
+          No pending rides
         </div>
       </div>
     </div>
