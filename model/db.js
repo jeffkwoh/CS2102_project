@@ -3,6 +3,7 @@ const pgp = require('pg-promise')({
 })
 const cn = require('../config/config.js')
 const db = pgp(cn)
+const admin = require('./admin.js')
 const user = require('./user.js')
 const bid = require('./bid.js')
 const ride = require('./ride.js')
@@ -74,54 +75,83 @@ async function initDb() {
 }
 
 /**
- * Initialises database, with all the necessary tables specified in the database
- * design of this application.
+ * Creates all stored functions, triggers and assertions.
  */
-async function createTriggers() {
+async function createFunctionsAndTriggers() {
   const query = `
   BEGIN;
   
+  CREATE OR REPLACE FUNCTION update_overdue_bids() RETURNS VOID AS 
+  $overdue_bids$
+    --
+    -- If any of the bids are for overdue rides, they are automatically
+    -- set as unsuccessful. 
+    --
+  DECLARE
+    currtime time := now()::time;
+    currdate date := now()::date;
+  BEGIN
+    UPDATE Bid
+    SET bidstatus = 'unsuccessful'
+    WHERE bidstatus = 'pending'
+    AND (date < currdate
+    OR (date = currdate
+    AND time < currtime));
+  END;$overdue_bids$ 
+  LANGUAGE plpgsql;
+
+  
+  CREATE OR REPLACE FUNCTION get_available_car_seats(givenDate DATE, 
+                          givenDriver INTEGER, 
+                          givenTime TIME, 
+                          givenOrigin VARCHAR, 
+                          givenDestination VARCHAR) 
+                          RETURNS INTEGER AS 
+  $n_bid_success$				
+  SELECT uCar.numSeats
+  FROM advertisedCarRide aCar, userOwnsACar uCar
+    WHERE aCar.date = givenDate
+    AND aCar.driver = givenDriver
+    AND aCar.time = givenTime
+    AND aCar.origin = givenOrigin
+    AND aCar.destination = givenDestination
+    AND aCar.car = uCar.licensePlate;	
+  $n_bid_success$ 
+  LANGUAGE sql;
+    
   CREATE OR REPLACE FUNCTION process_bid_success() RETURNS TRIGGER AS $bid_success$
     BEGIN
         --
         -- Update the rest of the pending bids to unsuccessful once the max amount of car rides has been reached.
         --
-		
-		IF (NEW.bidStatus = 'successful') THEN
-			IF (
-				(SELECT COUNT(*)
-					FROM bid
-					WHERE bidStatus = 'successful'
-					AND driver = NEW.driver
-					AND date = NEW.date
-					AND time = NEW.time
-					AND origin = NEW.origin
-					AND destination = NEW.destination
-				) 
-					>= 
-				(SELECT numSeats
-					FROM advertisedCarRide aCar, userOwnsACar uCar
-					WHERE aCar.date = NEW.date
-					AND aCar.driver = NEW.driver
-					AND aCar.time = NEW.time
-					AND aCar.origin = NEW.origin
-					AND aCar.destination = NEW.destination
-					AND aCar.car = uCar.licensePlate
-				)
-			) THEN
-			
-			UPDATE bid
-			SET bidStatus = 'unsuccessful' 
-			WHERE bidStatus = 'pending' 
-			AND driver = NEW.driver
-			AND date = NEW.date
-			AND time = NEW.time
-			AND origin = NEW.origin
-			AND destination = NEW.destination;
-			
-			END IF;
-		END IF;
-		
+    
+    IF (NEW.bidStatus = 'successful') THEN
+      IF (
+        (SELECT COUNT(*)
+          FROM bid
+          WHERE bidStatus = 'successful'
+          AND driver = NEW.driver
+          AND date = NEW.date
+          AND time = NEW.time
+          AND origin = NEW.origin
+          AND destination = NEW.destination
+        ) 
+          >= 
+        get_available_car_seats(NEW.date, NEW.driver, NEW.time, NEW.origin, NEW.destination)
+      ) THEN
+      
+      UPDATE bid
+      SET bidStatus = 'unsuccessful' 
+      WHERE bidStatus = 'pending' 
+      AND driver = NEW.driver
+      AND date = NEW.date
+      AND time = NEW.time
+      AND origin = NEW.origin
+      AND destination = NEW.destination;
+      
+      END IF;
+    END IF;
+    
         RETURN NULL; -- result is ignored since this is an AFTER trigger
     END;
     $bid_success$ 
@@ -129,23 +159,60 @@ async function createTriggers() {
     VOLATILE
     PARALLEL UNSAFE;
 
-    -- Trigger on INSERT and UPDATE
-    CREATE TRIGGER bid_success
-	    AFTER INSERT OR UPDATE ON bid
-		  FOR EACH ROW EXECUTE PROCEDURE process_bid_success();
+  -- Trigger to ensure that once the max amount of available bids are made, the
+  -- rest of the pending bids are automatically made unsuccessful.
+  CREATE TRIGGER bid_success
+    AFTER INSERT OR UPDATE ON bid
+    FOR EACH ROW EXECUTE PROCEDURE process_bid_success();
+  
+   CREATE OR REPLACE FUNCTION assert_number_of_bid_success() RETURNS TRIGGER AS $n_bid_success$
+    BEGIN
+      --
+      -- Forces a rollback on the whole statement if it determines that it results in
+      -- more successful bids than available seats for car rides.
+      --
+
+      IF ((SELECT MAX(c.num) FROM
+        (SELECT COUNT(*) AS num
+          FROM bid
+          WHERE bidStatus = 'successful'
+          AND driver = NEW.driver
+          AND date = NEW.date
+          AND time = NEW.time
+          AND origin = NEW.origin
+          AND destination = NEW.destination
+         GROUP BY date, time, origin, destination, driver
+        ) AS c)
+          >
+        get_available_car_seats(NEW.date, NEW.driver, NEW.time, NEW.origin, NEW.destination)
+      ) THEN
+
+        RAISE EXCEPTION 'Number of successful car ride bids cannot except number of available car seats.';
+
+      END IF;
+
+      RETURN NULL; -- result is ignored since this is an AFTER trigger
+    END;
+  $n_bid_success$ LANGUAGE plpgsql;
+ 
+  -- Trigger to ensure that once the max amount of available bids are made for a
+  -- car ride, no more bids can be made successful for that car ride. 
+  CREATE TRIGGER assert_number_of_successful_bids_not_more_than_number_of_seats
+  AFTER INSERT OR UPDATE ON bid
+    FOR EACH ROW EXECUTE PROCEDURE assert_number_of_bid_success();
 
   COMMIT;`
 
   return db
-  .any(query)
-  .then(() => {
-    // success;
-    console.log('Created triggers!')
-  })
-  .catch(error => {
-    // error;
-    console.log(error)
-  })
+    .any(query)
+    .then(() => {
+      // success;
+      console.log('Created functions, triggers and assertions!')
+    })
+    .catch(error => {
+      // error;
+      console.log(error)
+    })
 }
 
 async function deinitDb() {
@@ -256,630 +323,630 @@ async function populateDb() {
   await user.addCarToUser('19', 'SWW0000D', 'BrandA', 'Mode2A', '6', db)
 
   await ride.advertiseCarRide(
-      '1',
-      'SAA0000A',
-      '2010-01-20',
-      '13:00:00',
-      'PlaceA1',
-      'PlaceA2',
-      db
+    '1',
+    'SAA0000A',
+    '2018-12-20',
+    '13:00:00',
+    'PlaceA1',
+    'PlaceA2',
+    db
   )
   await ride.advertiseCarRide(
-      '1',
-      'SAA2222A',
-      '2010-02-20',
-      '14:00:00',
-      'PlaceB1',
-      'PlaceB2',
-      db
+    '1',
+    'SAA2222A',
+    '2018-02-20',
+    '14:00:00',
+    'PlaceB1',
+    'PlaceB2',
+    db
   )
   await ride.advertiseCarRide(
-      '2',
-      'SBB0000B',
-      '2010-03-20',
-      '15:00:00',
-      'PlaceC1',
-      'PlaceC2',
-      db
-  )
-    await ride.advertiseCarRide(
-      '2',
-      'SBB0000B',
-      '2010-03-21',
-      '15:00:00',
-      'PlaceC3',
-      'PlaceC4',
-      db
+    '2',
+    'SBB0000B',
+    '2018-03-20',
+    '15:00:00',
+    'PlaceC1',
+    'PlaceC2',
+    db
   )
   await ride.advertiseCarRide(
-      '4',
-      'SDD0000D',
-      '2010-04-20',
-      '16:00:00',
-      'PlaceD1',
-      'PlaceD2',
-      db
+    '2',
+    'SBB0000B',
+    '2018-03-21',
+    '15:00:00',
+    'PlaceC3',
+    'PlaceC4',
+    db
   )
   await ride.advertiseCarRide(
-      '5',
-      'SEE0000D',
-      '2010-04-20',
-      '13:00:00',
-      'PlaceA1',
-      'PlaceA2',
-      db
+    '4',
+    'SDD0000D',
+    '2018-04-20',
+    '16:00:00',
+    'PlaceD1',
+    'PlaceD2',
+    db
   )
   await ride.advertiseCarRide(
-      '6',
-      'SGG0000D',
-      '2010-04-20',
-      '15:00:00',
-      'PlaceB1',
-      'PlaceA2',
-      db
+    '5',
+    'SEE0000D',
+    '2018-04-20',
+    '13:00:00',
+    'PlaceA1',
+    'PlaceA2',
+    db
   )
   await ride.advertiseCarRide(
-      '6',
-      'SGG0000D',
-      '2010-04-21',
-      '17:00:00',
-      'PlaceD1',
-      'PlaceA2',
-      db
+    '6',
+    'SGG0000D',
+    '2018-04-20',
+    '15:00:00',
+    'PlaceB1',
+    'PlaceA2',
+    db
   )
   await ride.advertiseCarRide(
-      '6',
-      'SGG0000D',
-      '2010-04-22',
-      '13:00:00',
-      'PlaceC1',
-      'PlaceA2',
-      db
+    '6',
+    'SGG0000D',
+    '2018-04-21',
+    '17:00:00',
+    'PlaceD1',
+    'PlaceA2',
+    db
   )
   await ride.advertiseCarRide(
-      '7',
-      'SHH0000D',
-      '2010-04-20',
-      '14:00:00',
-      'PlaceE9',
-      'PlaceB3',
-      db
+    '6',
+    'SGG0000D',
+    '2018-04-22',
+    '13:00:00',
+    'PlaceC1',
+    'PlaceA2',
+    db
   )
   await ride.advertiseCarRide(
-      '8',
-      'SKK0000D',
-      '2010-04-20',
-      '15:00:00',
-      'PlaceA1',
-      'PlaceB8',
-      db
+    '7',
+    'SHH0000D',
+    '2018-04-20',
+    '14:00:00',
+    'PlaceE9',
+    'PlaceB3',
+    db
   )
   await ride.advertiseCarRide(
-      '8',
-      'SKK0000D',
-      '2010-04-21',
-      '18:00:00',
-      'PlaceR1',
-      'PlaceV2',
-      db
+    '8',
+    'SKK0000D',
+    '2018-04-20',
+    '15:00:00',
+    'PlaceA1',
+    'PlaceB8',
+    db
   )
   await ride.advertiseCarRide(
-      '8',
-      'SKK0000D',
-      '2010-04-22',
-      '18:30:00',
-      'PlaceE1',
-      'PlaceB2',
-      db
+    '8',
+    'SKK0000D',
+    '2018-04-21',
+    '18:00:00',
+    'PlaceR1',
+    'PlaceV2',
+    db
   )
   await ride.advertiseCarRide(
-      '8',
-      'SKK0000D',
-      '2010-04-23',
-      '14:00:00',
-      'PlaceS1',
-      'PlaceX2',
-      db
+    '8',
+    'SKK0000D',
+    '2018-04-22',
+    '18:30:00',
+    'PlaceE1',
+    'PlaceB2',
+    db
   )
   await ride.advertiseCarRide(
-      '8',
-      'SKK0000D',
-      '2010-04-24',
-      '11:00:00',
-      'PlaceA1',
-      'PlaceC2',
-      db
+    '8',
+    'SKK0000D',
+    '2018-04-23',
+    '14:00:00',
+    'PlaceS1',
+    'PlaceX2',
+    db
   )
   await ride.advertiseCarRide(
-      '10',
-      'SLL0000D',
-      '2010-04-20',
-      '09:00:00',
-      'PlaceV1',
-      'PlaceB2',
-      db
+    '8',
+    'SKK0000D',
+    '2018-04-24',
+    '11:00:00',
+    'PlaceA1',
+    'PlaceC2',
+    db
   )
   await ride.advertiseCarRide(
-      '11',
-      'SMM0000D',
-      '2010-04-20',
-      '13:00:00',
-      'PlaceV1',
-      'PlaceA2',
-      db
+    '10',
+    'SLL0000D',
+    '2018-04-20',
+    '09:00:00',
+    'PlaceV1',
+    'PlaceB2',
+    db
   )
   await ride.advertiseCarRide(
-      '12',
-      'SNN0000D',
-      '2010-04-24',
-      '13:00:00',
-      'PlaceB1',
-      'PlaceA2',
-      db
+    '11',
+    'SMM0000D',
+    '2018-04-20',
+    '13:00:00',
+    'PlaceV1',
+    'PlaceA2',
+    db
   )
   await ride.advertiseCarRide(
-      '13',
-      'SOO0000D',
-      '2010-01-24',
-      '13:00:00',
-      'PlaceA1',
-      'PlaceA2',
-      db
+    '12',
+    'SNN0000D',
+    '2018-04-24',
+    '13:00:00',
+    'PlaceB1',
+    'PlaceA2',
+    db
   )
   await ride.advertiseCarRide(
-      '13',
-      'SOO0000D',
-      '2010-01-25',
-      '13:00:00',
-      'PlaceS1',
-      'PlaceA2',
-      db
+    '13',
+    'SOO0000D',
+    '2018-12-24',
+    '13:00:00',
+    'PlaceA1',
+    'PlaceA2',
+    db
   )
   await ride.advertiseCarRide(
-      '13',
-      'SOO0000D',
-      '2010-01-26',
-      '13:00:00',
-      'PlaceT1',
-      'PlaceA2',
-      db
+    '13',
+    'SOO0000D',
+    '2018-12-25',
+    '13:00:00',
+    'PlaceS1',
+    'PlaceA2',
+    db
   )
   await ride.advertiseCarRide(
-      '13',
-      'SOO0000D',
-      '2010-01-26',
-      '13:30:00',
-      'PlaceE1',
-      'PlaceA5',
-      db
+    '13',
+    'SOO0000D',
+    '2018-12-26',
+    '13:00:00',
+    'PlaceT1',
+    'PlaceA2',
+    db
   )
   await ride.advertiseCarRide(
-      '13',
-      'SOO0000D',
-      '2010-01-26',
-      '14:00:00',
-      'PlaceR1',
-      'PlaceG2',
-      db
+    '13',
+    'SOO0000D',
+    '2018-12-26',
+    '13:30:00',
+    'PlaceE1',
+    'PlaceA5',
+    db
   )
   await ride.advertiseCarRide(
-      '13',
-      'SOO0000D',
-      '2010-01-26',
-      '14:30:00',
-      'PlaceW1',
-      'PlaceG2',
-      db
+    '13',
+    'SOO0000D',
+    '2018-12-26',
+    '14:00:00',
+    'PlaceR1',
+    'PlaceG2',
+    db
   )
   await ride.advertiseCarRide(
-      '13',
-      'SOO0000D',
-      '2010-01-26',
-      '15:00:00',
-      'PlaceD1',
-      'PlaceF2',
-      db
+    '13',
+    'SOO0000D',
+    '2018-12-26',
+    '14:30:00',
+    'PlaceW1',
+    'PlaceG2',
+    db
   )
   await ride.advertiseCarRide(
-      '18',
-      'STT0000D',
-      '2010-04-25',
-      '18:00:00',
-      'PlaceD1',
-      'PlaceH2',
-      db
+    '13',
+    'SOO0000D',
+    '2018-12-26',
+    '15:00:00',
+    'PlaceD1',
+    'PlaceF2',
+    db
   )
   await ride.advertiseCarRide(
-      '18',
-      'STT0000D',
-      '2010-03-20',
-      '12:00:00',
-      'PlaceN1',
-      'PlaceH2',
-      db
+    '18',
+    'STT0000D',
+    '2018-04-25',
+    '18:00:00',
+    'PlaceD1',
+    'PlaceH2',
+    db
   )
   await ride.advertiseCarRide(
-      '18',
-      'SUU0000D',
-      '2010-01-23',
-      '19:00:00',
-      'PlaceZ1',
-      'PlaceS2',
-      db
+    '18',
+    'STT0000D',
+    '2018-03-20',
+    '12:00:00',
+    'PlaceN1',
+    'PlaceH2',
+    db
   )
   await ride.advertiseCarRide(
-      '18',
-      'SUU0000D',
-      '2010-01-22',
-      '16:00:00',
-      'PlaceA1',
-      'PlaceU2',
-      db
+    '18',
+    'SUU0000D',
+    '2018-12-23',
+    '19:00:00',
+    'PlaceZ1',
+    'PlaceS2',
+    db
   )
   await ride.advertiseCarRide(
-      '18',
-      'SVV0000D',
-      '2010-01-10',
-      '17:00:00',
-      'PlaceS1',
-      'PlaceY2',
-      db
+    '18',
+    'SUU0000D',
+    '2018-12-22',
+    '16:00:00',
+    'PlaceA1',
+    'PlaceU2',
+    db
   )
   await ride.advertiseCarRide(
-      '19',
-      'SWW0000D',
-      '2010-01-12',
-      '16:00:00',
-      'PlaceR5',
-      'PlaceJ2',
-      db
+    '18',
+    'SVV0000D',
+    '2018-12-10',
+    '17:00:00',
+    'PlaceS1',
+    'PlaceY2',
+    db
   )
   await ride.advertiseCarRide(
-      '19',
-      'SWW0000D',
-      '2010-01-11',
-      '15:00:00',
-      'PlaceL1',
-      'PlaceN3',
-      db
+    '19',
+    'SWW0000D',
+    '2018-12-12',
+    '16:00:00',
+    'PlaceR5',
+    'PlaceJ2',
+    db
   )
   await ride.advertiseCarRide(
-      '19',
-      'SWW0000D',
-      '2010-01-11',
-      '13:00:00',
-      'PlaceB1',
-      'PlaceB1',
-      db
+    '19',
+    'SWW0000D',
+    '2018-12-11',
+    '15:00:00',
+    'PlaceL1',
+    'PlaceN3',
+    db
   )
   await ride.advertiseCarRide(
-      '19',
-      'SWW0000D',
-      '2010-01-11',
-      '19:00:00',
-      'PlaceN1',
-      'PlaceC1',
-      db
+    '19',
+    'SWW0000D',
+    '2018-12-11',
+    '13:00:00',
+    'PlaceB1',
+    'PlaceB1',
+    db
   )
   await ride.advertiseCarRide(
-      '19',
-      'SWW0000D',
-      '2010-01-12',
-      '10:00:00',
-      'PlaceE1',
-      'PlaceD1',
-      db
+    '19',
+    'SWW0000D',
+    '2018-12-11',
+    '19:00:00',
+    'PlaceN1',
+    'PlaceC1',
+    db
+  )
+  await ride.advertiseCarRide(
+    '19',
+    'SWW0000D',
+    '2018-12-12',
+    '10:00:00',
+    'PlaceE1',
+    'PlaceD1',
+    db
   )
 
   await bid.createUserBid(
-      '3',
-      '100',
-      '1',
-      '2010-01-20',
-      '13:00:00',
-      'PlaceA1',
-      'PlaceA2',
-      db
+    '3',
+    '100',
+    '1',
+    '2018-12-20',
+    '13:00:00',
+    'PlaceA1',
+    'PlaceA2',
+    db
   )
   await bid.createUserBid(
-      '4',
-      '200',
-      '1',
-      '2010-01-20',
-      '13:00:00',
-      'PlaceA1',
-      'PlaceA2',
-      db
+    '4',
+    '200',
+    '1',
+    '2018-12-20',
+    '13:00:00',
+    'PlaceA1',
+    'PlaceA2',
+    db
   )
   await bid.createUserBid(
-      '1',
-      '100',
-      '2',
-      '2010-03-20',
-      '15:00:00',
-      'PlaceC1',
-      'PlaceC2',
-      db
+    '1',
+    '100',
+    '2',
+    '2018-03-20',
+    '15:00:00',
+    'PlaceC1',
+    'PlaceC2',
+    db
   )
   await bid.createUserBid(
-      '5',
-      '500',
-      '1',
-      '2010-01-20',
-      '13:00:00',
-      'PlaceA1',
-      'PlaceA2',
-      db
+    '5',
+    '500',
+    '1',
+    '2018-12-20',
+    '13:00:00',
+    'PlaceA1',
+    'PlaceA2',
+    db
   )
   await bid.createUserBid(
-      '5',
-      '120',
-      '2',
-      '2010-03-20',
-      '15:00:00',
-      'PlaceC1',
-      'PlaceC2',
-      db
+    '5',
+    '120',
+    '2',
+    '2018-03-20',
+    '15:00:00',
+    'PlaceC1',
+    'PlaceC2',
+    db
   )
   await bid.createUserBid(
-      '5',
-      '345',
-      '4',
-      '2010-04-20',
-      '16:00:00',
-      'PlaceD1',
-      'PlaceD2',
-      db
+    '5',
+    '345',
+    '4',
+    '2018-04-20',
+    '16:00:00',
+    'PlaceD1',
+    'PlaceD2',
+    db
   )
   await bid.createUserBid(
-      '7',
-      '333',
-      '13',
-      '2010-01-26',
-      '15:00:00',
-      'PlaceD1',
-      'PlaceF2',
-      db
+    '7',
+    '333',
+    '13',
+    '2018-12-26',
+    '15:00:00',
+    'PlaceD1',
+    'PlaceF2',
+    db
   )
   await bid.createUserBid(
-      '8',
-      '314',
-      '13',
-      '2010-01-26',
-      '15:00:00',
-      'PlaceD1',
-      'PlaceF2',
-      db
+    '8',
+    '314',
+    '13',
+    '2018-12-26',
+    '15:00:00',
+    'PlaceD1',
+    'PlaceF2',
+    db
   )
   await bid.createUserBid(
-      '9',
-      '311',
-      '13',
-      '2010-01-26',
-      '15:00:00',
-      'PlaceD1',
-      'PlaceF2',
-      db
+    '9',
+    '311',
+    '13',
+    '2018-12-26',
+    '15:00:00',
+    'PlaceD1',
+    'PlaceF2',
+    db
   )
   await bid.createUserBid(
-      '10',
-      '325',
-      '13',
-      '2010-01-26',
-      '15:00:00',
-      'PlaceD1',
-      'PlaceF2',
-      db
+    '10',
+    '325',
+    '13',
+    '2018-12-26',
+    '15:00:00',
+    'PlaceD1',
+    'PlaceF2',
+    db
   )
   await bid.createUserBid(
-      '1',
-      '325',
-      '13',
-      '2010-01-26',
-      '15:00:00',
-      'PlaceD1',
-      'PlaceF2',
-      db
+    '1',
+    '325',
+    '13',
+    '2018-12-26',
+    '15:00:00',
+    'PlaceD1',
+    'PlaceF2',
+    db
   )
   await bid.createUserBid(
-      '2',
-      '325',
-      '13',
-      '2010-01-26',
-      '15:00:00',
-      'PlaceD1',
-      'PlaceF2',
-      db
+    '2',
+    '325',
+    '13',
+    '2018-12-26',
+    '15:00:00',
+    'PlaceD1',
+    'PlaceF2',
+    db
   )
   await bid.createUserBid(
-      '3',
-      '325',
-      '13',
-      '2010-01-26',
-      '15:00:00',
-      'PlaceD1',
-      'PlaceF2',
-      db
+    '3',
+    '325',
+    '13',
+    '2018-12-26',
+    '15:00:00',
+    'PlaceD1',
+    'PlaceF2',
+    db
   )
   await bid.createUserBid(
-      '11',
-      '370',
-      '13',
-      '2010-01-26',
-      '15:00:00',
-      'PlaceD1',
-      'PlaceF2',
-      db
+    '11',
+    '370',
+    '13',
+    '2018-12-26',
+    '15:00:00',
+    'PlaceD1',
+    'PlaceF2',
+    db
   )
   await bid.createUserBid(
-      '12',
-      '221',
-      '13',
-      '2010-01-26',
-      '14:30:00',
-      'PlaceW1',
-      'PlaceG2',
-      db
+    '12',
+    '221',
+    '13',
+    '2018-12-26',
+    '14:30:00',
+    'PlaceW1',
+    'PlaceG2',
+    db
   )
   await bid.createUserBid(
-      '12',
-      '123',
-      '13',
-      '2010-01-26',
-      '14:00:00',
-      'PlaceR1',
-      'PlaceG2',
-      db
+    '12',
+    '123',
+    '13',
+    '2018-12-26',
+    '14:00:00',
+    'PlaceR1',
+    'PlaceG2',
+    db
   )
   await bid.createUserBid(
-      '12',
-      '421',
-      '13',
-      '2010-01-26',
-      '13:30:00',
-      'PlaceE1',
-      'PlaceA5',
-      db
+    '12',
+    '421',
+    '13',
+    '2018-12-26',
+    '13:30:00',
+    'PlaceE1',
+    'PlaceA5',
+    db
   )
   await bid.createUserBid(
-      '12',
-      '155',
-      '13',
-      '2010-01-24',
-      '13:00:00',
-      'PlaceA1',
-      'PlaceA2',
-      db
+    '12',
+    '155',
+    '13',
+    '2018-12-24',
+    '13:00:00',
+    'PlaceA1',
+    'PlaceA2',
+    db
   )
   await bid.createUserBid(
-      '14',
-      '275',
-      '19',
-      '2010-01-12',
-      '10:00:00',
-      'PlaceE1',
-      'PlaceD1',
-      db
+    '14',
+    '275',
+    '19',
+    '2018-12-12',
+    '10:00:00',
+    'PlaceE1',
+    'PlaceD1',
+    db
   )
   await bid.createUserBid(
-      '14',
-      '185',
-      '19',
-      '2010-01-11',
-      '19:00:00',
-      'PlaceN1',
-      'PlaceC1',
-      db
+    '14',
+    '185',
+    '19',
+    '2018-12-11',
+    '19:00:00',
+    'PlaceN1',
+    'PlaceC1',
+    db
   )
   await bid.createUserBid(
-      '14',
-      '125',
-      '19',
-      '2010-01-11',
-      '13:00:00',
-      'PlaceB1',
-      'PlaceB1',
-      db
+    '14',
+    '125',
+    '19',
+    '2018-12-11',
+    '13:00:00',
+    'PlaceB1',
+    'PlaceB1',
+    db
   )
   await bid.createUserBid(
-      '15',
-      '345',
-      '19',
-      '2010-01-11',
-      '13:00:00',
-      'PlaceB1',
-      'PlaceB1',
-      db
+    '15',
+    '345',
+    '19',
+    '2018-12-11',
+    '13:00:00',
+    'PlaceB1',
+    'PlaceB1',
+    db
   )
   await bid.createUserBid(
-      '15',
-      '345',
-      '18',
-      '2010-04-25',
-      '18:00:00',
-      'PlaceD1',
-      'PlaceH2',
-      db
+    '15',
+    '345',
+    '18',
+    '2018-04-25',
+    '18:00:00',
+    'PlaceD1',
+    'PlaceH2',
+    db
   )
   await bid.createUserBid(
-      '15',
-      '345',
-      '18',
-      '2010-01-10',
-      '17:00:00',
-      'PlaceS1',
-      'PlaceY2',
-      db
+    '15',
+    '345',
+    '18',
+    '2018-12-10',
+    '17:00:00',
+    'PlaceS1',
+    'PlaceY2',
+    db
   )
   await bid.createUserBid(
-      '16',
-      '365',
-      '19',
-      '2010-01-12',
-      '10:00:00',
-      'PlaceE1',
-      'PlaceD1',
-      db
+    '16',
+    '365',
+    '19',
+    '2018-12-12',
+    '10:00:00',
+    'PlaceE1',
+    'PlaceD1',
+    db
   )
   await bid.createUserBid(
-      '16',
-      '123',
-      '2',
-      '2010-03-20',
-      '15:00:00',
-      'PlaceC1',
-      'PlaceC2',
-      db
+    '16',
+    '123',
+    '2',
+    '2018-03-20',
+    '15:00:00',
+    'PlaceC1',
+    'PlaceC2',
+    db
   )
   await bid.createUserBid(
-      '17',
-      '352',
-      '19',
-      '2010-01-12',
-      '10:00:00',
-      'PlaceE1',
-      'PlaceD1',
-      db
+    '17',
+    '352',
+    '19',
+    '2018-12-12',
+    '10:00:00',
+    'PlaceE1',
+    'PlaceD1',
+    db
   )
   await bid.createUserBid(
-      '18',
-      '300',
-      '19',
-      '2010-01-12',
-      '10:00:00',
-      'PlaceE1',
-      'PlaceD1',
-      db
+    '18',
+    '300',
+    '19',
+    '2018-12-12',
+    '10:00:00',
+    'PlaceE1',
+    'PlaceD1',
+    db
   )
   await bid.createUserBid(
-      '19',
-      '250',
-      '18',
-      '2010-01-22',
-      '16:00:00',
-      'PlaceA1',
-      'PlaceU2',
-      db
+    '19',
+    '250',
+    '18',
+    '2018-12-22',
+    '16:00:00',
+    'PlaceA1',
+    'PlaceU2',
+    db
   )
   await bid.createUserBid(
-      '19',
-      '123',
-      '18',
-      '2010-01-10',
-      '17:00:00',
-      'PlaceS1',
-      'PlaceY2',
-      db
+    '19',
+    '123',
+    '18',
+    '2018-12-10',
+    '17:00:00',
+    'PlaceS1',
+    'PlaceY2',
+    db
   )
 
   await bid.updateBidStatus(
-      '16',
-      '2',
-      '2010-03-20',
-      '15:00:00',
-      'PlaceC1',
-      'PlaceC2',
-      db
+    '16',
+    '2',
+    '2018-03-20',
+    '15:00:00',
+    'PlaceC1',
+    'PlaceC2',
+    db
   )
 
   console.log('Populated all tables!')
@@ -888,9 +955,10 @@ async function populateDb() {
 /* DB helpers to be exported */
 module.exports = {
   initDb,
-  createTriggers,
+  createFunctionsAndTriggers,
   deinitDb,
   populateDb,
+  admin,
   user,
   bid,
   ride,
