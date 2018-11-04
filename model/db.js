@@ -79,57 +79,77 @@ async function createFunctionsAndTriggers() {
   const query = `
   BEGIN;
   
+  CREATE OR REPLACE FUNCTION update_overdue_bids() RETURNS VOID AS 
+  $overdue_bids$
+    --
+    -- If any of the bids are for overdue rides, they are automatically
+    -- set as unsuccessful. 
+    --
+  DECLARE
+    currtime time := now()::time;
+    currdate date := now()::date;
+  BEGIN
+    UPDATE Bid
+    SET bidstatus = 'unsuccessful'
+    WHERE bidstatus = 'pending'
+    AND (date < currdate
+    OR (date = currdate
+    AND time = currtime));
+  END;$overdue_bids$ 
+  LANGUAGE plpgsql;
+
+  
   CREATE OR REPLACE FUNCTION get_available_car_seats(givenDate DATE, 
-													givenDriver INTEGER, 
-													givenTime TIME, 
-													givenOrigin VARCHAR, 
-													givenDestination VARCHAR) 
-													RETURNS INTEGER AS 
-	$n_bid_success$				
-	SELECT uCar.numSeats
-	FROM advertisedCarRide aCar, userOwnsACar uCar
-		WHERE aCar.date = givenDate
-		AND aCar.driver = givenDriver
-		AND aCar.time = givenTime
-		AND aCar.origin = givenOrigin
-		AND aCar.destination = givenDestination
-		AND aCar.car = uCar.licensePlate;	
-	$n_bid_success$ 
-	LANGUAGE sql;
-		
+                          givenDriver INTEGER, 
+                          givenTime TIME, 
+                          givenOrigin VARCHAR, 
+                          givenDestination VARCHAR) 
+                          RETURNS INTEGER AS 
+  $n_bid_success$				
+  SELECT uCar.numSeats
+  FROM advertisedCarRide aCar, userOwnsACar uCar
+    WHERE aCar.date = givenDate
+    AND aCar.driver = givenDriver
+    AND aCar.time = givenTime
+    AND aCar.origin = givenOrigin
+    AND aCar.destination = givenDestination
+    AND aCar.car = uCar.licensePlate;	
+  $n_bid_success$ 
+  LANGUAGE sql;
+    
   CREATE OR REPLACE FUNCTION process_bid_success() RETURNS TRIGGER AS $bid_success$
     BEGIN
         --
         -- Update the rest of the pending bids to unsuccessful once the max amount of car rides has been reached.
         --
-		
-		IF (NEW.bidStatus = 'successful') THEN
-			IF (
-				(SELECT COUNT(*)
-					FROM bid
-					WHERE bidStatus = 'successful'
-					AND driver = NEW.driver
-					AND date = NEW.date
-					AND time = NEW.time
-					AND origin = NEW.origin
-					AND destination = NEW.destination
-				) 
-					>= 
+    
+    IF (NEW.bidStatus = 'successful') THEN
+      IF (
+        (SELECT COUNT(*)
+          FROM bid
+          WHERE bidStatus = 'successful'
+          AND driver = NEW.driver
+          AND date = NEW.date
+          AND time = NEW.time
+          AND origin = NEW.origin
+          AND destination = NEW.destination
+        ) 
+          >= 
         get_available_car_seats(NEW.date, NEW.driver, NEW.time, NEW.origin, NEW.destination)
-			) THEN
-			
-			UPDATE bid
-			SET bidStatus = 'unsuccessful' 
-			WHERE bidStatus = 'pending' 
-			AND driver = NEW.driver
-			AND date = NEW.date
-			AND time = NEW.time
-			AND origin = NEW.origin
-			AND destination = NEW.destination;
-			
-			END IF;
-		END IF;
-		
+      ) THEN
+      
+      UPDATE bid
+      SET bidStatus = 'unsuccessful' 
+      WHERE bidStatus = 'pending' 
+      AND driver = NEW.driver
+      AND date = NEW.date
+      AND time = NEW.time
+      AND origin = NEW.origin
+      AND destination = NEW.destination;
+      
+      END IF;
+    END IF;
+    
         RETURN NULL; -- result is ignored since this is an AFTER trigger
     END;
     $bid_success$ 
@@ -142,42 +162,42 @@ async function createFunctionsAndTriggers() {
   CREATE TRIGGER bid_success
     AFTER INSERT OR UPDATE ON bid
     FOR EACH ROW EXECUTE PROCEDURE process_bid_success();
-	
-	 CREATE OR REPLACE FUNCTION assert_number_of_bid_success() RETURNS TRIGGER AS $n_bid_success$
-		BEGIN
-			--
-			-- Forces a rollback on the whole statement if it determines that it results in
-			-- more successful bids than available seats for car rides.
-			--
+  
+   CREATE OR REPLACE FUNCTION assert_number_of_bid_success() RETURNS TRIGGER AS $n_bid_success$
+    BEGIN
+      --
+      -- Forces a rollback on the whole statement if it determines that it results in
+      -- more successful bids than available seats for car rides.
+      --
 
-			IF ((SELECT MAX(c.num) FROM
-				(SELECT COUNT(*) AS num
-					FROM bid
-					WHERE bidStatus = 'successful'
-					AND driver = NEW.driver
-					AND date = NEW.date
-					AND time = NEW.time
-					AND origin = NEW.origin
-					AND destination = NEW.destination
-				 GROUP BY date, time, origin, destination, driver
-				) AS c)
-					>
+      IF ((SELECT MAX(c.num) FROM
+        (SELECT COUNT(*) AS num
+          FROM bid
+          WHERE bidStatus = 'successful'
+          AND driver = NEW.driver
+          AND date = NEW.date
+          AND time = NEW.time
+          AND origin = NEW.origin
+          AND destination = NEW.destination
+         GROUP BY date, time, origin, destination, driver
+        ) AS c)
+          >
         get_available_car_seats(NEW.date, NEW.driver, NEW.time, NEW.origin, NEW.destination)
-			) THEN
+      ) THEN
 
-				RAISE EXCEPTION 'Number of successful car ride bids cannot except number of available car seats.';
+        RAISE EXCEPTION 'Number of successful car ride bids cannot except number of available car seats.';
 
-			END IF;
+      END IF;
 
-			RETURN NULL; -- result is ignored since this is an AFTER trigger
-		END;
-	$n_bid_success$ LANGUAGE plpgsql;
+      RETURN NULL; -- result is ignored since this is an AFTER trigger
+    END;
+  $n_bid_success$ LANGUAGE plpgsql;
  
   -- Trigger to ensure that once the max amount of available bids are made for a
   -- car ride, no more bids can be made successful for that car ride. 
   CREATE TRIGGER assert_number_of_successful_bids_not_more_than_number_of_seats
-	AFTER INSERT OR UPDATE ON bid
-		FOR EACH ROW EXECUTE PROCEDURE assert_number_of_bid_success();
+  AFTER INSERT OR UPDATE ON bid
+    FOR EACH ROW EXECUTE PROCEDURE assert_number_of_bid_success();
 
   COMMIT;`
 
@@ -303,7 +323,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '1',
       'SAA0000A',
-      '2010-01-20',
+      '2018-12-20',
       '13:00:00',
       'PlaceA1',
       'PlaceA2',
@@ -312,7 +332,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '1',
       'SAA2222A',
-      '2010-02-20',
+      '2018-02-20',
       '14:00:00',
       'PlaceB1',
       'PlaceB2',
@@ -321,7 +341,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '2',
       'SBB0000B',
-      '2010-03-20',
+      '2018-03-20',
       '15:00:00',
       'PlaceC1',
       'PlaceC2',
@@ -330,7 +350,7 @@ async function populateDb() {
     await ride.advertiseCarRide(
       '2',
       'SBB0000B',
-      '2010-03-21',
+      '2018-03-21',
       '15:00:00',
       'PlaceC3',
       'PlaceC4',
@@ -339,7 +359,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '4',
       'SDD0000D',
-      '2010-04-20',
+      '2018-04-20',
       '16:00:00',
       'PlaceD1',
       'PlaceD2',
@@ -348,7 +368,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '5',
       'SEE0000D',
-      '2010-04-20',
+      '2018-04-20',
       '13:00:00',
       'PlaceA1',
       'PlaceA2',
@@ -357,7 +377,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '6',
       'SGG0000D',
-      '2010-04-20',
+      '2018-04-20',
       '15:00:00',
       'PlaceB1',
       'PlaceA2',
@@ -366,7 +386,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '6',
       'SGG0000D',
-      '2010-04-21',
+      '2018-04-21',
       '17:00:00',
       'PlaceD1',
       'PlaceA2',
@@ -375,7 +395,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '6',
       'SGG0000D',
-      '2010-04-22',
+      '2018-04-22',
       '13:00:00',
       'PlaceC1',
       'PlaceA2',
@@ -384,7 +404,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '7',
       'SHH0000D',
-      '2010-04-20',
+      '2018-04-20',
       '14:00:00',
       'PlaceE9',
       'PlaceB3',
@@ -393,7 +413,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '8',
       'SKK0000D',
-      '2010-04-20',
+      '2018-04-20',
       '15:00:00',
       'PlaceA1',
       'PlaceB8',
@@ -402,7 +422,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '8',
       'SKK0000D',
-      '2010-04-21',
+      '2018-04-21',
       '18:00:00',
       'PlaceR1',
       'PlaceV2',
@@ -411,7 +431,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '8',
       'SKK0000D',
-      '2010-04-22',
+      '2018-04-22',
       '18:30:00',
       'PlaceE1',
       'PlaceB2',
@@ -420,7 +440,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '8',
       'SKK0000D',
-      '2010-04-23',
+      '2018-04-23',
       '14:00:00',
       'PlaceS1',
       'PlaceX2',
@@ -429,7 +449,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '8',
       'SKK0000D',
-      '2010-04-24',
+      '2018-04-24',
       '11:00:00',
       'PlaceA1',
       'PlaceC2',
@@ -438,7 +458,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '10',
       'SLL0000D',
-      '2010-04-20',
+      '2018-04-20',
       '09:00:00',
       'PlaceV1',
       'PlaceB2',
@@ -447,7 +467,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '11',
       'SMM0000D',
-      '2010-04-20',
+      '2018-04-20',
       '13:00:00',
       'PlaceV1',
       'PlaceA2',
@@ -456,7 +476,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '12',
       'SNN0000D',
-      '2010-04-24',
+      '2018-04-24',
       '13:00:00',
       'PlaceB1',
       'PlaceA2',
@@ -465,7 +485,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '13',
       'SOO0000D',
-      '2010-01-24',
+      '2018-12-24',
       '13:00:00',
       'PlaceA1',
       'PlaceA2',
@@ -474,7 +494,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '13',
       'SOO0000D',
-      '2010-01-25',
+      '2018-12-25',
       '13:00:00',
       'PlaceS1',
       'PlaceA2',
@@ -483,7 +503,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '13',
       'SOO0000D',
-      '2010-01-26',
+      '2018-12-26',
       '13:00:00',
       'PlaceT1',
       'PlaceA2',
@@ -492,7 +512,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '13',
       'SOO0000D',
-      '2010-01-26',
+      '2018-12-26',
       '13:30:00',
       'PlaceE1',
       'PlaceA5',
@@ -501,7 +521,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '13',
       'SOO0000D',
-      '2010-01-26',
+      '2018-12-26',
       '14:00:00',
       'PlaceR1',
       'PlaceG2',
@@ -510,7 +530,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '13',
       'SOO0000D',
-      '2010-01-26',
+      '2018-12-26',
       '14:30:00',
       'PlaceW1',
       'PlaceG2',
@@ -519,7 +539,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '13',
       'SOO0000D',
-      '2010-01-26',
+      '2018-12-26',
       '15:00:00',
       'PlaceD1',
       'PlaceF2',
@@ -528,7 +548,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '18',
       'STT0000D',
-      '2010-04-25',
+      '2018-04-25',
       '18:00:00',
       'PlaceD1',
       'PlaceH2',
@@ -537,7 +557,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '18',
       'STT0000D',
-      '2010-03-20',
+      '2018-03-20',
       '12:00:00',
       'PlaceN1',
       'PlaceH2',
@@ -546,7 +566,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '18',
       'SUU0000D',
-      '2010-01-23',
+      '2018-12-23',
       '19:00:00',
       'PlaceZ1',
       'PlaceS2',
@@ -555,7 +575,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '18',
       'SUU0000D',
-      '2010-01-22',
+      '2018-12-22',
       '16:00:00',
       'PlaceA1',
       'PlaceU2',
@@ -564,7 +584,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '18',
       'SVV0000D',
-      '2010-01-10',
+      '2018-12-10',
       '17:00:00',
       'PlaceS1',
       'PlaceY2',
@@ -573,7 +593,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '19',
       'SWW0000D',
-      '2010-01-12',
+      '2018-12-12',
       '16:00:00',
       'PlaceR5',
       'PlaceJ2',
@@ -582,7 +602,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '19',
       'SWW0000D',
-      '2010-01-11',
+      '2018-12-11',
       '15:00:00',
       'PlaceL1',
       'PlaceN3',
@@ -591,7 +611,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '19',
       'SWW0000D',
-      '2010-01-11',
+      '2018-12-11',
       '13:00:00',
       'PlaceB1',
       'PlaceB1',
@@ -600,7 +620,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '19',
       'SWW0000D',
-      '2010-01-11',
+      '2018-12-11',
       '19:00:00',
       'PlaceN1',
       'PlaceC1',
@@ -609,7 +629,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
       '19',
       'SWW0000D',
-      '2010-01-12',
+      '2018-12-12',
       '10:00:00',
       'PlaceE1',
       'PlaceD1',
@@ -620,7 +640,7 @@ async function populateDb() {
       '3',
       '100',
       '1',
-      '2010-01-20',
+      '2018-12-20',
       '13:00:00',
       'PlaceA1',
       'PlaceA2',
@@ -630,7 +650,7 @@ async function populateDb() {
       '4',
       '200',
       '1',
-      '2010-01-20',
+      '2018-12-20',
       '13:00:00',
       'PlaceA1',
       'PlaceA2',
@@ -640,7 +660,7 @@ async function populateDb() {
       '1',
       '100',
       '2',
-      '2010-03-20',
+      '2018-03-20',
       '15:00:00',
       'PlaceC1',
       'PlaceC2',
@@ -650,7 +670,7 @@ async function populateDb() {
       '5',
       '500',
       '1',
-      '2010-01-20',
+      '2018-12-20',
       '13:00:00',
       'PlaceA1',
       'PlaceA2',
@@ -660,7 +680,7 @@ async function populateDb() {
       '5',
       '120',
       '2',
-      '2010-03-20',
+      '2018-03-20',
       '15:00:00',
       'PlaceC1',
       'PlaceC2',
@@ -670,7 +690,7 @@ async function populateDb() {
       '5',
       '345',
       '4',
-      '2010-04-20',
+      '2018-04-20',
       '16:00:00',
       'PlaceD1',
       'PlaceD2',
@@ -680,7 +700,7 @@ async function populateDb() {
       '7',
       '333',
       '13',
-      '2010-01-26',
+      '2018-12-26',
       '15:00:00',
       'PlaceD1',
       'PlaceF2',
@@ -690,7 +710,7 @@ async function populateDb() {
       '8',
       '314',
       '13',
-      '2010-01-26',
+      '2018-12-26',
       '15:00:00',
       'PlaceD1',
       'PlaceF2',
@@ -700,7 +720,7 @@ async function populateDb() {
       '9',
       '311',
       '13',
-      '2010-01-26',
+      '2018-12-26',
       '15:00:00',
       'PlaceD1',
       'PlaceF2',
@@ -710,7 +730,7 @@ async function populateDb() {
       '10',
       '325',
       '13',
-      '2010-01-26',
+      '2018-12-26',
       '15:00:00',
       'PlaceD1',
       'PlaceF2',
@@ -720,7 +740,7 @@ async function populateDb() {
       '1',
       '325',
       '13',
-      '2010-01-26',
+      '2018-12-26',
       '15:00:00',
       'PlaceD1',
       'PlaceF2',
@@ -730,7 +750,7 @@ async function populateDb() {
       '2',
       '325',
       '13',
-      '2010-01-26',
+      '2018-12-26',
       '15:00:00',
       'PlaceD1',
       'PlaceF2',
@@ -740,7 +760,7 @@ async function populateDb() {
       '3',
       '325',
       '13',
-      '2010-01-26',
+      '2018-12-26',
       '15:00:00',
       'PlaceD1',
       'PlaceF2',
@@ -750,7 +770,7 @@ async function populateDb() {
       '11',
       '370',
       '13',
-      '2010-01-26',
+      '2018-12-26',
       '15:00:00',
       'PlaceD1',
       'PlaceF2',
@@ -760,7 +780,7 @@ async function populateDb() {
       '12',
       '221',
       '13',
-      '2010-01-26',
+      '2018-12-26',
       '14:30:00',
       'PlaceW1',
       'PlaceG2',
@@ -770,7 +790,7 @@ async function populateDb() {
       '12',
       '123',
       '13',
-      '2010-01-26',
+      '2018-12-26',
       '14:00:00',
       'PlaceR1',
       'PlaceG2',
@@ -780,7 +800,7 @@ async function populateDb() {
       '12',
       '421',
       '13',
-      '2010-01-26',
+      '2018-12-26',
       '13:30:00',
       'PlaceE1',
       'PlaceA5',
@@ -790,7 +810,7 @@ async function populateDb() {
       '12',
       '155',
       '13',
-      '2010-01-24',
+      '2018-12-24',
       '13:00:00',
       'PlaceA1',
       'PlaceA2',
@@ -800,7 +820,7 @@ async function populateDb() {
       '14',
       '275',
       '19',
-      '2010-01-12',
+      '2018-12-12',
       '10:00:00',
       'PlaceE1',
       'PlaceD1',
@@ -810,7 +830,7 @@ async function populateDb() {
       '14',
       '185',
       '19',
-      '2010-01-11',
+      '2018-12-11',
       '19:00:00',
       'PlaceN1',
       'PlaceC1',
@@ -820,7 +840,7 @@ async function populateDb() {
       '14',
       '125',
       '19',
-      '2010-01-11',
+      '2018-12-11',
       '13:00:00',
       'PlaceB1',
       'PlaceB1',
@@ -830,7 +850,7 @@ async function populateDb() {
       '15',
       '345',
       '19',
-      '2010-01-11',
+      '2018-12-11',
       '13:00:00',
       'PlaceB1',
       'PlaceB1',
@@ -840,7 +860,7 @@ async function populateDb() {
       '15',
       '345',
       '18',
-      '2010-04-25',
+      '2018-04-25',
       '18:00:00',
       'PlaceD1',
       'PlaceH2',
@@ -850,7 +870,7 @@ async function populateDb() {
       '15',
       '345',
       '18',
-      '2010-01-10',
+      '2018-12-10',
       '17:00:00',
       'PlaceS1',
       'PlaceY2',
@@ -860,7 +880,7 @@ async function populateDb() {
       '16',
       '365',
       '19',
-      '2010-01-12',
+      '2018-12-12',
       '10:00:00',
       'PlaceE1',
       'PlaceD1',
@@ -870,7 +890,7 @@ async function populateDb() {
       '16',
       '123',
       '2',
-      '2010-03-20',
+      '2018-03-20',
       '15:00:00',
       'PlaceC1',
       'PlaceC2',
@@ -880,7 +900,7 @@ async function populateDb() {
       '17',
       '352',
       '19',
-      '2010-01-12',
+      '2018-12-12',
       '10:00:00',
       'PlaceE1',
       'PlaceD1',
@@ -890,7 +910,7 @@ async function populateDb() {
       '18',
       '300',
       '19',
-      '2010-01-12',
+      '2018-12-12',
       '10:00:00',
       'PlaceE1',
       'PlaceD1',
@@ -900,7 +920,7 @@ async function populateDb() {
       '19',
       '250',
       '18',
-      '2010-01-22',
+      '2018-12-22',
       '16:00:00',
       'PlaceA1',
       'PlaceU2',
@@ -910,7 +930,7 @@ async function populateDb() {
       '19',
       '123',
       '18',
-      '2010-01-10',
+      '2018-12-10',
       '17:00:00',
       'PlaceS1',
       'PlaceY2',
@@ -920,7 +940,7 @@ async function populateDb() {
   await bid.updateBidStatus(
       '16',
       '2',
-      '2010-03-20',
+      '2018-03-20',
       '15:00:00',
       'PlaceC1',
       'PlaceC2',
