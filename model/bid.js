@@ -118,12 +118,12 @@ const listPendingBidsForUser = async (user, filters, db) => {
     WHERE b.bidder = $1
     AND b.bidStatus = 'pending'
     AND b.bidAmount LIKE "%$2%"
-    AND b.bidder LIKE "%$3%"
-    AND b.driver LIKE "%$4%"
-    AND b.date LIKE "%$5%"
-    AND b.time LIKE "%$6%"
-    AND b.origin LIKE "%$7%";`,
-      [user, filters.bidAmountFilter, filters.bidderFilter, filters.driverFilter, filters.dateFilter, filters.timeFilter, filters.originFilter]
+    AND b.driver LIKE "%$3%"
+    AND b.date LIKE "%$4%"
+    AND b.time LIKE "%$5%"
+    AND b.origin LIKE "%$6%";
+    AND b.destination LIKE "%$7%";`,
+      [user, filters.bidAmountFilter, filters.driverFilter, filters.dateFilter, filters.timeFilter, filters.originFilter, filters.destinationFilter]
     )
     .then(result => {
       console.log(`List bids success:\n${JSON.stringify(result)}`)
