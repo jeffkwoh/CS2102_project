@@ -104,16 +104,26 @@ const deleteUserBid = async (
     })
 }
 
-// List all bids a user has made
-const listPendingBidsForUser = async (user, db) => {
+/*
+ * List all bids a user has made.
+ *
+ * @param filters An object containing specific filter options. @see rider router
+ */
+const listPendingBidsForUser = async (user, filters, db) => {
   return db
     .any(
       `
     SELECT b.driver, b.date, b.time, b.origin, b.destination, b.bidAmount
     FROM bid b
     WHERE b.bidder = $1
-    AND b.bidStatus = 'pending';`,
-      [user]
+    AND b.bidStatus = 'pending'
+    AND b.bidAmount LIKE "%$2%"
+    AND b.bidder LIKE "%$3%"
+    AND b.driver LIKE "%$4%"
+    AND b.date LIKE "%$5%"
+    AND b.time LIKE "%$6%"
+    AND b.origin LIKE "%$7%";`,
+      [user, filters.bidAmountFilter, filters.bidderFilter, filters.driverFilter, filters.dateFilter, filters.timeFilter, filters.originFilter]
     )
     .then(result => {
       console.log(`List bids success:\n${JSON.stringify(result)}`)
