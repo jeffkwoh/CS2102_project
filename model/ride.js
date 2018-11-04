@@ -57,8 +57,10 @@ const listAvailableAdvertisedCarRidesForRider = async (user, db) => {
 
 /**
  * List car rides that user will be a rider in, that are confirmed.
+ *
+ * @param filters An object containing specific filter options. @see rider router
  */
-const listConfirmedRidesForRider = async (user, db) => {
+const listConfirmedRidesForRider = async (user, filters, db) => {
   return db
     .any(
       `
@@ -66,9 +68,16 @@ const listConfirmedRidesForRider = async (user, db) => {
     FROM advertisedCarRide a
     NATURAL JOIN bid b
     WHERE b.bidStatus = 'successful'
-      AND b.bidder = $1;
+      AND b.bidder = $1
+      AND b.bidStatus LIKE "%$2%"
+      AND b.bidAmount LIKE "%$3%"
+      AND b.bidder LIKE "%$4%"
+      AND b.driver LIKE "%$5%"
+      AND b.date LIKE "%$6%"
+      AND b.time LIKE "%$7%"
+      AND b.origin LIKE "%$8%";
     `,
-      [user]
+      [user, filters.bidStatusFilter, filters.bidAmountFilter, filters.bidderFilter, filters.driverFilter, filters.dateFilter, filters.timeFilter, filters.originFilter]
     )
     .then(result => {
       console.log(`Retrived all confirmed car rides for rider ${user}!`)
