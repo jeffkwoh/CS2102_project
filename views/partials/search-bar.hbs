@@ -1,0 +1,10 @@
+<div class="panel">
+  <form id="{{name}}" action="{{postRoute}}" method="post">
+    {{#each searchFields}}
+      <div class="form-group">
+        <input type="{{this.type}}" name="{{this.name}}" class="form-control" id="input{{this.name}}{{../name}}" placeholder="{{this.placeholder}}">
+      </div>
+    {{/each}}
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+</div>
