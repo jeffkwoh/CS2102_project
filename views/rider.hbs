@@ -21,6 +21,22 @@
 </div>
 
 <h2> Confirmed Rides </h2>
+
+{{#getJsonContext '[
+  {
+    "type": "text",
+    "name": "penis",
+    "placeholder": "burn"
+  },
+  {
+    "type": "text",
+    "name": "penis",
+    "placeholder": "burn"
+  }
+]'}}
+  {{> search-bar  name='ConfirmedRides' getRoute='/rider' searchFields=this}}
+{{/getJsonContext}}
+
 <table>
   <tr>
     <td> Driver </td>
