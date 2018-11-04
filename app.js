@@ -2,8 +2,13 @@ var createError = require('http-errors')
 var express = require('express')
 var path = require('path')
 var cookieParser = require('cookie-parser')
+var bodyParser = require('body-parser')
+var session = require('express-session')
+var passport = require('./config/passport')
 var logger = require('morgan')
 var sassMiddleware = require('node-sass-middleware')
+var hbs = require('hbs');
+var fs = require('fs');
 
 // db
 var db = require('./model/db')
@@ -14,12 +19,33 @@ var driverRouter = require('./routes/driver')
 var riderRouter = require('./routes/rider')
 var carRideRouter = require('./routes/carRide')
 var biddingRouter = require('./routes/bidding')
+var loginRouter = require('./routes/login')
 
 var app = express()
+
+// local variables
+app.locals = {
+  ...app.locals,
+  title: 'Hitch',
+  description: 'A website to list and go on shared car rides!'
+};
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'hbs')
+// adding partials
+var partialsDir = __dirname + '/views/partials';
+var filenames = fs.readdirSync(partialsDir);
+filenames.forEach(function (filename) {
+  var matches = /^([^.]+).hbs$/.exec(filename);
+  if (!matches) {
+    return;
+  }
+  var name = matches[1];
+  var template = fs.readFileSync(partialsDir + '/' + filename, 'utf8');
+  hbs.registerPartial(name, template);
+});
+
 
 app.use(logger('dev'))
 app.use(express.json())
@@ -35,12 +61,19 @@ app.use(
 )
 app.use(express.static(path.join(__dirname, 'public')))
 
+//passport
+app.use(session({ secret:"outer-joins-are-useless" }))
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(passport.initialize())
+app.use(passport.session())
+
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
 app.use('/driver', driverRouter)
 app.use('/rider', riderRouter)
 app.use('/rides', carRideRouter)
 app.use('/bidding', biddingRouter)
+app.use('/login', loginRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

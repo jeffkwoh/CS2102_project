@@ -1,10 +1,11 @@
 var express = require('express')
 var router = express.Router()
 var db = require('../model/db.js')
+const connect = require('connect-ensure-login')
 
 /* GET user-rider's rides/bids listing page. */
-router.get('/', async function(req, res, next) {
-  const riderId = req.query.user_id_field
+router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next) {
+  const riderId = req.user
   // fetch:
   // 1) car rides that are confirmed for this rider
   // 2) bids (for car rides) that are pending

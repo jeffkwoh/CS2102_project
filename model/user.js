@@ -154,10 +154,33 @@ const listCarUserOwns = async (owner, db) => {
     })
 }
 
+const getValidUserid = (username, password, db) => {
+  return db.any(
+      `
+      SELECT a.userID
+      FROM appUserAccount a
+      WHERE 
+        a.email = $1 AND
+        a.password = $2
+      `
+      ,
+      [username, password]
+  )
+  .then(result => {
+    console.log(`Successful login for userID: ${JSON.stringify(result)}`)
+    return result
+  })
+  .catch(error => {
+    console.log(error)
+    return error
+  })
+}
+
 module.exports = {
   createUserAppAccount,
   listUserAppAccount,
   addCarToUser,
   delUserAcct,
   listCarUserOwns,
+  getValidUserid
 }
