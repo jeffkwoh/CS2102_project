@@ -4,18 +4,18 @@
     <h1>Drive</h1>
   </div>
   <div class="p-1">
-    | or view as a <a href="/driver/">rider</a>
+    | or view as a <a href="/rider/">rider</a>
   </div>
   <div class="ml-auto">
-    <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#myModal">Create Ride</button>
+    <button type="button" class="btn btn-outline-secondary btn-md" data-toggle="modal" data-target="#createCar">Add Car</button>
+  </div>
+  <div class="pl-1">
+    <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#createRide">Create Ride</button>
   </div>
 </div>
 
-
-
-
 <!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
+<div id="createRide" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
     <!-- Modal content-->
@@ -33,27 +33,87 @@
 
             <div class="input-group mt-3">
               <div class="input-group-prepend">
-                <label class="input-group-text" for="bid_amount_field">Bid</label>
+                <label class="input-group-text" for="date_field">Date</label>
               </div>
-              <input type="number" name="bid_amount_field" value="{{this.bidamount}}" class="form-control" placeholder="Change bid">
-              <div class="input-group-append">
-                <button class="btn btn-outline-primary" type="submit">Change</button>
-              </div>
+              <input type="date" name="date_field" class="form-control" value="2018-12-01">
             </div>
 
-            <label for="date">Date: </label>
-            <input id="date" type="date" name="date_field" value="2018-10-30">
+            <div class="input-group mt-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="time_field">Time</label>
+              </div>
+              <input type="time" name="time_field" class="form-control" value="08:00:00">
+            </div>
 
-            <label for="time">Time: </label>
-            <input id="time" type="time" name="time_field" value="14:30">
+            <div class="input-group mt-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="origin_field">From</label>
+              </div>
+              <input type="text" name="origin_field" placeholder="Origin" class="form-control">
+            </div>
 
-            <label for="origin">Starting location: </label>
-            <input id="origin" type="text" name="origin_field" value="Suntec City">
-
-            <label for="destination">Destination: </label>
-            <input id="destination" type="text" name="destination_field" value="M.A.A.D City">
+            <div class="input-group mt-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="destination_field">To</label>
+              </div>
+              <input type="text" name="destination_field" placeholder="Destination" class="form-control">
+            </div>
           </div>
+          <div class="modal-footer">
+                    <button class="btn btn-primary" type="submit" value="OK">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
 
+
+<!-- Modal -->
+<div id="createCar" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h4 class="modal-title">Create Ride</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <form action="/driver/addCar" method="post">
+        <input type="number" name="owner_field" value="{{driverId}}" hidden="true">
+          
+          <div class="modal-body">
+
+            <div class="input-group mt-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="licensePlate_field">Plate No.</label>
+              </div>
+              <input type="text" name="licensePlate_field" class="form-control" placeholder="SAB1234C">
+            </div>
+
+            <div class="input-group mt-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="carBrand_field">Brand</label>
+              </div>
+              <input type="text" name="carBrand_field" class="form-control" placeholder="Toyota">
+            </div>
+
+            <div class="input-group mt-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="carModel_field">Model</label>
+              </div>
+              <input type="text" name="carModel_field" placeholder="Corolla" class="form-control">
+            </div>
+
+            <div class="input-group mt-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="numAvailSeats_field">Seats Available</label>
+              </div>
+              <input type="number" name="numAvailSeats_field" placeholder="4" class="form-control">
+            </div>
+          </div>
 
           <div class="modal-footer">
                     <button class="btn btn-primary" type="submit" value="OK">Submit</button>
@@ -66,6 +126,10 @@
 
   </div>
 </div>
+
+
+
+<hr />
 
 
 <hr />
@@ -86,51 +150,6 @@
     </tr>
   {{/each}}
 </table>
-
-<hr />
-
-<h2> Add a Car </h2>
-
-<form action="/driver/addCar" method="post">
-    <input type="number" name="owner_field" value="{{driverId}}" hidden="true">
-
-    <label for="date">License Plate: </label>
-    <input id="date" type="text" name="licensePlate_field" value="SLM5370D">
-
-    <label for="carBrand">Car Brand: </label>
-    <input id="carBrand" type="text" name="carBrand_field" value="BMW">
-
-    <label for="carModel">Car Model: </label>
-    <input id="carModel" type="text" name="carModel_field" value="530e iPerformance">
-
-    <label for="numAvailSeats">Number Of Available Seats: </label>
-    <input id="numAvailSeats" type="number" name="numAvailSeats_field" value="3">
-
-    <input type="submit" value="OK">
-</form>
-
-<hr />
-
-<h2> Create Car Ride </h2>
-<form action="/rides/create" method="post">
-    <input type="number" name="driver_field" value="{{driverId}}" hidden="true">
-
-    <label for="date">Date: </label>
-    <input id="date" type="date" name="date_field" value="2018-10-30">
-
-    <label for="time">Time: </label>
-    <input id="time" type="time" name="time_field" value="14:30">
-
-    <label for="origin">Starting location: </label>
-    <input id="origin" type="text" name="origin_field" value="Suntec City">
-
-    <label for="destination">Destination: </label>
-    <input id="destination" type="text" name="destination_field" value="M.A.A.D City">
-
-    <input type="submit" value="OK">
-</form>
-
-<hr />
 
 <h2> Confirmed Rides </h2>
 <table>
@@ -181,7 +200,7 @@
         <input id="time_id" type="text" name="time" value="{{this.time}}" hidden="true">
         <input id="origin_id" type="text" name="origin" value="{{this.origin}}" hidden="true">
         <input id="destination_id" type="text" name="destination" value="{{this.destination}}" hidden="true">
-        <input type="submit" value="View Bids">
+        <input type="submit" value="Edit">
       </form>
     </td>
     <td>
