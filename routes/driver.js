@@ -4,8 +4,8 @@ var db = require('../model/db.js')
 var connect = require('connect-ensure-login')
 
 /* GET car rides listing page. */
-router.get('/', connect.ensureLoggedIn() ,async function(req, res, next) {
-  const driverId = req.query.user_id_field
+router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next) {
+  const driverId = req.user
 
   // fetch:
   // 1) car rides that are pending

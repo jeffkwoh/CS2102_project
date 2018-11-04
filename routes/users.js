@@ -4,14 +4,14 @@ var db = require('../model/db.js')
 var connect = require('connect-ensure-login')
 
 /* GET users listing page. */
-router.get('/', connect.ensureLoggedIn() ,async function(req, res, next) {
+router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next) {
   const users = await db.user.listUserAppAccount(db.exposedInstance)
 
   res.render('users', { users: users })
 })
 
 /* POST user creation. */
-router.post('/create', connect.ensureLoggedIn() ,async function(req, res, next) {
+router.post('/create', connect.ensureLoggedIn('/login') ,async function(req, res, next) {
   const name = req.body.name_field
   const email = req.body.email_field
   const number = req.body.contact_number_field
