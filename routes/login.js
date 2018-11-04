@@ -1,15 +1,28 @@
+var db = require('../model/db.js')
 var express = require('express');
-var router = express.Router();
 var passport = require('../config/passport')
+var router = express.Router();
 
 /* GET login page. */
 router.get('/', function(req, res, next) {
-  res.redirect('/');
+  res.redirect('/')
 });
 
 /* Post data to passport */
 router.post('/', passport.authenticate('local'), function(req, res, next) {
-  res.redirect('/rider');
+  res.redirect('/rider')
+});
+
+/* Post data to passport */
+router.post('/register', async function(req, res, next) {
+  const {
+    email,
+    password,
+    name,
+    phone
+  } = req.body
+  await db.user.createUserAppAccount(email, phone, name, password, db.exposedInstance)
+  res.redirect(308, '/login')
 });
 
 module.exports = router;
