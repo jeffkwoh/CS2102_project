@@ -91,6 +91,7 @@ async function createTriggers() {
 				(SELECT COUNT(*)
 					FROM bid
 					WHERE bidStatus = 'successful'
+					AND driver = NEW.driver
 					AND date = NEW.date
 					AND time = NEW.time
 					AND origin = NEW.origin
