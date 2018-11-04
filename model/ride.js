@@ -86,7 +86,25 @@ const listAvailableAdvertisedCarRidesForRider = async (user, filters, db) => {
       ,[user]
     )
     .then(result => {
-      console.log(`Retrived all upcoming car rides!`)
+      console.log(`Retrieved all upcoming car rides!`)
+      return result
+    })
+    .catch(error => {
+      console.log(error)
+    })
+}
+
+const listCarsUserOwns = async (user, db) => {
+  return db
+    .any(
+      `
+      SELECT u.licensePlate, u.carBrand, u.carModel, u.numSeats FROM userOwnsACar u
+      WHERE u.owner = $1
+    `,
+      [user]
+    )
+    .then(result => {
+      console.log(`Retrieved all cars a user owns!`)
       return result
     })
     .catch(error => {
@@ -116,7 +134,7 @@ const listConfirmedRidesForRider = async (user, filters, db) => {
       [user]
     )
     .then(result => {
-      console.log(`Retrived all confirmed car rides for rider ${user}!`)
+      console.log(`Retrieved all confirmed car rides for rider ${user}!`)
       return result
     })
     .catch(error => {
@@ -139,7 +157,7 @@ const listConfirmedRidesForDriver = async (user, db) => {
       [user]
     )
     .then(result => {
-      console.log(`Retrived all confirmed car rides for driver ${user}!`)
+      console.log(`Retrieved all confirmed car rides for driver ${user}!`)
       return result
     })
     .catch(error => {
@@ -166,7 +184,7 @@ const listPendingRidesForDriver = async (user, db) => {
       [user]
     )
     .then(result => {
-      console.log(`Retrived all pending car rides for driver ${user}!`)
+      console.log(`Retrieved all pending car rides for driver ${user}!`)
       return result
     })
     .catch(error => {
@@ -180,5 +198,7 @@ module.exports = {
   listConfirmedRidesForRider,
   listConfirmedRidesForDriver,
   listPendingRidesForDriver,
+  listCarsUserOwns,
+  delAdvertisedRide,
   delAdvertisedRide
 }

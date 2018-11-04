@@ -7,6 +7,7 @@ const admin = require('./admin.js')
 const user = require('./user.js')
 const bid = require('./bid.js')
 const ride = require('./ride.js')
+const car = require('./car.js')
 
 /**
  * Initialises database, with all the necessary tables specified in the database
@@ -961,5 +962,6 @@ module.exports = {
   user,
   bid,
   ride,
+  car,
   exposedInstance: db,
 }
