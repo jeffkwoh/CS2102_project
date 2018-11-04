@@ -149,7 +149,7 @@ const listConfirmedRidesForDriver = async (user, db) => {
   return db
     .any(
       `
-    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car FROM advertisedCarRide a
+    SELECT DISTINCT a.driver, a.date, a.time, a.origin, a.destination, a.car FROM advertisedCarRide a
     NATURAL JOIN bid b
     WHERE b.bidStatus = 'successful'
       AND a.driver = $1;
