@@ -27,14 +27,21 @@ const advertiseCarRide = async (
 
 /**
  * List all upcoming advertised car rides that this user can ride in.
+ *
+ * @param filters An object containing specific filter options. @see rider router
  */
-const listAvailableAdvertisedCarRidesForRider = async (user, db) => {
+const listAvailableAdvertisedCarRidesForRider = async (user, filters, db) => {
   return db
     .any(
       `
     -- Car rides the user is not driver for
     SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
     WHERE a.driver <> $1
+      AND a.driver LIKE "%$2%"
+      AND a.date LIKE "%$3%"
+      AND a.time LIKE "%$4%"
+      AND a.origin LIKE "%$5%"
+      AND a.destination LIKE "%$5%"
     GROUP BY a.driver, a.date, a.time, a.origin, a.destination
 
     EXCEPT
