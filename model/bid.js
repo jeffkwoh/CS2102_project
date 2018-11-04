@@ -117,11 +117,12 @@ const listPendingBidsForUser = async (user, filters, db) => {
     FROM advertisedCarRide a
     NATURAL JOIN bid b
     WHERE b.bidder = $1
-    AND b.bidStatus = 'pending'
-    AND TO_CHAR(CAST(b.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
-    AND CAST(b.time as VARCHAR(25)) LIKE '%${filters.time}%'
-    AND b.origin LIKE '%${filters.origin}%'
-    AND b.destination LIKE '%${filters.destination}%';
+      AND b.bidStatus = 'pending'
+      AND TO_CHAR(CAST(b.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
+      AND CAST(b.time as VARCHAR(25)) LIKE '%${filters.time}%'
+      AND b.origin LIKE '%${filters.origin}%'
+      AND b.destination LIKE '%${filters.destination}%'
+    ORDER BY b.date ASC, b.time ASC;
       `, [user]
     )
     .then(result => {
@@ -169,7 +170,8 @@ const listUnsuccessfulBidsForUser = async (user, db) => {
     FROM advertisedCarRide a
     NATURAL JOIN bid b
     WHERE b.bidStatus = 'unsuccessful'
-    AND b.bidder = $1;`,
+      AND b.bidder = $1
+    ORDER BY a.date DESC;`,
       [user]
     )
     .then(result => {
@@ -199,11 +201,20 @@ const updateBidStatus = async (
         UPDATE bid
         SET bidStatus = 'successful' 
         WHERE bidder = $1
-        AND driver = $2 
-        AND date = $3 
-        AND time = $4 
-        AND origin = $5 
-        AND destination = $6;`,
+          AND driver = $2 
+          AND date = $3 
+          AND time = $4 
+          AND origin = $5 
+          AND destination = $6;
+
+        UPDATE bid
+        SET bidStatus = 'unsuccessful' 
+        WHERE bidder <> $1 
+          AND driver = $2 
+          AND date = $3 
+          AND time = $4 
+          AND origin = $5
+          AND destination = $6;`,
       [successfulBidder, driver, date, time, origin, destination]
     )
     .then(() => {
@@ -224,10 +235,12 @@ const listBidsForRide = async (driver, date, time, origin, destination, db) => {
       SELECT *
       FROM bid b
       WHERE b.driver = $1
-      AND b.date = $2
-      AND b.time = $3
-      AND b.origin = $4
-      AND b.destination = $5;`,
+        AND b.date = $2
+        AND b.time = $3
+        AND b.origin = $4
+        AND b.destination = $5
+      ORDER BY b.bidAmount DESC;
+      `,
       [driver, new Date(date), time, origin, destination]
     )
     .then(result => {
