@@ -10,18 +10,20 @@ router.get('/', function(req, res, next) {
 
 /* Post data to passport */
 router.post('/', passport.authenticate('local'), function(req, res, next) {
+  console.log(req.body)
   res.redirect('/rider')
 });
 
 /* Post data to passport */
 router.post('/register', async function(req, res, next) {
   const {
-    email,
+    username,
     password,
     name,
     phone
   } = req.body
-  await db.user.createUserAppAccount(email, phone, name, password, db.exposedInstance)
+  await db.user.createUserAppAccount(username, phone, name, password, db.exposedInstance)
+
   res.redirect(308, '/login')
 });
 
