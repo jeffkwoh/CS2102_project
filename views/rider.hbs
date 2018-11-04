@@ -5,7 +5,7 @@
     <h1> Ride </h1>
   </div>
   <div class="">
-    | or be a <b> <a href="/driver/">driver</a></b>
+    | or view as a <b> <a href="/driver/">driver</a></b>
   </div>
 </div>
 
@@ -54,7 +54,7 @@
   </div>
 </div>
 
-<!-- OLD VERSION
+
 <table>
   <tr>
     <td> Driver </td>
@@ -82,14 +82,13 @@
     </tr>
   {{/each}}
 </table>
--->
 
 <div class="row">
   {{#if confirmedRides}}
 
     {{#each confirmedRides}}
       <div class="col-sm-6 col-md-4 mb-4">
-        <div class="card">
+        <div class="card border-success">
           <form action="/bidding/create" method="post">
             <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
             <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
