@@ -204,15 +204,7 @@ const updateBidStatus = async (
         AND time = $4 
         AND origin = $5 
         AND destination = $6;
-        
-        UPDATE bid
-        SET bidStatus = 'unsuccessful' 
-        WHERE bidder <> $1 
-        AND driver = $2 
-        AND date = $3 
-        AND time = $4 
-        AND origin = $5
-        AND destination = $6;`,
+        `,
       [successfulBidder, driver, date, time, origin, destination]
     )
     .then(() => {
