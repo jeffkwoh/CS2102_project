@@ -6,15 +6,17 @@ const connect = require('connect-ensure-login')
 /* GET user-rider's rides/bids listing page. */
 router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next) {
   const riderId = req.user
+  console.log(req.query)
   const filters = {
-    driver: req.body.driverFilter || "",
-    date: req.body.dateFilter || "",
-    time: req.body.timeFilter || "",
-    origin: req.body.originFilter || "",
-    destination: req.body.destinationFilter || "",
-    bidAmount: req.body.bidAmountFilter || "",
-    bidStatus: req.body.bidStatusFilter || ""
+    driver: req.query.driverFilter || "",
+    date: req.query.dateFilter || "",
+    time: req.query.timeFilter || "",
+    origin: req.query.originFilter || "",
+    destination: req.query.destinationFilter || "",
+    bidAmount: req.query.bidAmountFilter || "",
+    bidStatus: req.query.bidStatusFilter || ""
   }
+  console.log(filters)
   // fetch:
   // 1) car rides that are confirmed for this rider
   // 2) bids (for car rides) that are pending
