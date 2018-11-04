@@ -3,7 +3,7 @@
     <div class="form-group">
       {{#each searchFields}}
           <span class="mr-1">
-            <label>{{this.name}}</label>
+            <label>{{this.label}}</label>
             <input type="{{this.type}}" name="{{this.name}}" id="input{{this.name}}{{../name}}" placeholder="{{this.placeholder}}">
           </span>
       {{/each}}

@@ -25,23 +25,27 @@
 {{#getJsonContext '[
   {
     "type": "text",
+    "label": "Date",
     "name": "dateFilter",
-    "placeholder": "dateFilter"
+    "placeholder": "23 Apr 2010"
   },
   {
     "type": "text",
+    "label": "Time",
     "name": "timeFilter",
-    "placeholder": "timeFilter"
+    "placeholder": "18:00"
   },
   {
     "type": "text",
+    "label": "Origin",
     "name": "originFilter",
-    "placeholder": "originFilter"
+    "placeholder": "Sunteck City"
   },
   {
     "type": "text",
+    "label": "Destination",
     "name": "destinationFilter",
-    "placeholder": "destinationFilter"
+    "placeholder": "Cinnamon College"
   }
 ]'}}
   {{> search-bar  name='ConfirmedRides' getRoute='/rider' searchFields=this}}
