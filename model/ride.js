@@ -76,9 +76,6 @@ const listConfirmedRidesForRider = async (user, filters, db) => {
     NATURAL JOIN bid b
     WHERE b.bidStatus = 'successful'
       AND b.bidder = $1
-      AND b.bidStatus LIKE '%${filters.bidStatus}%'
-      AND CAST(b.bidAmount as varchar(20)) LIKE '%${filters.bidAmount}%'
-      AND CAST(b.driver as varchar(20)) LIKE '%${filters.driver}%'
       AND CAST(b.date as varchar(20)) LIKE '%${filters.date}%'
       AND CAST(b.time as varchar(20)) LIKE '%${filters.time}%'
       AND b.origin LIKE '%${filters.origin}%'

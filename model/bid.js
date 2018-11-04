@@ -117,9 +117,6 @@ const listPendingBidsForUser = async (user, filters, db) => {
     FROM bid b
     WHERE b.bidder = $1
     AND b.bidStatus = 'pending'
-    AND b.bidStatus LIKE '%${filters.bidStatus}%'
-    AND CAST(b.bidAmount as varchar(20)) LIKE '%${filters.bidAmount}%'
-    AND CAST(b.driver as varchar(20)) LIKE '%${filters.driver}%'
     AND to_char(CAST(b.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
     AND CAST(b.time as VARCHAR(25)) LIKE '%${filters.time}%'
     AND b.origin LIKE '%${filters.origin}%'
