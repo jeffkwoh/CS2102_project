@@ -63,6 +63,7 @@
     <td> Origin </td>
     <td> Destination </td>
     <td> Car </td>
+    <td> Bid Status </td>
     <td> Current Bid </td>
   </tr>
   {{#each biddedRides}}
@@ -73,6 +74,7 @@
       <td>{{this.origin}}</td>
       <td>{{this.destination}}</td>
       <td>{{this.car}}</td>
+      <td>{{this.bidstatus}}</td>
       <td>{{this.bidamount}}</td>
       <td>
         <form action="/bidding/update" method="post">
@@ -99,6 +101,19 @@
       </td>
     </tr>
   {{/each}}
+
+  {{#each unsuccessfulBiddedRides}}
+    <tr>
+      <td>{{this.driver}}</td>
+      <td>{{this.date}}</td>
+      <td>{{this.time}}</td>
+      <td>{{this.origin}}</td>
+      <td>{{this.destination}}</td>
+      <td>{{this.car}}</td>
+      <td>{{this.bidstatus}}</td>
+      <td></td>
+    </tr>
+    {{/each}}
 </table>
 
 <h2>Upcoming rides</h2>

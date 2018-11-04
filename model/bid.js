@@ -109,10 +109,11 @@ const listPendingBidsForUser = async (user, db) => {
   return db
     .any(
       `
-    SELECT b.driver, b.date, b.time, b.origin, b.destination, b.bidAmount
-    FROM bid b
-    WHERE b.bidder = $1
-    AND b.bidStatus = 'pending';`,
+    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car, b.bidAmount, b.bidStatus
+    FROM advertisedCarRide a
+    NATURAL JOIN bid b
+    WHERE b.bidStatus = 'pending'
+    AND b.bidder = $1;`,
       [user]
     )
     .then(result => {
@@ -126,8 +127,31 @@ const listPendingBidsForUser = async (user, db) => {
     })
 }
 
+// List all bids a user has made
+const listUnsuccessfulBidsForUser = async (user, db) => {
+  return db
+    .any(
+      `
+    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car, b.bidStatus
+    FROM advertisedCarRide a
+    NATURAL JOIN bid b
+    WHERE b.bidStatus = 'unsuccessful'
+    AND b.bidder = $1;`,
+      [user]
+    )
+    .then(result => {
+      console.log(`List Unsuccessful Bids:\n${JSON.stringify(result)}`)
+      // success;
+      return result
+    })
+    .catch(error => {
+      console.log(error)
+      // error;
+    })
+}
+
 // Updates an existing bid in the table Bid as successful
-const setBidAsSuccessful = async (
+const updateBidStatus = async (
   successfulBidder,
   driver,
   date,
@@ -139,15 +163,23 @@ const setBidAsSuccessful = async (
   return db
     .none(
       `
-        UPDATE bid 
-        SET b.bidStatus = 'successful' 
-        FROM bid b 
-        WHERE b.bidder = $1
-        AND b.driver = $2 
-        AND b.date = $3 
-        AND b.time = $4 
-        AND b.origin = $5 
-        AND b.destination = $6;`,
+        UPDATE bid
+        SET bidStatus = 'successful' 
+        WHERE bidder = $1
+        AND driver = $2 
+        AND date = $3 
+        AND time = $4 
+        AND origin = $5 
+        AND destination = $6;
+        
+        UPDATE bid
+        SET bidStatus = 'unsuccessful' 
+        WHERE bidder <> $1 
+        AND driver = $2 
+        AND date = $3 
+        AND time = $4 
+        AND origin = $5
+        AND destination = $6;`,
       [successfulBidder, driver, date, time, origin, destination]
     )
     .then(() => {
@@ -160,47 +192,14 @@ const setBidAsSuccessful = async (
     })
 }
 
-// Updates an existing bid in the table Bid as unsuccessful
-const setBidAsUnsuccessful = async (
-  unsuccessfulBidder,
-  driver,
-  date,
-  time,
-  origin,
-  destination,
-  db
-) => {
-  return db
-    .none(
-      `
-    UPDATE bid 
-    SET b.bidStatus = 'unsuccessful' 
-    FROM bid b 
-    WHERE b.bidder = $1 
-    AND b.driver = $2 
-    AND b.date = $3 
-    AND b.time = $4 
-    AND b.origin = $5
-    AND b.destination = $6;`,
-      [unsuccessfulBidder, driver, date, time, origin, destination]
-    )
-    .then(() => {
-      console.log('success!')
-      // success;
-    })
-    .catch(error => {
-      console.log(error)
-      // error;
-    })
-}
 
 const listBidsForRide = async (driver, date, time, origin, destination, db) => {
   return db
     .any(
       `
-    SELECT b.bidder, b.bidAmount
-    FROM bid b
-    WHERE b.driver = $1
+      SELECT *
+      FROM bid b
+      WHERE b.driver = $1
       AND b.date = $2
       AND b.time = $3
       AND b.origin = $4
@@ -223,7 +222,7 @@ module.exports = {
   updateUserBid,
   listPendingBidsForUser,
   listBidsForRide,
+  listUnsuccessfulBidsForUser,
   deleteUserBid,
-  setBidAsSuccessful,
-  setBidAsUnsuccessful,
+  updateBidStatus
 }
