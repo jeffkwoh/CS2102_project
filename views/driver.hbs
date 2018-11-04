@@ -1,5 +1,5 @@
 <!-- HEADER WITH LINK TO DRIVER -->
-<div class="d-flex flex-md-row pt-2 justify-content-start align-items-end">
+<div class="d-flex flex-md-row pt-3 pl-2 pr-2 justify-content-start align-items-end">
   <div class="">
     <h1>Drive</h1>
   </div>
@@ -7,7 +7,7 @@
     | or view as a <a href="/rider/">rider</a>
   </div>
   <div class="ml-auto">
-    <button type="button" class="btn btn-outline-secondary btn-md" data-toggle="modal" data-target="#createCar">Add Car</button>
+    <button type="button" class="btn btn-outline-default btn-md" data-toggle="modal" data-target="#createCar">Add Car</button>
   </div>
   <div class="pl-1">
     <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#createRide">Create Ride</button>
@@ -31,11 +31,11 @@
           
           <div class="modal-body">
 
-            <div class="input-group mt-3">
+            <div class="input-group">
               <div class="input-group-prepend">
                 <label class="input-group-text" for="date_field">Date</label>
               </div>
-              <input type="date" name="date_field" class="form-control" value="2018-12-01">
+              <input type="date" name="date_field" class="form-control" placeholder="2018-12-01">
             </div>
 
             <div class="input-group mt-3">
@@ -60,8 +60,8 @@
             </div>
           </div>
           <div class="modal-footer">
-                    <button class="btn btn-primary" type="submit" value="OK">Submit</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button class="btn btn-primary" type="submit" value="OK">Submit</button>
           </div>
       </form>
     </div>
@@ -77,7 +77,7 @@
     <div class="modal-content">
 
       <div class="modal-header">
-        <h4 class="modal-title">Create Ride</h4>
+        <h4 class="modal-title">Add Owned Car</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
@@ -86,7 +86,7 @@
           
           <div class="modal-body">
 
-            <div class="input-group mt-3">
+            <div class="input-group">
               <div class="input-group-prepend">
                 <label class="input-group-text" for="licensePlate_field">Plate No.</label>
               </div>
@@ -116,103 +116,141 @@
           </div>
 
           <div class="modal-footer">
-                    <button class="btn btn-primary" type="submit" value="OK">Submit</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button class="btn btn-primary" type="submit" value="OK">Submit</button>
           </div>
       </form>
-
-
     </div>
+  </div>
+</div>
 
+<hr />
+
+
+<!-- GARAGE -->
+<div class="d-flex justify-content-start align-items-center p-2">
+  <div data-toggle="collapse" data-target="#collapseGarage">
+    <h3>Garage</h3> 
+  </div>
+</div>
+
+<div class="collapse show" id="collapseGarage">
+  <div class="row">
+    {{#if ownedCars}}
+      {{#each ownedCars}}
+        <div class="col-sm-6 col-md-4">
+          <div class="card border-default">
+            <div class="card-body">
+              <h3 class="card-title">{{this.licenseplate}}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{this.carbrand}} {{this.carmodel}}</h6>
+              <div class="text-muted">{{this.numseats}} seats available</div>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    {{else}}
+      <div class="col-12">
+        <div class="pl-4 pb-4 d-flex justify-content-start align-items-baseline">
+          <div class="text-muted">
+            No cars owned
+          </div>
+        </div>
+      </div>
+    {{/if}}
   </div>
 </div>
 
 
 
-<hr />
 
+<div class="d-flex justify-content-start align-items-center p-2 pt-4">
+  <div data-toggle="collapse" data-target="#collapseConfirmedRides">
+    <h3>Confirmed Rides</h3> 
+  </div>
+</div>
 
-<hr />
-<h2> List of Owned Cars </h2>
-<table>
-  <tr>
-    <td> License Plate </td>
-    <td> Car Brand </td>
-    <td> Car Model </td>
-    <td> Number Of Seats </td>
-  </tr>
-  {{#each ownedCars}}
-    <tr>
-      <td>{{this.licenseplate}}</td>
-      <td>{{this.carbrand}}</td>
-      <td>{{this.carmodel}}</td>
-      <td>{{this.numseats}}</td>
-    </tr>
-  {{/each}}
-</table>
+<div class="collapse show" id="collapseConfirmedRides">
+  <div class="row">
+    {{#if confirmedRides}}
 
-<h2> Confirmed Rides </h2>
-<table>
-  <tr>
-    <td> Date </td>
-    <td> Time </td>
-    <td> Trip start Location </td>
-    <td> Destination </td>
-    <td> Car </td>
-  </tr>
-{{#each confirmedRides}}
-  <tr>
-      <td>{{this.date}}</td>
-      <td>{{this.time}}</td>
-      <td>{{this.origin}}</td>
-      <td>{{this.destination}}</td>
-      <td>{{this.car}}</td>
-    <td>
-      <form action="/rides" method="get">
-        <input id="ride_id" type="number" name="id" value="{{this.id}}" hidden="true">
-        <input type="submit" value="View">
-      </form>
-    </td>
-  </tr>
-{{/each}}
-</table>
+      {{#each confirmedRides}}
+        <div class="col-sm-6 col-md-4 mb-4">
+          <div class="card border-success">
+            <div class="card-body">
+              <h5 class="card-title"><span class="badge badge-success">{{this.i}}</span> <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
+              <h6 class="text-muted">{{this.car}}</h4>
 
-<h2> Pending Rides </h2>
-<table>
-  <tr>
-    <td> Date </td>
-    <td> Time </td>
-    <td> Trip start Location </td>
-    <td> Destination </td>
-    <td> Car </td>
-  </tr>
-{{#each pendingRides}}
-  <tr>
-      <td>{{this.date}}</td>
-      <td>{{this.time}}</td>
-      <td>{{this.origin}}</td>
-      <td>{{this.destination}}</td>
-      <td>{{this.car}}</td>
-    <td>
-      <form action="/rides" method="post">
-        <input id="driver_id" type="text" name="driver" value="{{this.driver}}" hidden="true">
-        <input id="date_id" type="text" name="date" value="{{this.date}}" hidden="true">
-        <input id="time_id" type="text" name="time" value="{{this.time}}" hidden="true">
-        <input id="origin_id" type="text" name="origin" value="{{this.origin}}" hidden="true">
-        <input id="destination_id" type="text" name="destination" value="{{this.destination}}" hidden="true">
-        <input type="submit" value="Edit">
-      </form>
-    </td>
-    <td>
-      <form action="/rides/delete" method="post">
-        <input id="ride_id" type="number" name="driver" value="{{this.driver}}" hidden="true">
-        <input id="date_id" type="text" name="date" value="{{this.date}}" hidden="true">
-        <input id="time_id" type="text" name="time" value="{{this.time}}" hidden="true">
-        <input id="origin_id" type="text" name="origin" value="{{this.origin}}" hidden="true">
-        <input id="destination_id" type="text" name="destination" value="{{this.destination}}" hidden="true">
-        <input type="submit" value="Delete">
-      </form>
-    </td>
-  </tr>
-{{/each}}
-</table>
+            </div>
+            <div class="card-footer p-1">
+              <form action="/rides" method="get">
+                <input id="ride_id" type="number" name="id" value="{{this.id}}" hidden="true">
+                <button class="btn btn-outline-success" type="submit">Details</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    {{else}}
+      <div class="col-12">
+        <div class="pl-4 pb-4 d-flex justify-content-start align-items-baseline">
+          <div class="text-muted">
+            No confirmed rides
+          </div>
+        </div>
+      </div>
+    {{/if}}
+  </div>
+</div>
+
+<div class="d-flex justify-content-start align-items-center p-2">
+  <div data-toggle="collapse" data-target="#collapsePendingRides">
+    <h3>Pending Rides</h3> 
+  </div>
+</div>
+
+<div class="collapse show" id="collapsePendingRides">
+  <div class="row">
+    {{#if pendingRides}}
+      {{#each pendingRides}}
+        <div class="col-sm-6 col-md-4 mb-4">
+          <div class="card border-default">
+            <div class="card-body">
+              <h5 class="card-title"><span class="badge badge-dark">{{this.i}}</span> <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
+              <h6 class="text-muted">{{this.car}}</h4>
+            </div>
+            <div class="card-footer">
+              <div class="btn-group" role="group">
+                <form action="/rides" method="post">
+                  <input id="driver_id" type="text" name="driver" value="{{this.driver}}" hidden="true">
+                  <input id="date_id" type="text" name="date" value="{{this.date}}" hidden="true">
+                  <input id="time_id" type="text" name="time" value="{{this.time}}" hidden="true">
+                  <input id="origin_id" type="text" name="origin" value="{{this.origin}}" hidden="true">
+                  <input id="destination_id" type="text" name="destination" value="{{this.destination}}" hidden="true">
+                  <button class="btn btn-outline-default" type="submit">Edit</button>
+                </form>
+                <form action="/rides/delete" method="post">
+                  <input id="ride_id" type="number" name="driver" value="{{this.driver}}" hidden="true">
+                  <input id="date_id" type="text" name="date" value="{{this.date}}" hidden="true">
+                  <input id="time_id" type="text" name="time" value="{{this.time}}" hidden="true">
+                  <input id="origin_id" type="text" name="origin" value="{{this.origin}}" hidden="true">
+                  <input id="destination_id" type="text" name="destination" value="{{this.destination}}" hidden="true">
+                  <button class="btn btn-outline-dark" type="submit">Delete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    {{else}}
+      <div class="col-12">
+        <div class="pl-4 pb-4 d-flex justify-content-start align-items-baseline">
+          <div class="text-muted">
+            No pending rides
+          </div>
+        </div>
+      </div>
+    {{/if}}
+  </div>
+</div>

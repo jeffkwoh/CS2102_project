@@ -1,49 +1,58 @@
 
 <!-- HEADER WITH LINK TO DRIVER -->
-<div class="d-flex flex-md-row pt-2 justify-content-start align-items-end">
-  <div class="p-1">
-    <h1> Ride </h1>
+
+<div class="d-flex flex-md-row pt-3 pl-2 pr-2  justify-content-start align-items-end">
+  <div class="">
+    <h1>Ride</h1>
   </div>
-  <div class="p-2">
+  <div class="p-1">
     | or view as a <a href="/driver/">driver</a>
   </div>
-</div>
-
-<!-- SEARCH BAR -->
-<div class="card">
-  <div class="card-header">Filter</div>
-  <div class="card-body">
-    {{#getJsonContext '[
-      {
-        "type": "text",
-        "label": "Date",
-        "name": "dateFilter",
-        "placeholder": "23 Apr 2010"
-      },
-      {
-        "type": "text",
-        "label": "Time",
-        "name": "timeFilter",
-        "placeholder": "18:00"
-      },
-      {
-        "type": "text",
-        "label": "Origin",
-        "name": "originFilter",
-        "placeholder": "Sunteck City"
-      },
-      {
-        "type": "text",
-        "label": "Destination",
-        "name": "destinationFilter",
-        "placeholder": "Cinnamon College"
-      }
-    ]'}}
-      {{> search-bar buttonName='Filter' name='ConfirmedRides' getRoute='/rider' searchFields=this}}
-    {{/getJsonContext}}
+  <div class="ml-auto">
+    <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#filter">Filter Results</button>
   </div>
 </div>
 
+<div id="filter" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+
+      {{#getJsonContext '[
+          {
+            "type": "text",
+            "label": "Date",
+            "name": "dateFilter",
+            "placeholder": "23 Apr 2010"
+          },
+          {
+            "type": "text",
+            "label": "Time",
+            "name": "timeFilter",
+            "placeholder": "18:00"
+          },
+          {
+            "type": "text",
+            "label": "Origin",
+            "name": "originFilter",
+            "placeholder": "Sunteck City"
+          },
+          {
+            "type": "text",
+            "label": "Destination",
+            "name": "destinationFilter",
+            "placeholder": "Cinnamon College"
+          }
+        ]'}}
+      {{> search-bar buttonName='Filter' name='ConfirmedRides' getRoute='/rider' searchFields=this}}
+      {{/getJsonContext}}
+    </div>
+  </div>
+</div>
+
+
+<hr />
 
 <!-- CONFIRMED RIDES -->
 
@@ -145,8 +154,9 @@
                 </div>
               </div>
             </form>
-
-            <form class="mt-2" action="/bidding/delete" method="post">
+          </div>
+          <div class="card-footer p-0">
+            <form class="" action="/bidding/delete" method="post">
               <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
               <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
               <input type="text" name="date_field" value="{{this.date}}" hidden="true">
