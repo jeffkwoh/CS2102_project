@@ -9,35 +9,44 @@
   </div>
 </div>
 
+<br />
+
 <!-- SEARCH BAR -->
-{{#getJsonContext '[
-  {
-    "type": "text",
-    "label": "Date",
-    "name": "dateFilter",
-    "placeholder": "23 Apr 2010"
-  },
-  {
-    "type": "text",
-    "label": "Time",
-    "name": "timeFilter",
-    "placeholder": "18:00"
-  },
-  {
-    "type": "text",
-    "label": "Origin",
-    "name": "originFilter",
-    "placeholder": "Sunteck City"
-  },
-  {
-    "type": "text",
-    "label": "Destination",
-    "name": "destinationFilter",
-    "placeholder": "Cinnamon College"
-  }
-]'}}
-  {{> search-bar  name='ConfirmedRides' getRoute='/rider' searchFields=this}}
-{{/getJsonContext}}
+<div class="card">
+  <div class="card-header">Filter</div>
+  <div class="card-body">
+    {{#getJsonContext '[
+      {
+        "type": "text",
+        "label": "Date",
+        "name": "dateFilter",
+        "placeholder": "23 Apr 2010"
+      },
+      {
+        "type": "text",
+        "label": "Time",
+        "name": "timeFilter",
+        "placeholder": "18:00"
+      },
+      {
+        "type": "text",
+        "label": "Origin",
+        "name": "originFilter",
+        "placeholder": "Sunteck City"
+      },
+      {
+        "type": "text",
+        "label": "Destination",
+        "name": "destinationFilter",
+        "placeholder": "Cinnamon College"
+      }
+    ]'}}
+      {{> search-bar buttonName='Filter' name='ConfirmedRides' getRoute='/rider' searchFields=this}}
+    {{/getJsonContext}}
+  </div>
+</div>
+
+<hr />
 
 <!-- CONFIRMED RIDES -->
 
