@@ -22,7 +22,29 @@ router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next)
     riderId,
     db.exposedInstance
   )
+
+  makeReadable(availableRides);
+
   res.render('rider', { riderId, confirmedRides, biddedRides, availableRides })
 })
+
+function makeReadable(rides) {
+  var len = rides.length;
+  for (var i = 0; i < len; i++) {
+    //console.log(JSON.stringify(rides[i].date))
+    rides[i].date = parseDate(rides[i].date)
+    rides[i].time = parseTime(rides[i].time)
+    console.log(rides[i].date + " -- " + rides[i].time)
+  }
+}
+
+function parseDate(date) {
+  var temp = date.toString().substring(0,10);
+  return temp.substring(0,3) + "," + temp.substring(3,10)
+}
+
+function parseTime(time) {
+  return time.substring(0,5);
+}
 
 module.exports = router
