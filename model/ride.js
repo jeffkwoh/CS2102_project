@@ -118,7 +118,7 @@ const listConfirmedRidesForDriver = async (user, db) => {
   return db
     .any(
       `
-    SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
+    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car FROM advertisedCarRide a
     NATURAL JOIN bid b
     WHERE b.bidStatus = 'successful'
       AND a.driver = $1;
@@ -141,13 +141,13 @@ const listPendingRidesForDriver = async (user, db) => {
   return db
     .any(
       `
-    SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
+    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car FROM advertisedCarRide a
     LEFT OUTER JOIN bid b ON a.driver = b.driver
       AND a.date = b.date
       AND a.time = b.time
       AND a.origin = b.origin
       AND a.destination = b.destination
-    WHERE a.driver = $1 AND b.bidStatus LIKE '%pending%'
+    WHERE a.driver = $1 AND (b.bidStatus LIKE '%pending%' OR b.bidStatus IS NULL)
     GROUP BY a.driver, a.date, a.time, a.origin, a.destination;
     `,
       [user]

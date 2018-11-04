@@ -109,14 +109,38 @@ const listPendingBidsForUser = async (user, db) => {
   return db
     .any(
       `
-    SELECT b.driver, b.date, b.time, b.origin, b.destination, b.bidAmount
-    FROM bid b
-    WHERE b.bidder = $1
-    AND b.bidStatus = 'pending';`,
+    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car, b.bidAmount, b.bidStatus
+    FROM advertisedCarRide a
+    NATURAL JOIN bid b
+    WHERE b.bidStatus = 'pending'
+    AND b.bidder = $1;`,
       [user]
     )
     .then(result => {
       console.log(`List bids success:\n${JSON.stringify(result)}`)
+      // success;
+      return result
+    })
+    .catch(error => {
+      console.log(error)
+      // error;
+    })
+}
+
+// List all bids a user has made
+const listUnsuccessfulBidsForUser = async (user, db) => {
+  return db
+    .any(
+      `
+    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car, b.bidStatus
+    FROM advertisedCarRide a
+    NATURAL JOIN bid b
+    WHERE b.bidStatus = 'unsuccessful'
+    AND b.bidder = $1;`,
+      [user]
+    )
+    .then(result => {
+      console.log(`List Unsuccessful Bids:\n${JSON.stringify(result)}`)
       // success;
       return result
     })
@@ -198,6 +222,7 @@ module.exports = {
   updateUserBid,
   listPendingBidsForUser,
   listBidsForRide,
+  listUnsuccessfulBidsForUser,
   deleteUserBid,
   updateBidStatus
 }
