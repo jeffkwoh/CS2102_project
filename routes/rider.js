@@ -22,11 +22,19 @@ router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next)
     riderId,
     db.exposedInstance
   )
+
   const availableRides = await db.ride.listAvailableAdvertisedCarRidesForRider(
     riderId,
     db.exposedInstance
   )
-  res.render('rider', { riderId, confirmedRides,unsuccessfulBiddedRides, biddedRides, availableRides })
+
+  const numUpcomingRides = await db.ride.countUpcomingRides(
+    riderId,
+    db.exposedInstance
+  )
+
+  res.render('rider', { riderId, confirmedRides,unsuccessfulBiddedRides,
+    biddedRides, availableRides, numUpcomingRides})
 })
 
 module.exports = router

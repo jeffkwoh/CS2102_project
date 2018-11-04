@@ -127,6 +127,30 @@ const listPendingBidsForUser = async (user, db) => {
     })
 }
 
+// Return the current highest bid for the ride
+const highestCurrentBid = async (driver, date, time, origin, destination, db) => {
+  return db
+    .any(
+      `
+      SELECT MAX(bidAmount)
+      FROM bid
+      WHERE driver = $1
+      AND date = $2
+      AND time = $3
+      AND origin = $4
+      AND destination = $5;`,
+      [driver, new Date(date), time, origin, destination]
+    )
+    .then(result => {
+      console.log('success!')
+      // success;
+    })
+    .catch(error => {
+      console.log(error)
+      // error;
+    })
+}
+
 // List all bids a user has made
 const listUnsuccessfulBidsForUser = async (user, db) => {
   return db
@@ -192,7 +216,6 @@ const updateBidStatus = async (
     })
 }
 
-
 const listBidsForRide = async (driver, date, time, origin, destination, db) => {
   return db
     .any(
@@ -222,6 +245,7 @@ module.exports = {
   updateUserBid,
   listPendingBidsForUser,
   listBidsForRide,
+  highestCurrentBid,
   listUnsuccessfulBidsForUser,
   deleteUserBid,
   updateBidStatus

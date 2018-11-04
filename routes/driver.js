@@ -18,7 +18,13 @@ router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next)
     driverId,
     db.exposedInstance
   )
-  res.render('driver', { driverId, confirmedRides, pendingRides })
+
+  const ownedCars = await db.ride.listCarsUserOwns(
+    driverId,
+    db.exposedInstance
+  )
+
+  res.render('driver', { driverId, confirmedRides, pendingRides, ownedCars })
 })
 
 /* POST Selected Bid */
@@ -40,16 +46,27 @@ router.post('/updateBidStatus', async function(req, res, next) {
     db.exposedInstance
   )
 
-  const confirmedRides = await db.ride.listConfirmedRidesForDriver(
-    driverId,
-    db.exposedInstance
-  )
-  const pendingRides = await db.ride.listPendingRidesForDriver(
-    driverId,
+  res.redirect('/driver')
+})
+
+/* POST Car */
+router.post('/addCar', async function(req, res, next) {
+  const owner_field = req.body.owner_field
+  const licensePlate_field = req.body.licensePlate_field
+  const carBrand_field = req.body.carBrand_field
+  const carModel_field = req.body.carModel_field
+  const numAvailSeats_field = req.body.numAvailSeats_field
+
+  await db.car.addCarToUser(
+    owner_field,
+    licensePlate_field,
+    carBrand_field,
+    carModel_field,
+    numAvailSeats_field,
     db.exposedInstance
   )
 
-  res.render('driver', { driverId, confirmedRides, pendingRides })
+  res.redirect('/driver')
 })
 
 module.exports = router

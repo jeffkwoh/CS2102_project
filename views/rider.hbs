@@ -31,12 +31,6 @@
     <td> Car </td>
   </tr>
   {{#each confirmedRides}}
-
-
-
-
-
-
     <tr>
       <td>{{this.driver}}</td>
       <td>{{this.date}}</td>
@@ -117,6 +111,9 @@
 </table>
 
 <h2>Upcoming rides</h2>
+
+<h3>Total Number of Available Rides for Bidding:
+{{#each numUpcomingRides}}{{ this.result }}{{/each}}</h3>
 <table>
   <tr>
     <td> Driver </td>
