@@ -91,6 +91,7 @@ async function createTriggers() {
 				(SELECT COUNT(*)
 					FROM bid
 					WHERE bidStatus = 'successful'
+					AND driver = NEW.driver
 					AND date = NEW.date
 					AND time = NEW.time
 					AND origin = NEW.origin
@@ -861,7 +862,7 @@ async function populateDb() {
       db
   )
 
-  await bid.setBidAsSuccessful(
+  await bid.updateBidStatus(
       '16',
       '2',
       '2010-03-20',

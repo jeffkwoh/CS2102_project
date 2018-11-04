@@ -18,16 +18,21 @@ router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next)
     riderId,
     db.exposedInstance
   )
+  const unsuccessfulBiddedRides = await db.bid.listUnsuccessfulBidsForUser(
+    riderId,
+    db.exposedInstance
+  )
   const availableRides = await db.ride.listAvailableAdvertisedCarRidesForRider(
     riderId,
     db.exposedInstance
   )
 
-  makeReadable(confirmedRides);
-  makeReadable(biddedRides);
-  makeReadable(availableRides);
+  makeReadable(confirmedRides)
+  makeReadable(biddedRides)
+  makeReadable(unsuccessfulBiddedRides)
+  makeReadable(availableRides)
 
-  res.render('rider', { riderId, confirmedRides, biddedRides, availableRides })
+  res.render('rider', { riderId, confirmedRides, unsuccessfulBiddedRides, biddedRides, availableRides })
 })
 
 function makeReadable(rides) {

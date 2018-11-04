@@ -48,13 +48,18 @@
 
 <!-- CONFIRMED RIDES -->
 
-<div class="d-flex justify-content-start align-items-baseline">
-  <div class="p-2">
-    <h3> Confirmed Rides </h3>
+<div class="d-flex justify-content-start align-items-center">
+  <div class="">
+    <h3>Confirmed Rides</h3> 
+  </div>
+  <div class="">
+    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseUnsuccessfulBids">
+      | show unsuccessful bids
+    </button>
   </div>
 </div>
 
-
+<!--
 <table>
   <tr>
     <td> Driver </td>
@@ -82,6 +87,7 @@
     </tr>
   {{/each}}
 </table>
+-->
 
 <div class="row">
   {{#if confirmedRides}}
@@ -89,27 +95,11 @@
     {{#each confirmedRides}}
       <div class="col-sm-6 col-md-4 mb-4">
         <div class="card border-success">
-          <form action="/bidding/create" method="post">
-            <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
-            <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
-            <input type="text" name="date_field" value="{{this.date}}" hidden="true">
-            <input type="text" name="time_field" value="{{this.time}}" hidden="true">
-            <input type="text" name="origin_field" value="{{this.origin}}" hidden="true">
-            <input type="text" name="destination_field" value="{{this.destination}}" hidden="true">
-
-            <div class="card-body">
-              <h5 class="card-title"><b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
-              <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
-
-              <div class="input-group mt-3">
-                <input type="number" class="form-control" placeholder="Place bid" name="bid_amount_field">
-                <div class="input-group-append">
-                  <button class="btn btn-outline-secondary" type="submit">Bid</button>
-                </div>
-              </div>
-
-            </div>
-          </form>
+          <div class="card-body">
+            <h5 class="card-title">{{this.i}}) <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
+            <h4 class="text-success">{{this.car}}</h4>
+          </div>
         </div>
       </div>
     {{/each}}
@@ -127,7 +117,33 @@
 </div>
 
 
+<div class="collapse" id="collapseUnsuccessfulBids">
+<div class="row">
+  {{#if confirmedRides}}
+    {{#each confirmedRides}}
+      <div class="col-sm-6 col-md-4 mb-4">
+        <div class="card border-danger">
+          <div class="card-body">
+            <h5 class="card-title">{{this.i}}) <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
+            <h4 class="text-danger">UNSUCCESSFUL</h4>
+          </div>
+        </div>
+      </div>
+    {{/each}}
 
+  {{else}}
+    <div class="col-12">
+      <div class="pl-4 pb-4 d-flex justify-content-start align-items-baseline">
+        <div class="text-muted">
+          No unsuccessful bids
+        </div>
+      </div>
+    </div>
+  {{/if}}
+  
+</div>
+</div>
 
 
 
@@ -151,6 +167,7 @@
     <td> Origin </td>
     <td> Destination </td>
     <td> Car </td>
+    <td> Bid Status </td>
     <td> Current Bid </td>
   </tr>
   {{#each biddedRides}}
@@ -161,6 +178,7 @@
       <td>{{this.origin}}</td>
       <td>{{this.destination}}</td>
       <td>{{this.car}}</td>
+      <td>{{this.bidstatus}}</td>
       <td>{{this.bidamount}}</td>
       <td>
 
@@ -170,17 +188,43 @@
         </form>
       </td>
       <td>
-
+        <form action="/bidding/delete" method="post">
+          <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
+          <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
+          <input type="text" name="date_field" value="{{this.date}}" hidden="true">
+          <input type="text" name="time_field" value="{{this.time}}" hidden="true">
+          <input type="text" name="origin_field" value="{{this.origin}}" hidden="true">
+          <input type="text" name="destination_field" value="{{this.destination}}" hidden="true">
+          <input type="submit" value="Delete bid">
+        </form>
       </td>
     </tr>
   {{/each}}
+
+  {{#each unsuccessfulBiddedRides}}
+    <tr>
+      <td>{{this.driver}}</td>
+      <td>{{this.date}}</td>
+      <td>{{this.time}}</td>
+      <td>{{this.origin}}</td>
+      <td>{{this.destination}}</td>
+      <td>{{this.car}}</td>
+      <td>{{this.bidstatus}}</td>
+      <td></td>
+    </tr>
+    {{/each}}
+</table>
+
+      </td>
+    </tr>
+  
 </table>
 -->
 
 
 
 
-<div class="d-flex justify-content-start align-items-baseline mt-4">
+<div class="d-flex justify-content-start align-items-baseline mt-0">
   <div class="p-2">
     <h3>Pending Bids</h3>
   </div>
@@ -194,7 +238,7 @@
         <div class="card border-primary">
           <div class="card-body">
             <h5 class="card-title">{{this.i}}) <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} <span class="text-muted">at</span> {{this.time_readable}}</h6>
+            <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
             <form action="/bidding/update" method="post">
               <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
               <input type="number" name="driver_field" value="{{this.driver}}" hidden="true">
@@ -231,7 +275,7 @@
     <div class="col-12">
       <div class="pl-4 pb-4 d-flex justify-content-start align-items-baseline">
         <div class="text-muted">
-          No pending rides
+          No pending bids
         </div>
       </div>
     </div>
@@ -283,7 +327,7 @@
             <input type="text" name="destination_field" value="{{this.destination}}" hidden="true">
 
             <div class="card-body">
-              <h5 class="card-title"><b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
+              <h5 class="card-title">{{this.i}}) <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
               <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
 
               <div class="input-group mt-3">
