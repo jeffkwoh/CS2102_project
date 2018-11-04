@@ -22,7 +22,7 @@
 </table>
 
 <hr />
-
+<h3>Current Highest Bid: {{#each highestBid }}{{this.result}}{{/each}}</h3>
 <table>
   <tr>
     <td> Bidder ID </td>
@@ -32,7 +32,7 @@
     <tr>
       <td>{{this.bidder}}</td>
       <td>{{this.bidamount}}</td>
-        <td>{{this.date}}</td>
+      <td>{{this.date}}</td>
       <td>
         <form action="/driver/updateBidStatus" method="post">
           <input id="bidder_user_id" type="number" name="bidder_user_id" value="{{this.bidder}}" hidden="true">

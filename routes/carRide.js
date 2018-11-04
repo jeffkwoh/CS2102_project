@@ -23,7 +23,15 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
   )
   const ride = { bids, driver, date, time, origin, destination }
   console.log(bids)
-  res.render('carRide', { ride, bids })
+  const highestBid = await db.bid.highestCurrentBid(
+    driver,
+    date,
+    time,
+    origin,
+    destination,
+    db.exposedInstance
+  )
+  res.render('carRide', { ride, bids, highestBid })
 })
 
 /**
