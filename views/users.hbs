@@ -43,6 +43,12 @@
         <input type="submit" value="Rider">
       </form>
     </td>
+    <td>
+      <form action="/users/delete" method="post">
+        <input id="rider_user_id" type="number" name="user_id_field" value="{{this.userid}}" hidden="true">
+        <input type="submit" value="Delete">
+      </form>
+    </td>
   </tr>
 {{/each}}
 </table>

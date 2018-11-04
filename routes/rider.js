@@ -28,12 +28,16 @@ router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next)
     filters,
     db.exposedInstance
   )
+  const unsuccessfulBiddedRides = await db.bid.listUnsuccessfulBidsForUser(
+    riderId,
+    db.exposedInstance
+  )
   const availableRides = await db.ride.listAvailableAdvertisedCarRidesForRider(
     riderId,
     filters,
     db.exposedInstance
   )
-  res.render('rider', { riderId, confirmedRides, biddedRides, availableRides })
+  res.render('rider', { riderId, confirmedRides,unsuccessfulBiddedRides, biddedRides, availableRides })
 })
 
 module.exports = router

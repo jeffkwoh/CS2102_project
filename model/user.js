@@ -79,6 +79,58 @@ const addCarToUser = async (
     })
 }
 
+// Deletes a car froma a specific user
+const delCarFromUser = async (
+  licensePlate,
+  db
+) => {
+  return db
+    .none(
+      `
+        DELETE FROM userOwnsACar
+        WHERE licensePlate = $1;
+      `,
+      [licensePlate]
+    )
+    .then(() => {
+      console.log('Delete Car success!')
+      // success;
+    })
+    .catch(error => {
+      console.log(error)
+      // error;
+    })
+}
+
+// Deletes a user account
+const delUserAcct = async (
+  userID,
+  db
+) => {
+  return db
+    .none(
+      `
+        DELETE FROM bid
+        WHERE bidder = $1 OR driver = $1;
+        DELETE FROM advertisedCarRide
+        WHERE driver = $1;
+        DELETE FROM userOwnsACar
+        WHERE owner = $1;
+        DELETE FROM appUserAccount
+        WHERE userId = $1;
+      `,
+      [userID]
+    )
+    .then(() => {
+      console.log('Delete User success!')
+      // success;
+    })
+    .catch(error => {
+      console.log(error)
+      // error;
+    })
+}
+
 // listCarUserOwns(arg1, arg2).then((res) => ...) use case
 // lists all the cars owned by a user
 const listCarUserOwns = async (owner, db) => {
@@ -128,6 +180,7 @@ module.exports = {
   createUserAppAccount,
   listUserAppAccount,
   addCarToUser,
+  delUserAcct,
   listCarUserOwns,
   getValidUserid
 }
