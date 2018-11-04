@@ -39,16 +39,17 @@ async function initDb() {
     car VARCHAR(10) REFERENCES userOwnsAcar(licensePlate),
     date DATE NOT NULL CHECK ((date > current_date) OR (date = current_date AND time < current_time)),
     time TIME NOT NULL,
-    origin VARCHAR(128) NOT NULL CHECK(origin <> destination),
+    origin VARCHAR(128) NOT NULL,
     destination VARCHAR(128) NOT NULL,
-    PRIMARY KEY (driver, date, time, origin, destination)
+    PRIMARY KEY (driver, date, time, origin, destination),
+    CHECK(origin <> destination)
   );
 
   CREATE TABLE IF NOT EXISTS bid (
     bidStatus CHAR(12) CHECK(bidStatus = 'pending' OR bidStatus ='unsuccessful'
       OR bidStatus = 'successful') NOT NULL,
     bidAmount DECIMAL(6,2) NOT NULL CHECK (bidAmount >= 0),
-    bidder INTEGER NOT NULL CHECK (bidder <> driver),
+    bidder INTEGER NOT NULL,
     driver INTEGER NOT NULL,
     date DATE NOT NULL,
     time TIME NOT NULL,
@@ -57,7 +58,8 @@ async function initDb() {
     FOREIGN KEY(bidder) REFERENCES appUserAccount(userID),
     FOREIGN KEY(driver, date, time, origin, destination)
     REFERENCES advertisedCarRide(driver, date, time, origin, destination),
-    PRIMARY KEY(bidder, driver, date, time, origin, destination)
+    PRIMARY KEY(bidder, driver, date, time, origin, destination),
+    CHECK (bidder <> driver)
   );
 
   COMMIT;`
@@ -96,7 +98,7 @@ async function createFunctionsAndTriggers() {
     WHERE bidstatus = 'pending'
     AND (date < currdate
     OR (date = currdate
-    AND time < currtime));
+    AND time > currtime));
   END;$overdue_bids$ 
   LANGUAGE plpgsql;
 
