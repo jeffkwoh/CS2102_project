@@ -811,6 +811,16 @@ async function populateDb() {
       db
   )
   await bid.createUserBid(
+      '16',
+      '123',
+      '2',
+      '2010-03-20',
+      '15:00:00',
+      'PlaceC1',
+      'PlaceC2',
+      db
+  )
+  await bid.createUserBid(
       '17',
       '352',
       '19',
@@ -848,6 +858,16 @@ async function populateDb() {
       '17:00:00',
       'PlaceS1',
       'PlaceY2',
+      db
+  )
+
+  await bid.setBidAsSuccessful(
+      '16',
+      '2',
+      '2010-03-20',
+      '15:00:00',
+      'PlaceC1',
+      'PlaceC2',
       db
   )
 
