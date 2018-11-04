@@ -68,6 +68,49 @@
 </div>
 
 
+<hr />
+<h2> List of Owned Cars </h2>
+<table>
+  <tr>
+    <td> License Plate </td>
+    <td> Car Brand </td>
+    <td> Car Model </td>
+    <td> Number Of Seats </td>
+  </tr>
+  {{#each ownedCars}}
+    <tr>
+      <td>{{this.licenseplate}}</td>
+      <td>{{this.carbrand}}</td>
+      <td>{{this.carmodel}}</td>
+      <td>{{this.numseats}}</td>
+    </tr>
+  {{/each}}
+</table>
+
+<hr />
+
+<h2> Add a Car </h2>
+
+<form action="/driver/addCar" method="post">
+    <input type="number" name="owner_field" value="{{driverId}}" hidden="true">
+
+    <label for="date">License Plate: </label>
+    <input id="date" type="text" name="licensePlate_field" value="SLM5370D">
+
+    <label for="carBrand">Car Brand: </label>
+    <input id="carBrand" type="text" name="carBrand_field" value="BMW">
+
+    <label for="carModel">Car Model: </label>
+    <input id="carModel" type="text" name="carModel_field" value="530e iPerformance">
+
+    <label for="numAvailSeats">Number Of Available Seats: </label>
+    <input id="numAvailSeats" type="number" name="numAvailSeats_field" value="3">
+
+    <input type="submit" value="OK">
+</form>
+
+<hr />
+
 <h2> Create Car Ride </h2>
 <form action="/rides/create" method="post">
     <input type="number" name="driver_field" value="{{driverId}}" hidden="true">
@@ -138,7 +181,7 @@
         <input id="time_id" type="text" name="time" value="{{this.time}}" hidden="true">
         <input id="origin_id" type="text" name="origin" value="{{this.origin}}" hidden="true">
         <input id="destination_id" type="text" name="destination" value="{{this.destination}}" hidden="true">
-        <input type="submit" value="Edit">
+        <input type="submit" value="View Bids">
       </form>
     </td>
     <td>

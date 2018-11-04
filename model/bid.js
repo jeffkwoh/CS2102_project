@@ -104,20 +104,53 @@ const deleteUserBid = async (
     })
 }
 
-// List all bids a user has made
-const listPendingBidsForUser = async (user, db) => {
+/*
+ * List all bids a user has made.
+ *
+ * @param filters An object containing specific filter options. @see rider router
+ */
+const listPendingBidsForUser = async (user, filters, db) => {
   return db
     .any(
       `
     SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car, b.bidAmount, b.bidStatus
     FROM advertisedCarRide a
     NATURAL JOIN bid b
-    WHERE b.bidStatus = 'pending'
-    AND b.bidder = $1;`,
-      [user]
+    WHERE b.bidder = $1
+    AND b.bidStatus = 'pending'
+    AND TO_CHAR(CAST(b.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
+    AND CAST(b.time as VARCHAR(25)) LIKE '%${filters.time}%'
+    AND b.origin LIKE '%${filters.origin}%'
+    AND b.destination LIKE '%${filters.destination}%';
+      `, [user]
     )
     .then(result => {
       console.log(`List bids success:\n${JSON.stringify(result)}`)
+      // success;
+      return result
+    })
+    .catch(error => {
+      console.log(error)
+      // error;
+    })
+}
+
+// Return the current highest bid for the ride
+const highestCurrentBid = async (driver, date, time, origin, destination, db) => {
+  return db
+    .any(
+      `
+      SELECT MAX(b.bidAmount) AS result
+      FROM bid b
+      WHERE b.driver = $1
+      AND b.date = $2
+      AND b.time = $3
+      AND b.origin = $4
+      AND b.destination = $5;`,
+      [driver, new Date(date), time, origin, destination]
+    )
+    .then(result => {
+      console.log('success!')
       // success;
       return result
     })
@@ -213,6 +246,7 @@ module.exports = {
   updateUserBid,
   listPendingBidsForUser,
   listBidsForRide,
+  highestCurrentBid,
   listUnsuccessfulBidsForUser,
   deleteUserBid,
   updateBidStatus

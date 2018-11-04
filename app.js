@@ -45,6 +45,10 @@ filenames.forEach(function (filename) {
   var template = fs.readFileSync(partialsDir + '/' + filename, 'utf8');
   hbs.registerPartial(name, template);
 });
+// adding JSON helper
+hbs.registerHelper('getJsonContext', function(data, options) {
+  return options.fn(JSON.parse(data));
+});
 
 
 app.use(logger('dev'))
