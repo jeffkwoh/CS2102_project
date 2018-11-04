@@ -17,8 +17,8 @@ async function initDb() {
 
   CREATE TABLE IF NOT EXISTS appUserAccount (
     userID SERIAL PRIMARY KEY,
-    email VARCHAR(128) UNIQUE NOT NULL CHECK (email LIKE '_%@__%.__%')
-    contactNumber VARCHAR(15) NOT NULL CONSTRAINT valid_contactNumber CHECK (contactNumber > 9999999 AND contactNumber < 100000000),
+    email VARCHAR(128) UNIQUE NOT NULL CHECK (email LIKE '%_@_%.__%'),
+    contactNumber INTEGER NOT NULL CONSTRAINT valid_contactNumber CHECK (contactNumber > 9999999 AND contactNumber < 100000000),
     name VARCHAR(64) NOT NULL,
     password VARCHAR(32) NOT NULL
   );
