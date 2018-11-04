@@ -95,7 +95,7 @@ app.use(function(err, req, res, next) {
 async function dbDriver() {
   await db.deinitDb()
   await db.initDb()
-  await db.createTriggers()
+  await db.createFunctionsAndTriggers()
   await db.populateDb()
 }
 dbDriver()

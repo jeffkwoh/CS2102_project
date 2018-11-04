@@ -73,13 +73,30 @@ async function initDb() {
 }
 
 /**
- * Initialises database, with all the necessary tables specified in the database
- * design of this application.
+ * Creates all stored functions, triggers and assertions.
  */
-async function createTriggers() {
+async function createFunctionsAndTriggers() {
   const query = `
   BEGIN;
   
+  CREATE OR REPLACE FUNCTION get_available_car_seats(givenDate DATE, 
+													givenDriver INTEGER, 
+													givenTime TIME, 
+													givenOrigin VARCHAR, 
+													givenDestination VARCHAR) 
+													RETURNS INTEGER AS 
+	$n_bid_success$				
+	SELECT uCar.numSeats
+	FROM advertisedCarRide aCar, userOwnsACar uCar
+		WHERE aCar.date = givenDate
+		AND aCar.driver = givenDriver
+		AND aCar.time = givenTime
+		AND aCar.origin = givenOrigin
+		AND aCar.destination = givenDestination
+		AND aCar.car = uCar.licensePlate;	
+	$n_bid_success$ 
+	LANGUAGE sql;
+		
   CREATE OR REPLACE FUNCTION process_bid_success() RETURNS TRIGGER AS $bid_success$
     BEGIN
         --
@@ -98,15 +115,7 @@ async function createTriggers() {
 					AND destination = NEW.destination
 				) 
 					>= 
-				(SELECT numSeats
-					FROM advertisedCarRide aCar, userOwnsACar uCar
-					WHERE aCar.date = NEW.date
-					AND aCar.driver = NEW.driver
-					AND aCar.time = NEW.time
-					AND aCar.origin = NEW.origin
-					AND aCar.destination = NEW.destination
-					AND aCar.car = uCar.licensePlate
-				)
+        get_available_car_seats(NEW.date, NEW.driver, NEW.time, NEW.origin, NEW.destination)
 			) THEN
 			
 			UPDATE bid
@@ -128,10 +137,47 @@ async function createTriggers() {
     VOLATILE
     PARALLEL UNSAFE;
 
-    -- Trigger on INSERT and UPDATE
-    CREATE TRIGGER bid_success
-	    AFTER INSERT OR UPDATE ON bid
-		  FOR EACH ROW EXECUTE PROCEDURE process_bid_success();
+  -- Trigger to ensure that once the max amount of available bids are made, the
+  -- rest of the pending bids are automatically made unsuccessful.
+  CREATE TRIGGER bid_success
+    AFTER INSERT OR UPDATE ON bid
+    FOR EACH ROW EXECUTE PROCEDURE process_bid_success();
+	
+	 CREATE OR REPLACE FUNCTION assert_number_of_bid_success() RETURNS TRIGGER AS $n_bid_success$
+		BEGIN
+			--
+			-- Forces a rollback on the whole statement if it determines that it results in
+			-- more successful bids than available seats for car rides.
+			--
+
+			IF ((SELECT MAX(c.num) FROM
+				(SELECT COUNT(*) AS num
+					FROM bid
+					WHERE bidStatus = 'successful'
+					AND driver = NEW.driver
+					AND date = NEW.date
+					AND time = NEW.time
+					AND origin = NEW.origin
+					AND destination = NEW.destination
+				 GROUP BY date, time, origin, destination, driver
+				) AS c)
+					>
+        get_available_car_seats(NEW.date, NEW.driver, NEW.time, NEW.origin, NEW.destination)
+			) THEN
+
+				RAISE EXCEPTION 'Number of successful car ride bids cannot except number of available car seats.';
+
+			END IF;
+
+			RETURN NULL; -- result is ignored since this is an AFTER trigger
+		END;
+	$n_bid_success$ LANGUAGE plpgsql;
+ 
+  -- Trigger to ensure that once the max amount of available bids are made for a
+  -- car ride, no more bids can be made successful for that car ride. 
+  CREATE TRIGGER assert_number_of_successful_bids_not_more_than_number_of_seats
+	AFTER INSERT OR UPDATE ON bid
+		FOR EACH ROW EXECUTE PROCEDURE assert_number_of_bid_success();
 
   COMMIT;`
 
@@ -139,7 +185,7 @@ async function createTriggers() {
   .any(query)
   .then(() => {
     // success;
-    console.log('Created triggers!')
+    console.log('Created functions, triggers and assertions!')
   })
   .catch(error => {
     // error;
@@ -858,7 +904,7 @@ async function populateDb() {
 /* DB helpers to be exported */
 module.exports = {
   initDb,
-  createTriggers,
+  createFunctionsAndTriggers,
   deinitDb,
   populateDb,
   user,
