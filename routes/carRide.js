@@ -31,7 +31,6 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
     destination,
     db.exposedInstance
   )
-  console.log("HIGHEST BID: " + highestBid)
   res.render('carRide', { ride, bids, highestBid })
 })
 

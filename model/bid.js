@@ -132,18 +132,19 @@ const highestCurrentBid = async (driver, date, time, origin, destination, db) =>
   return db
     .any(
       `
-      SELECT MAX(bidAmount)
-      FROM bid
-      WHERE driver = $1
-      AND date = $2
-      AND time = $3
-      AND origin = $4
-      AND destination = $5;`,
+      SELECT MAX(b.bidAmount) AS result
+      FROM bid b
+      WHERE b.driver = $1
+      AND b.date = $2
+      AND b.time = $3
+      AND b.origin = $4
+      AND b.destination = $5;`,
       [driver, new Date(date), time, origin, destination]
     )
     .then(result => {
       console.log('success!')
       // success;
+      return result
     })
     .catch(error => {
       console.log(error)
