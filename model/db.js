@@ -66,6 +66,8 @@ async function initDb() {
   -- Convenience view to be used in one of the queries to showcase use of views
   -- Other places where this view could be used but are not used is deliberate
   -- to showcase other uses of sql
+  -- TODO: Rename to reflect that this does not include car rides without
+  -- successful bids as intended
   --
   CREATE VIEW car_rides_with_capacity 
   (driver, date, time, origin, destination, maxcapacity, currcapacity) 
