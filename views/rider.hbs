@@ -5,7 +5,7 @@
     <h1> Ride </h1>
   </div>
   <div class="">
-    | or view as a <b> <a href="/driver/">driver</a></b>
+    | or view as a <a href="/driver/">driver</a>
   </div>
 </div>
 
@@ -96,7 +96,7 @@
       <div class="col-sm-6 col-md-4 mb-4">
         <div class="card border-success">
           <div class="card-body">
-            <h5 class="card-title">{{this.i}}) <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
+            <h5 class="card-title"><span class="badge badge-success">{{this.i}}</span> <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
             <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
             <h4 class="text-success">{{this.car}}</h4>
           </div>
@@ -124,7 +124,7 @@
       <div class="col-sm-6 col-md-4 mb-4">
         <div class="card border-danger">
           <div class="card-body">
-            <h5 class="card-title">{{this.i}}) <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
+            <h5 class="card-title"><span class="badge badge-danger">{{this.i}}</span> <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
             <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
             <h4 class="text-danger">UNSUCCESSFUL</h4>
           </div>
@@ -237,7 +237,7 @@
       <div class="col-md-6">
         <div class="card border-primary">
           <div class="card-body">
-            <h5 class="card-title">{{this.i}}) <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
+            <h5 class="card-title"><span class="badge badge-primary">{{this.i}}</span> <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
             <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
             <form action="/bidding/update" method="post">
               <input type="number" name="bidder_field" value="{{../riderId}}" hidden="true">
@@ -327,7 +327,7 @@
             <input type="text" name="destination_field" value="{{this.destination}}" hidden="true">
 
             <div class="card-body">
-              <h5 class="card-title">{{this.i}}) <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
+              <h5 class="card-title"><span class="badge badge-secondary">{{this.i}}</span> <b>{{this.origin}}</b> <span class="text-muted">to</span> <b>{{this.destination}}</b></h5>
               <h6 class="card-subtitle mb-2 text-muted">{{this.date_readable}} @ {{this.time_readable}}</h6>
 
               <div class="input-group mt-3">

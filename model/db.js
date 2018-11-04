@@ -281,6 +281,15 @@ async function populateDb() {
       'PlaceC2',
       db
   )
+    await ride.advertiseCarRide(
+      '2',
+      'SBB0000B',
+      '2010-03-21',
+      '15:00:00',
+      'PlaceC3',
+      'PlaceC4',
+      db
+  )
   await ride.advertiseCarRide(
       '4',
       'SDD0000D',
