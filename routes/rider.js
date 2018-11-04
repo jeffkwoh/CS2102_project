@@ -33,7 +33,7 @@ router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next)
 function makeReadable(rides) {
   var len = rides.length;
   for (var i = 0; i < len; i++) {
-    //console.log(JSON.stringify(rides[i].date))
+    rides[i].i = i + 1
     rides[i].date_readable = parseDate(rides[i].date)
     rides[i].time_readable = parseTime(rides[i].time)
   }
