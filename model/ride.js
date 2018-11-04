@@ -51,7 +51,7 @@ const listAvailableAdvertisedCarRidesForRider = async (user, filters, db) => {
     WHERE b.bidder = $1 OR b.bidStatus <> 'pending'
     GROUP BY b.driver, b.date, b.time, b.origin, b.destination;
     `
-      ,[user, filters.driverFilter, filters.dateFilter, filters.timeFilter, filters.originFilter, filters.destinationFilter]
+      ,[user]
     )
     .then(result => {
       console.log(`Retrived all upcoming car rides!`)
@@ -81,7 +81,7 @@ const listConfirmedRidesForRider = async (user, filters, db) => {
       AND b.origin LIKE '%${filters.origin}%'
       AND b.destination LIKE '%${filters.destination}%"'
     `,
-      [user, filters.bidStatusFilter, filters.bidAmountFilter, filters.bidderFilter, filters.driverFilter, filters.dateFilter, filters.timeFilter, filters.originFilter, filters.destinationFilter]
+      [user]
     )
     .then(result => {
       console.log(`Retrived all confirmed car rides for rider ${user}!`)
