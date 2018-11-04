@@ -8,13 +8,10 @@ router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next)
   const riderId = req.user
   console.log(req.query)
   const filters = {
-    driver: req.query.driverFilter || "",
     date: req.query.dateFilter || "",
     time: req.query.timeFilter || "",
     origin: req.query.originFilter || "",
-    destination: req.query.destinationFilter || "",
-    bidAmount: req.query.bidAmountFilter || "",
-    bidStatus: req.query.bidStatusFilter || ""
+    destination: req.query.destinationFilter || ""
   }
   console.log(filters)
   // fetch:
