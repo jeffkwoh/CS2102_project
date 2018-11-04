@@ -1,10 +1,13 @@
-<div class="panel">
+<div class="panel searchBar">
   <form id="{{name}}" action="{{postRoute}}" method="post">
-    {{#each searchFields}}
-      <div class="form-group">
-        <input type="{{this.type}}" name="{{this.name}}" class="form-control" id="input{{this.name}}{{../name}}" placeholder="{{this.placeholder}}">
-      </div>
-    {{/each}}
-    <button type="submit" class="btn btn-primary">Search</button>
+    <div class="form-group">
+      {{#each searchFields}}
+          <span class="mr-1">
+            <label>{{this.name}}</label>
+            <input type="{{this.type}}" name="{{this.name}}" id="input{{this.name}}{{../name}}" placeholder="{{this.placeholder}}">
+          </span>
+      {{/each}}
+      <button type="submit" class="btn btn-primary btn-sm">Search</button>
+    </div>
   </form>
 </div>
