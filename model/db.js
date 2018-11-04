@@ -171,60 +171,60 @@ async function deinitDb() {
 }
 
 async function populateDb() {
-  await user.createUserAppAccount('one@a.com', '98765432', 'one', 'one', db)
-  await user.createUserAppAccount('two@a.com', '88765432', 'two', 'two', db)
-  await user.createUserAppAccount('thr@a.com', '78765432', 'thr', 'thr', db)
-  await user.createUserAppAccount('fou@a.com', '68765432', 'fou', 'fou', db)
-  await user.createUserAppAccount('fiv@a.com', '58765432', 'fiv', 'fiv', db)
-  await user.createUserAppAccount('alpha@a.com', '98213212', 'six', 'six', db)
-  await user.createUserAppAccount('bravo@a.com', '95513212', 'sev', 'sev', db)
-  await user.createUserAppAccount('charlie@a.com', '94765432', 'eig', 'eig', db)
-  await user.createUserAppAccount('delta@a.com', '93765432', 'nin', 'nin', db)
-  await user.createUserAppAccount('echo@a.com', '92765432', 'ten', 'ten', db)
-  await user.createUserAppAccount('foxtrot@a.com', '88565432', 'ele', 'ele', db)
-  await user.createUserAppAccount('golf@a.com', '81165432', 'twe', 'twe', db)
-  await user.createUserAppAccount('hotel@a.com', '81155432', 'thir', 'thir', db)
+  await user.createUserAppAccount('one@a.com', '11765432', 'one', 'one_pw', db)
+  await user.createUserAppAccount('two@a.com', '88765432', 'two', 'two_pw', db)
+  await user.createUserAppAccount('thr@a.com', '78765432', 'thr', 'thr_pw', db)
+  await user.createUserAppAccount('fou@a.com', '68765432', 'fou', 'fou_pw', db)
+  await user.createUserAppAccount('fiv@a.com', '58765432', 'fiv', 'fiv_pw', db)
+  await user.createUserAppAccount('alpha@a.com', '98213212', 'six', 'six_pw', db)
+  await user.createUserAppAccount('bravo@a.com', '95513212', 'sev', 'sev_pw', db)
+  await user.createUserAppAccount('charlie@a.com', '94765432', 'eig', 'eig_pw', db)
+  await user.createUserAppAccount('delta@a.com', '93765432', 'nin', 'nin_pw', db)
+  await user.createUserAppAccount('echo@a.com', '92765432', 'ten', 'ten_pw', db)
+  await user.createUserAppAccount('foxtrot@a.com', '88565432', 'ele', 'ele_pw', db)
+  await user.createUserAppAccount('golf@a.com', '81165432', 'twe', 'twe_pw', db)
+  await user.createUserAppAccount('hotel@a.com', '81155432', 'thir', 'thir_pw', db)
   await user.createUserAppAccount(
       'india@a.com',
       '82335432',
       'fourt',
-      'fourt',
+      'fourt_pw',
       db
   )
   await user.createUserAppAccount(
       'juliett@a.com',
       '82565432',
       'fivt',
-      'fivt',
+      'fivt_pw',
       db
   )
-  await user.createUserAppAccount('kilo@a.com', '82869932', 'sixt', 'sixt', db)
+  await user.createUserAppAccount('kilo@a.com', '82869932', 'sixt', 'sixt_pw', db)
   await user.createUserAppAccount(
       'lima@a.com',
       '82865432',
       'sevent',
-      'sevent',
+      'sevent_pw',
       db
   )
   await user.createUserAppAccount(
       'mike@a.com',
       '82135432',
       'eighteen',
-      'eighteen',
+      'eighteen_pw',
       db
   )
   await user.createUserAppAccount(
       'november@a.com',
       '89005432',
       'ninet',
-      'ninet',
+      'ninet_pw',
       db
   )
   await user.createUserAppAccount(
       'oscar@a.com',
       '80754372',
       'twent',
-      'twent',
+      'twent_pw',
       db
   )
 
