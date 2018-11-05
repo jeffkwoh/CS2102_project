@@ -147,7 +147,8 @@ const highestCurrentBid = async (driver, date, time, origin, destination, db) =>
       AND b.date = $2
       AND b.time = $3
       AND b.origin = $4
-      AND b.destination = $5;`,
+      AND b.destination = $5
+      AND b.bidstatus = 'pending';`,
       [driver, new Date(date), time, origin, destination]
     )
     .then(result => {
@@ -219,7 +220,9 @@ const updateBidStatus = async (
     })
 }
 
-
+/*
+List bids available for driver to confirm
+ */
 const listBidsForRide = async (driver, date, time, origin, destination, db) => {
   return db
     .any(
@@ -231,6 +234,7 @@ const listBidsForRide = async (driver, date, time, origin, destination, db) => {
         AND b.time = $3
         AND b.origin = $4
         AND b.destination = $5
+        AND b.bidstatus = 'pending'
       ORDER BY b.bidAmount DESC;
       `,
       [driver, new Date(date), time, origin, destination]
