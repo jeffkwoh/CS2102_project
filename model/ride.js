@@ -212,6 +212,5 @@ module.exports = {
   listConfirmedRidesForDriver,
   listPendingRidesForDriver,
   listCarsUserOwns,
-  delAdvertisedRide,
   delAdvertisedRide
 }
