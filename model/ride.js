@@ -166,7 +166,7 @@ const listConfirmedRidesForDriver = async (user, db) => {
 }
 
 /**
- * List car rides that user will be a driver for, that are still pending.
+ * List car rides that user will be a driver for, still have available seats.
  */
 const listPendingRidesForDriver = async (user, db) => {
   return db
@@ -174,8 +174,16 @@ const listPendingRidesForDriver = async (user, db) => {
       `
       SELECT DISTINCT a.driver, a.date, a.time, a.origin, a.destination, a.car 
       FROM advertisedCarRide a, bid b
-      WHERE a.driver = $1
-      AND NOT EXISTS(
+      WHERE 
+      -- This ride is advertised by the driver
+      a.driver = $1 
+      -- This ride is not overdue
+      AND (a.date > current_date 
+           OR (a.date = current_date
+              AND a.time > current_time)
+          )
+      -- This ride has not reached maximum capacity
+      AND NOT EXISTS( 
         SELECT 1
         FROM car_rides_with_capacity c
         WHERE a.driver = c.driver
