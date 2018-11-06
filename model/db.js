@@ -61,6 +61,27 @@ async function initDb() {
     PRIMARY KEY(bidder, driver, date, time, origin, destination),
     CHECK (bidder <> driver)
   );
+  
+  --
+  -- Convenience view to be used in one of the queries to showcase use of views
+  -- Other places where this view could be used but are not used is deliberate
+  -- to showcase other uses of sql
+  -- TODO: Rename to reflect that this does not include car rides without
+  -- successful bids as intended
+  --
+  CREATE VIEW car_rides_with_capacity 
+  (driver, date, time, origin, destination, maxcapacity, currcapacity) 
+  AS SELECT b.driver, b.date, b.time, b.origin, b.destination ,uCar.numseats, count(*)
+	FROM bid b, advertisedCarRide aCar, userOwnsACar uCar
+	  WHERE b.bidstatus = 'successful'
+	  AND aCar.date = b.date
+	  AND aCar.driver = b.driver
+	  AND aCar.time = b.time
+	  AND aCar.origin = b.origin
+	  AND aCar.destination = b.destination
+	  AND aCar.car = uCar.licensePlate
+	  group by b.driver, b.date, b.time, b.origin, b.destination, uCar.numseats
+	  order by b.driver,b.date,b.time,b.origin,b.destination;  
 
   COMMIT;`
 
@@ -220,7 +241,8 @@ async function createFunctionsAndTriggers() {
 async function deinitDb() {
   const query = `
   BEGIN;
-
+  
+  DROP VIEW IF EXISTS car_rides_with_capacity;
   DROP TABLE IF EXISTS bid;
   DROP TABLE IF EXISTS advertisedCarRide;
   DROP TABLE IF EXISTS userOwnsACar;

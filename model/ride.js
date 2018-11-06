@@ -166,20 +166,34 @@ const listConfirmedRidesForDriver = async (user, db) => {
 }
 
 /**
- * List car rides that user will be a driver for, that are still pending.
+ * List car rides that user will be a driver for, still have available seats.
  */
 const listPendingRidesForDriver = async (user, db) => {
   return db
     .any(
       `
-    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car FROM advertisedCarRide a
-    LEFT OUTER JOIN bid b ON a.driver = b.driver
-      AND a.date = b.date
-      AND a.time = b.time
-      AND a.origin = b.origin
-      AND a.destination = b.destination
-    WHERE a.driver = $1 AND (b.bidStatus = 'pending' OR b.bidStatus IS NULL)
-    GROUP BY a.driver, a.date, a.time, a.origin, a.destination;
+      SELECT DISTINCT a.driver, a.date, a.time, a.origin, a.destination, a.car 
+      FROM advertisedCarRide a
+      WHERE 
+      -- This ride is advertised by the driver
+      a.driver = $1 
+      -- This ride is not overdue
+      AND (a.date > current_date 
+           OR (a.date = current_date
+              AND a.time > current_time)
+          )
+      -- This ride has not reached maximum capacity
+      -- This condition makes checking for bidstatus redundant
+      AND NOT EXISTS( 
+        SELECT 1
+        FROM car_rides_with_capacity c
+        WHERE a.driver = c.driver
+        AND a.date = c.date
+        AND a.time = c.time
+        AND a.origin = c.origin
+        AND a.destination = c.destination
+        AND c.currcapacity >= c.maxcapacity)
+      ORDER BY a.driver, a.date, a.time, a.origin, a.destination;
     `,
       [user]
     )
@@ -246,7 +260,6 @@ module.exports = {
   listConfirmedRidesForDriver,
   listPendingRidesForDriver,
   listCarsUserOwns,
-  delAdvertisedRide,
   delAdvertisedRide,
   listSuccessfulBidsForRide
 }
