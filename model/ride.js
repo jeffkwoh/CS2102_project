@@ -83,9 +83,9 @@ const listAvailableAdvertisedCarRidesForRider = async (user, currentDate, curren
     EXCEPT
 
     -- Car rides the user has bid
-    SELECT b.driver, b.date, b.time, b.origin, b.destination FROM bid b
+    (SELECT b.driver, b.date, b.time, b.origin, b.destination FROM bid b
     WHERE b.bidder = $1 OR b.bidStatus <> 'pending'
-    GROUP BY b.driver, b.date, b.time, b.origin, b.destination;
+    GROUP BY b.driver, b.date, b.time, b.origin, b.destination);
     `
       ,[user, currentDate, currentTime]
     )
@@ -121,7 +121,7 @@ const listCarsUserOwns = async (user, db) => {
  *
  * @param filters An object containing specific filter options. @see rider router
  */
-const listConfirmedRidesForRider = async (user, filters, db) => {
+const listConfirmedRidesForRider = async (user, currentDate, currentTime, filters, db) => {
   return db
     .any(
       `
@@ -134,8 +134,12 @@ const listConfirmedRidesForRider = async (user, filters, db) => {
       AND CAST(b.time as varchar(20)) LIKE '%${filters.time}%'
       AND b.origin LIKE '%${filters.origin}%'
       AND b.destination LIKE '%${filters.destination}%"'
+      AND (a.date > $2
+           OR (a.date = $2
+              AND a.time > $3)
+           )
     `,
-      [user]
+      [user, currentDate, currentTime]
     )
     .then(result => {
       console.log(`Retrieved all confirmed car rides for rider ${user}!`)
