@@ -22,6 +22,36 @@
 </table>
 
 <hr />
+
+<h3>Successful Bidders</h3>
+<table>
+    <tr>
+        <td> Bidder Name </td>
+        <td> Bidder Contact Number </td>
+        <td> Bidder Email </td>
+        <td> Driver Name </td>
+        <td> Driver Contact Number </td>
+        <td> Driver Email </td>
+        <td> Car License Plate </td>
+        <td> Car Brand </td>
+        <td> Car Model Number </td>
+    </tr>
+    {{#each successfulBids }}
+        <tr>
+            <td>{{this.name}}</td>
+            <td>{{this.contactNumber}}</td>
+            <td>{{this.email}}</td>
+            <td>{{this.name}}</td>
+            <td>{{this.contactNumber}}</td>
+            <td>{{this.email}}</td>
+            <td>{{this.licensePlate}}</td>
+            <td>{{this.carBrand}}</td>
+            <td>{{this.carModel}}</td>
+        </tr>
+    {{/each}}
+</table>
+
+<hr />
 <h3>Current Highest Bid: {{#each highestBid }}{{this.result}}{{/each}}</h3>
 <table>
   <tr>

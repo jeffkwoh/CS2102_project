@@ -13,6 +13,7 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
   const time = req.body.time
   const origin = req.body.origin
   const destination = req.body.destination
+
   const bids = await db.bid.listBidsForRide(
     driver,
     date,
@@ -21,8 +22,9 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
     destination,
     db.exposedInstance
   )
+
   const ride = { bids, driver, date, time, origin, destination }
-  console.log(bids)
+
   const highestBid = await db.bid.highestCurrentBid(
     driver,
     date,
@@ -31,7 +33,16 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
     destination,
     db.exposedInstance
   )
-  res.render('carRide', { ride, bids, highestBid })
+
+  const successfulBids = await db.ride.listSuccessfulBidsForRide(
+    driver,
+    date,
+    time,
+    origin,
+    destination,
+    db.exposedInstance
+  )
+  res.render('carRide', { ride, bids, highestBid, successfulBids })
 })
 
 /**

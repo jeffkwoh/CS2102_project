@@ -192,6 +192,53 @@ const listPendingRidesForDriver = async (user, db) => {
     })
 }
 
+const listSuccessfulBidsForRide = async (driver, date, time, origin, destination, db) => {
+  return db
+    .any(
+      `
+      SELECT 
+      -- bidder details
+      u1.name, u1.contactNumber, u1.email, 
+      
+      -- driver details
+      u2.name, u2.contactNumber, u2.email,
+      
+      -- car details details
+      c.licensePlate, c.carBrand, c.carModel
+      
+      FROM advertisedCarRide a, bid b, userOwnsACar c, appUserAccount u1, appUserAccount u2
+      WHERE b.driver = $1
+        AND b.date = $2
+        AND b.time = $3
+        AND b.origin = $4
+        AND b.destination = $5
+        AND b.bidStatus = 'successful'
+        
+        AND a.driver = b.driver
+        AND a.date = b.date
+        AND a.time = b.time
+        AND a.origin = b.origin
+        AND a.destination = b.destination
+        
+        AND b.bidder = u1.userID
+        AND a.driver = u2.userID
+        
+        AND a.car = c.licensePlate;
+      `,
+      [driver, new Date(date), time, origin, destination]
+    )
+    .then(result => {
+      // success;
+      console.log('success!')
+      return result
+    })
+    .catch(error => {
+      // error;
+      console.log(error)
+    })
+}
+
+
 module.exports = {
   advertiseCarRide,
   listAvailableAdvertisedCarRidesForRider,
@@ -200,5 +247,6 @@ module.exports = {
   listPendingRidesForDriver,
   listCarsUserOwns,
   delAdvertisedRide,
-  delAdvertisedRide
+  delAdvertisedRide,
+  listSuccessfulBidsForRide
 }
