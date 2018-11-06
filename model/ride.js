@@ -212,10 +212,14 @@ const listSuccessfulBidsForRide = async (driver, date, time, origin, destination
       `
       SELECT 
       -- bidder details
-      u1.name, u1.contactNumber, u1.email, 
+      u1.name AS bidderName, 
+      u1.contactNumber AS bidderContact, 
+      u1.email AS bidderEmail, 
       
       -- driver details
-      u2.name, u2.contactNumber, u2.email,
+      u2.name AS driverName, 
+      u2.contactNumber AS driverContact,
+      u2.email AS driverEmail,
       
       -- car details details
       c.licensePlate, c.carBrand, c.carModel

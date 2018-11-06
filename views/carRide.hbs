@@ -27,26 +27,26 @@
 <table>
     <tr>
         <td> Bidder Name </td>
-        <td> Bidder Contact Number </td>
-        <td> Bidder Email </td>
+        <td> Contact Number </td>
+        <td> Email </td>
         <td> Driver Name </td>
-        <td> Driver Contact Number </td>
-        <td> Driver Email </td>
+        <td> Contact Number </td>
+        <td> Email </td>
         <td> Car License Plate </td>
         <td> Car Brand </td>
         <td> Car Model Number </td>
     </tr>
     {{#each successfulBids }}
         <tr>
-            <td>{{this.name}}</td>
-            <td>{{this.contactNumber}}</td>
-            <td>{{this.email}}</td>
-            <td>{{this.name}}</td>
-            <td>{{this.contactNumber}}</td>
-            <td>{{this.email}}</td>
-            <td>{{this.licensePlate}}</td>
-            <td>{{this.carBrand}}</td>
-            <td>{{this.carModel}}</td>
+            <td>{{this.biddername}}</td>
+            <td>{{this.biddercontact}}</td>
+            <td>{{this.bidderemail}}</td>
+            <td>{{this.drivername}}</td>
+            <td>{{this.drivercontact}}</td>
+            <td>{{this.driveremail}}</td>
+            <td>{{this.licenseplate}}</td>
+            <td>{{this.carbrand}}</td>
+            <td>{{this.carmodel}}</td>
         </tr>
     {{/each}}
 </table>
