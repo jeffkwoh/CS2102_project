@@ -71,7 +71,7 @@ router.post('/delete', async function(req, res, next) {
     db.exposedInstance
   )
 
-  res.redirect(`/driver?user_id_field=${req.body.driver}`)
+  res.redirect(`/driver`)
 })
 
 module.exports = router
