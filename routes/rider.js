@@ -6,7 +6,11 @@ const connect = require('connect-ensure-login')
 /* GET user-rider's rides/bids listing page. */
 router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next) {
   const riderId = req.user
-  console.log(req.query)
+  const currentDateTime = new Date()
+  const currentDate = currentDateTime.toISOString().split('T')[0]
+  const currentTime = currentDateTime.getHours() + ":"
+    + currentDateTime.getMinutes() + ":"
+    + currentDateTime.getSeconds();
   const filters = {
     date: req.query.dateFilter || "",
     time: req.query.timeFilter || "",
@@ -35,6 +39,8 @@ router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next)
 
   const availableRides = await db.ride.listAvailableAdvertisedCarRidesForRider(
     riderId,
+    currentDate,
+    currentTime,
     filters,
     db.exposedInstance
   )
