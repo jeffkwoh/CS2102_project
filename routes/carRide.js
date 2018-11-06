@@ -40,10 +40,9 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
  * To be called by driver view.
  */
 router.post('/create', connect.ensureLoggedIn('/login'), async function(req, res, next) {
-  // TODO pass in user and car here
   const params = [
     req.body.driver_field,
-    'SAA0000A',
+    req.body.licensePlate_field,
     req.body.date_field,
     req.body.time_field,
     req.body.origin_field,
@@ -53,7 +52,7 @@ router.post('/create', connect.ensureLoggedIn('/login'), async function(req, res
 
   await db.ride.advertiseCarRide(...params)
 
-  res.redirect(`/driver?user_id_field=${req.body.driver_field}`)
+  res.redirect(`/driver`)
 })
 
 router.post('/delete', async function(req, res, next) {
