@@ -173,7 +173,7 @@ const listPendingRidesForDriver = async (user, db) => {
     .any(
       `
       SELECT DISTINCT a.driver, a.date, a.time, a.origin, a.destination, a.car 
-      FROM advertisedCarRide a, bid b
+      FROM advertisedCarRide a
       WHERE 
       -- This ride is advertised by the driver
       a.driver = $1 
@@ -183,6 +183,7 @@ const listPendingRidesForDriver = async (user, db) => {
               AND a.time > current_time)
           )
       -- This ride has not reached maximum capacity
+      -- This condition makes checking for bidstatus redundant
       AND NOT EXISTS( 
         SELECT 1
         FROM car_rides_with_capacity c
