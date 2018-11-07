@@ -20,4 +20,10 @@ router.post('/editRide', connect.ensureLoggedIn('/login'), ensureAdmin, async fu
 router.post('/deleteRide', connect.ensureLoggedIn('/login'), ensureAdmin, async function(req, res, next) {
 })
 
+router.post('/editCar', connect.ensureLoggedIn('/login'), ensureAdmin, async function(req, res, next) {
+})
+
+router.post('/deleteCar', connect.ensureLoggedIn('/login'), ensureAdmin, async function(req, res, next) {
+})
+
 module.exports = router
