@@ -4,6 +4,7 @@ const pgp = require('pg-promise')({
 const cn = require('../config/config.js')
 const db = pgp(cn)
 const admin = require('./admin.js')
+const adminCarRide = require('./adminCarRide')
 const user = require('./user.js')
 const bid = require('./bid.js')
 const ride = require('./ride.js')
@@ -983,6 +984,7 @@ module.exports = {
   deinitDb,
   populateDb,
   admin,
+  adminCarRide,
   user,
   bid,
   ride,
