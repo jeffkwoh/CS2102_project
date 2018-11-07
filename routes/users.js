@@ -30,6 +30,24 @@ router.post('/create', connect.ensureLoggedIn('/login') ,async function(req, res
   res.redirect('/users')
 })
 
+/* Assume the role of a user. */
+router.post('/assumeUser', async function(req, res, next) {
+  // ensure user is an admin first.
+  // if (req.userId !== 0) {
+  //   res.redirect('/')
+  // }
+
+  const currentUser = req.user;
+  console.log(req.user);
+  // TODO check if user is 0
+  const targetId = req.body.user_id_field;
+  console.log(req.body.user_id_field);
+  await req.login(targetId, function(err) {
+    if (err) { return next(err); }
+    return res.redirect('/users/');
+  });
+})
+
 /* POST Delete creation. */
 router.post('/delete', async function(req, res, next) {
   const userId = req.body.user_id_field
