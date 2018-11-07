@@ -19,14 +19,14 @@ async function initDb() {
 
   CREATE TABLE IF NOT EXISTS appUserAccount (
     userID SERIAL PRIMARY KEY,
-    email VARCHAR(128) UNIQUE NOT NULL,
-    contactNumber VARCHAR(15) NOT NULL,
+    email VARCHAR(128) UNIQUE NOT NULL CHECK (email LIKE '%_@_%.__%'),
+    contactNumber INTEGER NOT NULL CONSTRAINT valid_contactNumber CHECK (contactNumber > 9999999 AND contactNumber < 100000000),
     name VARCHAR(64) NOT NULL,
-    password VARCHAR(32) NOT NULL
+    password VARCHAR(32) NOT NULL CHECK (LENGTH(password) > 5)
   );
 
   CREATE TABLE IF NOT EXISTS userOwnsACar (
-    licensePlate VARCHAR(10) PRIMARY KEY,
+    licensePlate VARCHAR(10) PRIMARY KEY CHECK (LENGTH(licensePlate) > 5),
     owner INTEGER NOT NULL,
     carBrand VARCHAR (64) NOT NULL,
     carModel VARCHAR (64) NOT NULL,
@@ -37,11 +37,12 @@ async function initDb() {
   CREATE TABLE IF NOT EXISTS advertisedCarRide (
     driver INTEGER REFERENCES appUserAccount(userID),
     car VARCHAR(10) REFERENCES userOwnsAcar(licensePlate),
-    date DATE NOT NULL,
+    date DATE NOT NULL CHECK ((date > current_date) OR (date = current_date AND time > current_time)),
     time TIME NOT NULL,
     origin VARCHAR(128) NOT NULL,
     destination VARCHAR(128) NOT NULL,
-    PRIMARY KEY (driver, date, time, origin, destination)
+    PRIMARY KEY (driver, date, time, origin, destination),
+    CHECK(origin <> destination)
   );
 
   CREATE TABLE IF NOT EXISTS bid (
@@ -57,8 +58,30 @@ async function initDb() {
     FOREIGN KEY(bidder) REFERENCES appUserAccount(userID),
     FOREIGN KEY(driver, date, time, origin, destination)
     REFERENCES advertisedCarRide(driver, date, time, origin, destination),
-    PRIMARY KEY(bidder, driver, date, time, origin, destination)
+    PRIMARY KEY(bidder, driver, date, time, origin, destination),
+    CHECK (bidder <> driver)
   );
+  
+  --
+  -- Convenience view to be used in one of the queries to showcase use of views
+  -- Other places where this view could be used but are not used is deliberate
+  -- to showcase other uses of sql
+  -- TODO: Rename to reflect that this does not include car rides without
+  -- successful bids as intended
+  --
+  CREATE VIEW car_rides_with_capacity 
+  (driver, date, time, origin, destination, maxcapacity, currcapacity) 
+  AS SELECT b.driver, b.date, b.time, b.origin, b.destination ,uCar.numseats, count(*)
+	FROM bid b, advertisedCarRide aCar, userOwnsACar uCar
+	  WHERE b.bidstatus = 'successful'
+	  AND aCar.date = b.date
+	  AND aCar.driver = b.driver
+	  AND aCar.time = b.time
+	  AND aCar.origin = b.origin
+	  AND aCar.destination = b.destination
+	  AND aCar.car = uCar.licensePlate
+	  group by b.driver, b.date, b.time, b.origin, b.destination, uCar.numseats
+	  order by b.driver,b.date,b.time,b.origin,b.destination;  
 
   COMMIT;`
 
@@ -96,7 +119,7 @@ async function createFunctionsAndTriggers() {
     WHERE bidstatus = 'pending'
     AND (date < currdate
     OR (date = currdate
-    AND time < currtime));
+    AND time > currtime));
   END;$overdue_bids$ 
   LANGUAGE plpgsql;
 
@@ -218,7 +241,8 @@ async function createFunctionsAndTriggers() {
 async function deinitDb() {
   const query = `
   BEGIN;
-
+  
+  DROP VIEW IF EXISTS car_rides_with_capacity;
   DROP TABLE IF EXISTS bid;
   DROP TABLE IF EXISTS advertisedCarRide;
   DROP TABLE IF EXISTS userOwnsACar;
@@ -239,60 +263,60 @@ async function deinitDb() {
 }
 
 async function populateDb() {
-  await user.createUserAppAccount('admin@a.com', '98765432', 'one', 'admin', db)
-  await user.createUserAppAccount('two@a.com', '88765432', 'two', 'two', db)
-  await user.createUserAppAccount('thr@a.com', '78765432', 'thr', 'thr', db)
-  await user.createUserAppAccount('fou@a.com', '68765432', 'fou', 'fou', db)
-  await user.createUserAppAccount('fiv@a.com', '58765432', 'fiv', 'fiv', db)
-  await user.createUserAppAccount('alpha@a.com', '98213212', 'six', 'six', db)
-  await user.createUserAppAccount('bravo@a.com', '95513212', 'sev', 'sev', db)
-  await user.createUserAppAccount('charlie@a.com', '94765432', 'eig', 'eig', db)
-  await user.createUserAppAccount('delta@a.com', '93765432', 'nin', 'nin', db)
-  await user.createUserAppAccount('echo@a.com', '92765432', 'ten', 'ten', db)
-  await user.createUserAppAccount('foxtrot@a.com', '88565432', 'ele', 'ele', db)
-  await user.createUserAppAccount('golf@a.com', '81165432', 'twe', 'twe', db)
-  await user.createUserAppAccount('hotel@a.com', '81155432', 'thir', 'thir', db)
+  await user.createUserAppAccount('admin@a.com', '98765432', 'one', 'admin_pw', db)
+  await user.createUserAppAccount('two@a.com', '88765432', 'two', 'two_pw', db)
+  await user.createUserAppAccount('thr@a.com', '78765432', 'thr', 'thr_pw', db)
+  await user.createUserAppAccount('fou@a.com', '68765432', 'fou', 'fou_pw', db)
+  await user.createUserAppAccount('fiv@a.com', '58765432', 'fiv', 'fiv_pw', db)
+  await user.createUserAppAccount('alpha@a.com', '98213212', 'six', 'six_pw', db)
+  await user.createUserAppAccount('bravo@a.com', '95513212', 'sev', 'sev_pw', db)
+  await user.createUserAppAccount('charlie@a.com', '94765432', 'eig', 'eig_pw', db)
+  await user.createUserAppAccount('delta@a.com', '93765432', 'nin', 'nin_pw', db)
+  await user.createUserAppAccount('echo@a.com', '92765432', 'ten', 'ten_pw', db)
+  await user.createUserAppAccount('foxtrot@a.com', '88565432', 'ele', 'ele_pw', db)
+  await user.createUserAppAccount('golf@a.com', '81165432', 'twe', 'twe_pw', db)
+  await user.createUserAppAccount('hotel@a.com', '81155432', 'thir', 'thir_pw', db)
   await user.createUserAppAccount(
       'india@a.com',
       '82335432',
       'fourt',
-      'fourt',
+      'fourt_pw',
       db
   )
   await user.createUserAppAccount(
       'juliett@a.com',
       '82565432',
       'fivt',
-      'fivt',
+      'fivt_pw',
       db
   )
-  await user.createUserAppAccount('kilo@a.com', '82869932', 'sixt', 'sixt', db)
+  await user.createUserAppAccount('kilo@a.com', '82869932', 'sixt', 'sixt_pw', db)
   await user.createUserAppAccount(
       'lima@a.com',
       '82865432',
       'sevent',
-      'sevent',
+      'sevent_pw',
       db
   )
   await user.createUserAppAccount(
       'mike@a.com',
       '82135432',
       'eighteen',
-      'eighteen',
+      'eighteen_pw',
       db
   )
   await user.createUserAppAccount(
       'november@a.com',
       '89005432',
       'ninet',
-      'ninet',
+      'ninet_pw',
       db
   )
   await user.createUserAppAccount(
       'oscar@a.com',
       '80754372',
       'twent',
-      'twent',
+      'twent_pw',
       db
   )
 
@@ -325,7 +349,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '1',
     'SAA0000A',
-    '2018-12-20',
+    '2030-01-20',
     '13:00:00',
     'PlaceA1',
     'PlaceA2',
@@ -334,7 +358,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '1',
     'SAA2222A',
-    '2018-02-20',
+    '2030-02-20',
     '14:00:00',
     'PlaceB1',
     'PlaceB2',
@@ -343,7 +367,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '2',
     'SBB0000B',
-    '2018-03-20',
+    '2030-03-20',
     '15:00:00',
     'PlaceC1',
     'PlaceC2',
@@ -352,7 +376,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '2',
     'SBB0000B',
-    '2018-03-21',
+    '2030-03-21',
     '15:00:00',
     'PlaceC3',
     'PlaceC4',
@@ -361,7 +385,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '4',
     'SDD0000D',
-    '2018-04-20',
+    '2030-04-20',
     '16:00:00',
     'PlaceD1',
     'PlaceD2',
@@ -370,7 +394,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '5',
     'SEE0000D',
-    '2018-04-20',
+    '2030-04-20',
     '13:00:00',
     'PlaceA1',
     'PlaceA2',
@@ -379,7 +403,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '6',
     'SGG0000D',
-    '2018-04-20',
+    '2030-04-20',
     '15:00:00',
     'PlaceB1',
     'PlaceA2',
@@ -388,7 +412,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '6',
     'SGG0000D',
-    '2018-04-21',
+    '2030-04-21',
     '17:00:00',
     'PlaceD1',
     'PlaceA2',
@@ -397,7 +421,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '6',
     'SGG0000D',
-    '2018-04-22',
+    '2030-04-22',
     '13:00:00',
     'PlaceC1',
     'PlaceA2',
@@ -406,7 +430,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '7',
     'SHH0000D',
-    '2018-04-20',
+    '2030-04-20',
     '14:00:00',
     'PlaceE9',
     'PlaceB3',
@@ -415,7 +439,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '8',
     'SKK0000D',
-    '2018-04-20',
+    '2030-04-20',
     '15:00:00',
     'PlaceA1',
     'PlaceB8',
@@ -424,7 +448,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '8',
     'SKK0000D',
-    '2018-04-21',
+    '2030-04-21',
     '18:00:00',
     'PlaceR1',
     'PlaceV2',
@@ -433,7 +457,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '8',
     'SKK0000D',
-    '2018-04-22',
+    '2030-04-22',
     '18:30:00',
     'PlaceE1',
     'PlaceB2',
@@ -442,7 +466,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '8',
     'SKK0000D',
-    '2018-04-23',
+    '2030-04-23',
     '14:00:00',
     'PlaceS1',
     'PlaceX2',
@@ -451,7 +475,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '8',
     'SKK0000D',
-    '2018-04-24',
+    '2030-04-24',
     '11:00:00',
     'PlaceA1',
     'PlaceC2',
@@ -460,7 +484,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '10',
     'SLL0000D',
-    '2018-04-20',
+    '2030-04-20',
     '09:00:00',
     'PlaceV1',
     'PlaceB2',
@@ -469,7 +493,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '11',
     'SMM0000D',
-    '2018-04-20',
+    '2030-04-20',
     '13:00:00',
     'PlaceV1',
     'PlaceA2',
@@ -478,7 +502,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '12',
     'SNN0000D',
-    '2018-04-24',
+    '2030-04-24',
     '13:00:00',
     'PlaceB1',
     'PlaceA2',
@@ -487,7 +511,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '13',
     'SOO0000D',
-    '2018-12-24',
+    '2030-01-24',
     '13:00:00',
     'PlaceA1',
     'PlaceA2',
@@ -496,7 +520,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '13',
     'SOO0000D',
-    '2018-12-25',
+    '2030-01-25',
     '13:00:00',
     'PlaceS1',
     'PlaceA2',
@@ -505,7 +529,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '13',
     'SOO0000D',
-    '2018-12-26',
+    '2030-01-26',
     '13:00:00',
     'PlaceT1',
     'PlaceA2',
@@ -514,7 +538,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '13',
     'SOO0000D',
-    '2018-12-26',
+    '2030-01-26',
     '13:30:00',
     'PlaceE1',
     'PlaceA5',
@@ -523,7 +547,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '13',
     'SOO0000D',
-    '2018-12-26',
+    '2030-01-26',
     '14:00:00',
     'PlaceR1',
     'PlaceG2',
@@ -532,7 +556,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '13',
     'SOO0000D',
-    '2018-12-26',
+    '2030-01-26',
     '14:30:00',
     'PlaceW1',
     'PlaceG2',
@@ -541,7 +565,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '13',
     'SOO0000D',
-    '2018-12-26',
+    '2030-01-26',
     '15:00:00',
     'PlaceD1',
     'PlaceF2',
@@ -550,7 +574,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '18',
     'STT0000D',
-    '2018-04-25',
+    '2030-04-25',
     '18:00:00',
     'PlaceD1',
     'PlaceH2',
@@ -559,7 +583,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '18',
     'STT0000D',
-    '2018-03-20',
+    '2030-03-20',
     '12:00:00',
     'PlaceN1',
     'PlaceH2',
@@ -568,7 +592,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '18',
     'SUU0000D',
-    '2018-12-23',
+    '2030-01-23',
     '19:00:00',
     'PlaceZ1',
     'PlaceS2',
@@ -577,7 +601,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '18',
     'SUU0000D',
-    '2018-12-22',
+    '2030-01-22',
     '16:00:00',
     'PlaceA1',
     'PlaceU2',
@@ -586,7 +610,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '18',
     'SVV0000D',
-    '2018-12-10',
+    '2030-01-10',
     '17:00:00',
     'PlaceS1',
     'PlaceY2',
@@ -595,7 +619,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '19',
     'SWW0000D',
-    '2018-12-12',
+    '2030-01-12',
     '16:00:00',
     'PlaceR5',
     'PlaceJ2',
@@ -604,7 +628,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '19',
     'SWW0000D',
-    '2018-12-11',
+    '2030-01-11',
     '15:00:00',
     'PlaceL1',
     'PlaceN3',
@@ -613,16 +637,16 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '19',
     'SWW0000D',
-    '2018-12-11',
+    '2030-01-11',
     '13:00:00',
     'PlaceB1',
-    'PlaceB1',
+    'PlaceB2',
     db
   )
   await ride.advertiseCarRide(
     '19',
     'SWW0000D',
-    '2018-12-11',
+    '2030-01-11',
     '19:00:00',
     'PlaceN1',
     'PlaceC1',
@@ -631,7 +655,7 @@ async function populateDb() {
   await ride.advertiseCarRide(
     '19',
     'SWW0000D',
-    '2018-12-12',
+    '2030-01-12',
     '10:00:00',
     'PlaceE1',
     'PlaceD1',
@@ -642,7 +666,7 @@ async function populateDb() {
     '3',
     '100',
     '1',
-    '2018-12-20',
+    '2030-01-20',
     '13:00:00',
     'PlaceA1',
     'PlaceA2',
@@ -652,7 +676,7 @@ async function populateDb() {
     '4',
     '200',
     '1',
-    '2018-12-20',
+    '2030-01-20',
     '13:00:00',
     'PlaceA1',
     'PlaceA2',
@@ -662,7 +686,7 @@ async function populateDb() {
     '1',
     '100',
     '2',
-    '2018-03-20',
+    '2030-03-20',
     '15:00:00',
     'PlaceC1',
     'PlaceC2',
@@ -672,7 +696,7 @@ async function populateDb() {
     '5',
     '500',
     '1',
-    '2018-12-20',
+    '2030-01-20',
     '13:00:00',
     'PlaceA1',
     'PlaceA2',
@@ -682,7 +706,7 @@ async function populateDb() {
     '5',
     '120',
     '2',
-    '2018-03-20',
+    '2030-03-20',
     '15:00:00',
     'PlaceC1',
     'PlaceC2',
@@ -692,7 +716,7 @@ async function populateDb() {
     '5',
     '345',
     '4',
-    '2018-04-20',
+    '2030-04-20',
     '16:00:00',
     'PlaceD1',
     'PlaceD2',
@@ -702,7 +726,7 @@ async function populateDb() {
     '7',
     '333',
     '13',
-    '2018-12-26',
+    '2030-01-26',
     '15:00:00',
     'PlaceD1',
     'PlaceF2',
@@ -712,7 +736,7 @@ async function populateDb() {
     '8',
     '314',
     '13',
-    '2018-12-26',
+    '2030-01-26',
     '15:00:00',
     'PlaceD1',
     'PlaceF2',
@@ -722,7 +746,7 @@ async function populateDb() {
     '9',
     '311',
     '13',
-    '2018-12-26',
+    '2030-01-26',
     '15:00:00',
     'PlaceD1',
     'PlaceF2',
@@ -732,7 +756,7 @@ async function populateDb() {
     '10',
     '325',
     '13',
-    '2018-12-26',
+    '2030-01-26',
     '15:00:00',
     'PlaceD1',
     'PlaceF2',
@@ -742,7 +766,7 @@ async function populateDb() {
     '1',
     '325',
     '13',
-    '2018-12-26',
+    '2030-01-26',
     '15:00:00',
     'PlaceD1',
     'PlaceF2',
@@ -752,7 +776,7 @@ async function populateDb() {
     '2',
     '325',
     '13',
-    '2018-12-26',
+    '2030-01-26',
     '15:00:00',
     'PlaceD1',
     'PlaceF2',
@@ -762,7 +786,7 @@ async function populateDb() {
     '3',
     '325',
     '13',
-    '2018-12-26',
+    '2030-01-26',
     '15:00:00',
     'PlaceD1',
     'PlaceF2',
@@ -772,7 +796,7 @@ async function populateDb() {
     '11',
     '370',
     '13',
-    '2018-12-26',
+    '2030-01-26',
     '15:00:00',
     'PlaceD1',
     'PlaceF2',
@@ -782,7 +806,7 @@ async function populateDb() {
     '12',
     '221',
     '13',
-    '2018-12-26',
+    '2030-01-26',
     '14:30:00',
     'PlaceW1',
     'PlaceG2',
@@ -792,7 +816,7 @@ async function populateDb() {
     '12',
     '123',
     '13',
-    '2018-12-26',
+    '2030-01-26',
     '14:00:00',
     'PlaceR1',
     'PlaceG2',
@@ -802,7 +826,7 @@ async function populateDb() {
     '12',
     '421',
     '13',
-    '2018-12-26',
+    '2030-01-26',
     '13:30:00',
     'PlaceE1',
     'PlaceA5',
@@ -812,7 +836,7 @@ async function populateDb() {
     '12',
     '155',
     '13',
-    '2018-12-24',
+    '2030-01-24',
     '13:00:00',
     'PlaceA1',
     'PlaceA2',
@@ -822,7 +846,7 @@ async function populateDb() {
     '14',
     '275',
     '19',
-    '2018-12-12',
+    '2030-01-12',
     '10:00:00',
     'PlaceE1',
     'PlaceD1',
@@ -832,7 +856,7 @@ async function populateDb() {
     '14',
     '185',
     '19',
-    '2018-12-11',
+    '2030-01-11',
     '19:00:00',
     'PlaceN1',
     'PlaceC1',
@@ -842,27 +866,27 @@ async function populateDb() {
     '14',
     '125',
     '19',
-    '2018-12-11',
+    '2030-01-11',
     '13:00:00',
     'PlaceB1',
-    'PlaceB1',
+    'PlaceB2',
     db
   )
   await bid.createUserBid(
     '15',
     '345',
     '19',
-    '2018-12-11',
+    '2030-01-11',
     '13:00:00',
     'PlaceB1',
-    'PlaceB1',
+    'PlaceB2',
     db
   )
   await bid.createUserBid(
     '15',
     '345',
     '18',
-    '2018-04-25',
+    '2030-04-25',
     '18:00:00',
     'PlaceD1',
     'PlaceH2',
@@ -872,7 +896,7 @@ async function populateDb() {
     '15',
     '345',
     '18',
-    '2018-12-10',
+    '2030-01-10',
     '17:00:00',
     'PlaceS1',
     'PlaceY2',
@@ -882,7 +906,7 @@ async function populateDb() {
     '16',
     '365',
     '19',
-    '2018-12-12',
+    '2030-01-12',
     '10:00:00',
     'PlaceE1',
     'PlaceD1',
@@ -892,7 +916,7 @@ async function populateDb() {
     '16',
     '123',
     '2',
-    '2018-03-20',
+    '2030-03-20',
     '15:00:00',
     'PlaceC1',
     'PlaceC2',
@@ -902,7 +926,7 @@ async function populateDb() {
     '17',
     '352',
     '19',
-    '2018-12-12',
+    '2030-01-12',
     '10:00:00',
     'PlaceE1',
     'PlaceD1',
@@ -912,7 +936,7 @@ async function populateDb() {
     '18',
     '300',
     '19',
-    '2018-12-12',
+    '2030-01-12',
     '10:00:00',
     'PlaceE1',
     'PlaceD1',
@@ -922,7 +946,7 @@ async function populateDb() {
     '19',
     '250',
     '18',
-    '2018-12-22',
+    '2030-01-22',
     '16:00:00',
     'PlaceA1',
     'PlaceU2',
@@ -932,7 +956,7 @@ async function populateDb() {
     '19',
     '123',
     '18',
-    '2018-12-10',
+    '2030-01-10',
     '17:00:00',
     'PlaceS1',
     'PlaceY2',
@@ -942,7 +966,7 @@ async function populateDb() {
   await bid.updateBidStatus(
     '16',
     '2',
-    '2018-03-20',
+    '2030-03-20',
     '15:00:00',
     'PlaceC1',
     'PlaceC2',
