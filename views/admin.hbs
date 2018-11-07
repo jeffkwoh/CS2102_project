@@ -15,9 +15,7 @@
       <div class="card">
         <div class="card-body">
           <form action="/admin/editRide" method="post">
-            <input type="number" name="driver_field" value="{{driverId}}" hidden="true">
             <div class="modal-body">
-
               <div class="input-group">
                 <div class="input-group-prepend">
                   <label class="input-group-text" for="licensePlate_field">Car License Plate</label>
@@ -36,7 +34,7 @@
                 <div class="input-group-prepend">
                   <label class="input-group-text" for="time_field">Time</label>
                 </div>
-                <input type="time" name="time_field" class="form-control" value="{{this.time}}">
+                <input type="time" name="time_field" class="form-control" placeholder="{{this.time}}">
               </div>
 
               <div class="input-group mt-3">
@@ -55,10 +53,18 @@
             </div>
 
             <button class="btn btn-primary" type="submit" value="Edit">Edit</button>
+
           </form>
+
           <form action="/admin/deleteRide">
+            <input hidden="true" type="text" name="destination_field" value="{{this.destination}}" class="form-control">
+            <input hidden="true" type="text" name="origin_field" value="{{this.origin}}" class="form-control">
+            <input hidden="true" type="time" name="time_field" class="form-control" value="{{this.time}}">
+            <input hidden="true" type="date" name="date_field" class="form-control" value="{{this.date}}">
+            <input hidden="true" type="text" name="licensePlate_field" value="{{this.car}}" class="form-control">
             <button class="btn btn-primary" type="submit" value="Delete">Delete</button>
           </form>
+
         </div>
       </div>
     </div>
