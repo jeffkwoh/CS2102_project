@@ -14,7 +14,51 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-body">
-          Penis
+          <form action="/admin/editRide" method="post">
+            <input type="number" name="driver_field" value="{{driverId}}" hidden="true">
+            <div class="modal-body">
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="licensePlate_field">Car License Plate</label>
+                </div>
+                <input type="text" name="licensePlate_field" placeholder="{{this.car}}" class="form-control">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="date_field">Date</label>
+                </div>
+                <input type="date" name="date_field" class="form-control" placeholder="{{this.date}}">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="time_field">Time</label>
+                </div>
+                <input type="time" name="time_field" class="form-control" value="{{this.time}}">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="origin_field">From</label>
+                </div>
+                <input type="text" name="origin_field" placeholder="{{this.origin}}" class="form-control">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="destination_field">To</label>
+                </div>
+                <input type="text" name="destination_field" placeholder="{{this.destination}}" class="form-control">
+              </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit" value="Edit">Edit</button>
+          </form>
+          <form action="/admin/deleteRide">
+            <button class="btn btn-primary" type="submit" value="Delete">Delete</button>
+          </form>
         </div>
       </div>
     </div>
