@@ -70,3 +70,52 @@
     </div>
   {{/each}}
 </div>
+
+<div class="row">
+  {{#each cars}}
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-body">
+          <form action="/admin/editCar" method="post">
+            <div class="modal-body">
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="licensePlate_field">Plate No.</label>
+                </div>
+                <input type="text" name="licensePlate_field" class="form-control" placeholder="{{this.licenseplate}}">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="carBrand_field">Brand</label>
+                </div>
+                <input type="text" name="carBrand_field" class="form-control" placeholder="{{this.brand}}">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="carModel_field">Model</label>
+                </div>
+                <input type="text" name="carModel_field" placeholder="{{this.model}}" class="form-control">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="numAvailSeats_field">Seats Available</label>
+                </div>
+                <input type="number" name="numAvailSeats_field" placeholder="{{this.numseats}}" class="form-control">
+              </div>
+            </div>
+            <button class="btn btn-primary" type="submit" value="Edit">Edit</button>
+          </form>
+
+          <form action="/admin/deleteCar">
+            <input hidden="true" type="text" name="licensePlate_field" class="form-control" placeholder="{{this.licenseplate}}">
+            <button class="btn btn-primary" type="submit" value="Delete">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {{/each}}
+</div>
