@@ -14,7 +14,10 @@ const ensureAdmin = (req, res, next) => {
 router.get('/', connect.ensureLoggedIn('/login'), ensureAdmin, async function(req, res, next) {
 })
 
-router.get('/editRide', connect.ensureLoggedIn('/login'), ensureAdmin, async function(req, res, next) {
+router.post('/editRide', connect.ensureLoggedIn('/login'), ensureAdmin, async function(req, res, next) {
+})
+
+router.post('/deleteRide', connect.ensureLoggedIn('/login'), ensureAdmin, async function(req, res, next) {
 })
 
 module.exports = router
