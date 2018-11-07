@@ -1,49 +1,69 @@
-<h1> Car Ride </h1>
+<div class="d-flex flex-md-row pt-3 pl-2 pr-2  justify-content-start align-items-end">
+  <div class="">
+    <h1>Your Created Ride</h1>
+  </div>
+</div>
 
 <hr />
+<h2>Ride Information</h2>
+<br />
 
-<table>
-  <tr>
-    <td> DriverID </td>
-    <td> Date </td>
-    <td> Time </td>
-    <td> Trip start Location </td>
-    <td> Destination </td>
-  </tr>
-  {{#with ride}}
+<table class="table">
+  <thead class="thead-dark">
     <tr>
-      <td>{{driver}}</td>
-      <td>{{date}}</td>
-      <td>{{time}}</td>
-      <td>{{origin}}</td>
-      <td>{{destination}}</td>
+      <td> Date </td>
+      <td> Time </td>
+      <td> Trip start Location </td>
+      <td> Destination </td>
+      {{#if winningBid}}
+      <td> Rider name </td>
+      <td> Email </td>
+      <td> Contact Number </td>
+      {{/if}}
     </tr>
-  {{/with}}
+  </thead>
+  <tbody>
+      <tr>
+        <td>{{ride.date_readable}}</td>
+        <td>{{ride.time_readable}}</td>
+        <td>{{ride.origin}}</td>
+        <td>{{ride.destination}}</td>
+        {{#if winningBid}}
+        <td>{{winningBid.name}}</td>
+        <td>{{winningBid.email}}</td>
+        <td>{{winningBid.contactnumber}}</td>
+        {{/if}}
+      </tr>
+  </tbody>
 </table>
 
 <hr />
-<h3>Current Highest Bid: {{#each highestBid }}{{this.result}}{{/each}}</h3>
-<table>
-  <tr>
-    <td> Bidder ID </td>
-    <td> Bid amount </td>
-  </tr>
-  {{#each bids }}
-    <tr>
-      <td>{{this.bidder}}</td>
-      <td>{{this.bidamount}}</td>
-      <td>{{this.date}}</td>
-      <td>
-        <form action="/driver/updateBidStatus" method="post">
-          <input id="bidder_user_id" type="number" name="bidder_user_id" value="{{this.bidder}}" hidden="true">
-          <input id="driver_user_id" type="number" name="driver_user_id" value="{{this.driver}}" hidden="true">
-          <input id="date" type="text" name="date_field" value="{{this.date}}" hidden="true">
-          <input id="time" type="text" name="time_field" value="{{this.time}}" hidden="true">
-          <input id="origin" type="text" name="origin_field" value="{{this.origin}}" hidden="true">
-          <input id="destination" type="text" name="destination_field" value="{{this.destination}}" hidden="true">
-          <input type="submit" value="Select Bidder">
-        </form>
-      </td>
-    </tr>
-  {{/each}}
-</table>
+<br />
+
+{{#unless winningBid}}
+  <div class="row">
+    {{#each pendingBids }}
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-primary">
+          <div class="card-body">
+            <h5 class="card-title">$<b>{{this.bidamount}}</b></h5>
+            <h6 class="card-subtitle mb-2 text-muted">by {{this.biddername}}</h6>
+            <form action="/driver/updateBidStatus" method="post">
+              <input id="bidder_user_id" type="number" name="bidder_user_id" value="{{this.bidder}}" hidden="true">
+              <input id="driver_user_id" type="number" name="driver_user_id" value="{{this.driver}}" hidden="true">
+              <input id="date" type="text" name="date_field" value="{{this.date}}" hidden="true">
+              <input id="time" type="text" name="time_field" value="{{this.time}}" hidden="true">
+              <input id="origin" type="text" name="origin_field" value="{{this.origin}}" hidden="true">
+              <input id="destination" type="text" name="destination_field" value="{{this.destination}}" hidden="true">
+              <div class="input-group mt-3">
+                <button class="btn btn-outline-primary btn-block" type="submit">Select Bidder</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+  <br />
+  <h4>Current Highest Bid: {{#each highestBid }}{{this.result}}{{/each}}</h4>
+{{/unless}}

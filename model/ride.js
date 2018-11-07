@@ -133,7 +133,7 @@ const listConfirmedRidesForRider = async (user, currentDate, currentTime, filter
       AND TO_CHAR(CAST(b.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
       AND CAST(b.time as varchar(20)) LIKE '%${filters.time}%'
       AND b.origin LIKE '%${filters.origin}%'
-      AND b.destination LIKE '%${filters.destination}%"'
+      AND b.destination LIKE '%${filters.destination}%'
       AND (a.date > $2
            OR (a.date = $2
               AND a.time > $3)
@@ -157,7 +157,7 @@ const listConfirmedRidesForDriver = async (user, db) => {
   return db
     .any(
       `
-    SELECT a.driver, a.date, a.time, a.origin, a.destination, a.car FROM advertisedCarRide a
+    SELECT DISTINCT a.driver, a.date, a.time, a.origin, a.destination, a.car FROM advertisedCarRide a
     NATURAL JOIN bid b
     WHERE b.bidStatus = 'successful'
       AND a.driver = $1;

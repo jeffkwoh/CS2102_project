@@ -8,12 +8,13 @@ var connect = require('connect-ensure-login')
  * Only 1 car ride listing is to be viewed at a time.
  */
 router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next) {
+  const user = req.user
   const driver = req.body.driver
   const date = req.body.date
   const time = req.body.time
   const origin = req.body.origin
   const destination = req.body.destination
-  const bids = await db.bid.listBidsForRide(
+  const pendingBids = await db.bid.listPendingBidsForRide(
     driver,
     date,
     time,
@@ -21,8 +22,18 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
     destination,
     db.exposedInstance
   )
-  const ride = { bids, driver, date, time, origin, destination }
-  console.log(bids)
+  // null | obj
+  const winningBid = await db.bid.winningBid(
+    driver,
+    date,
+    time,
+    origin,
+    destination,
+    db.exposedInstance
+  )
+  console.log(winningBid)
+  const ride = { pendingBids, driver, date, time, origin, destination }
+  console.log(pendingBids)
   const highestBid = await db.bid.highestCurrentBid(
     driver,
     date,
@@ -31,7 +42,8 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
     destination,
     db.exposedInstance
   )
-  res.render('carRide', { ride, bids, highestBid })
+  makeReadable(ride)
+  res.render('carRide', { user, ride, pendingBids, highestBid, winningBid })
 })
 
 /**
@@ -73,5 +85,19 @@ router.post('/delete', async function(req, res, next) {
 
   res.redirect(`/driver`)
 })
+
+function makeReadable(ride) {
+    ride.date_readable = parseDate(ride.date)
+    ride.time_readable = parseTime(ride.time)
+}
+
+function parseDate(date) {
+  var temp = date.toString().substring(0,15);
+  return temp.substring(0,3) + "," + temp.substring(3,15)
+}
+
+function parseTime(time) {
+  return time.substring(0,5);
+}
 
 module.exports = router
