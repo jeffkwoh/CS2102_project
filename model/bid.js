@@ -174,7 +174,7 @@ const winningBid = async (driver, date, time, origin, destination, db) => {
     .oneOrNone(
       `
       SELECT b.bidAmount, b.driver, b.date, b.time, b.origin, b.destination,
-        u.email, u.contactNumber, u.name AS result
+        u.email, u.contactNumber, u.name
       FROM bid b, appUserAccount u
       WHERE b.driver = $1
       AND b.date = $2
