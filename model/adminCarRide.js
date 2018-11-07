@@ -1,7 +1,5 @@
-const db = require('./db').exposedInstance;
-
 //CREATE
-const addACarRide = (driver, car, date, time, origin, dest) => {
+const addACarRide = (db, driver, car, date, time, origin, dest) => {
   return db
   .none(`INSERT INTO advertisedCarRide (driver, car, date, time, origin, destination)
           VALUES ($1, $2, $3, $4, $5, $6);`,
@@ -16,7 +14,7 @@ const addACarRide = (driver, car, date, time, origin, dest) => {
 }
 
 //READ
-const getAllCarRides = () => {
+const getAllCarRides = (db) => {
   return db
   .any(`SELECT * FROM advertisedCarRide;`)
   .then((result) => {
@@ -29,7 +27,7 @@ const getAllCarRides = () => {
 }
 
 // UPDATE
-const updateCarRide = (oldDriver, oldDate, oldTime, oldOrigin, oldDest,
+const updateCarRide = (db, oldDriver, oldDate, oldTime, oldOrigin, oldDest,
                        newDriver, newCar, newDate, newTime, newOrigin, newDest) => {
   return db
   .none(`
@@ -60,7 +58,7 @@ const updateCarRide = (oldDriver, oldDate, oldTime, oldOrigin, oldDest,
 }
 
 // DELETE
-const deleteCarRide = (driver, date, time, origin, dest) => {
+const deleteCarRide = (db, driver, date, time, origin, dest) => {
   return db
   .none(`
       DELETE FROM advertisedCarRide
