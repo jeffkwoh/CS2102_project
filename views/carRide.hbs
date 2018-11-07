@@ -1,10 +1,12 @@
 <div class="d-flex flex-md-row pt-3 pl-2 pr-2  justify-content-start align-items-end">
   <div class="">
-    <h1>Ride</h1>
+    <h1>Your Created Ride</h1>
   </div>
 </div>
 
 <hr />
+<h2>Ride Information</h2>
+<br />
 
 <table class="table">
   <thead class="thead-dark">
@@ -35,10 +37,10 @@
   </tbody>
 </table>
 
+<hr />
+<br />
 
 {{#unless winningBid}}
-  <h3>Current Highest Bid: {{#each highestBid }}{{this.result}}{{/each}}</h3>
-
   <div class="row">
     {{#each pendingBids }}
       <div class="col-md-6 col-lg-4">
@@ -62,4 +64,6 @@
       </div>
     {{/each}}
   </div>
+  <br />
+  <h4>Current Highest Bid: {{#each highestBid }}{{this.result}}{{/each}}</h4>
 {{/unless}}
