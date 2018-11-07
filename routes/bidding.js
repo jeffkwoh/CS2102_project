@@ -36,7 +36,7 @@ router.post('/create', connect.ensureLoggedIn('/login'), async function(req, res
     db.exposedInstance
   )
 
-  res.redirect(`rider`)
+  res.redirect(`/rider?user_id_field=${req.body.bidder_field}`)
 })
 
 /**
@@ -76,7 +76,7 @@ router.post('/update', connect.ensureLoggedIn('/login'), async function(req, res
     db.exposedInstance
   )
 
-  res.redirect(`/rider`)
+  res.redirect(`/rider?user_id_field=${req.body.bidder_field}`)
 })
 
 router.post('/delete', async function(req, res, next) {
@@ -103,7 +103,7 @@ router.post('/delete', async function(req, res, next) {
     db.exposedInstance
   )
 
-  res.redirect(`/rider`)
+  res.redirect(`/rider?user_id_field=${req.body.bidder_field}`)
 })
 
 module.exports = router
