@@ -1,5 +1,5 @@
 //CREATE
-const addACarRide = (db, driver, car, date, time, origin, dest) => {
+const addACarRide = (driver, car, date, time, origin, dest, db) => {
   return db
   .none(`INSERT INTO advertisedCarRide (driver, car, date, time, origin, destination)
           VALUES ($1, $2, $3, $4, $5, $6);`,
@@ -27,8 +27,8 @@ const getAllCarRides = (db) => {
 }
 
 // UPDATE
-const updateCarRide = (db, oldDriver, oldDate, oldTime, oldOrigin, oldDest,
-                       newDriver, newCar, newDate, newTime, newOrigin, newDest) => {
+const updateCarRide = (oldDriver, oldDate, oldTime, oldOrigin, oldDest,
+                       newDriver, newCar, newDate, newTime, newOrigin, newDest, db) => {
   return db
   .none(`
       UPDATE advertisedCarRide
@@ -58,7 +58,7 @@ const updateCarRide = (db, oldDriver, oldDate, oldTime, oldOrigin, oldDest,
 }
 
 // DELETE
-const deleteCarRide = (db, driver, date, time, origin, dest) => {
+const deleteCarRide = (driver, date, time, origin, dest, db) => {
   return db
   .none(`
       DELETE FROM advertisedCarRide
