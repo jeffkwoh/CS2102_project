@@ -239,7 +239,7 @@ async function deinitDb() {
 }
 
 async function populateDb() {
-  await user.createUserAppAccount('one@a.com', '98765432', 'one', 'one', db)
+  await user.createUserAppAccount('admin@a.com', '98765432', 'one', 'admin', db)
   await user.createUserAppAccount('two@a.com', '88765432', 'two', 'two', db)
   await user.createUserAppAccount('thr@a.com', '78765432', 'thr', 'thr', db)
   await user.createUserAppAccount('fou@a.com', '68765432', 'fou', 'fou', db)
