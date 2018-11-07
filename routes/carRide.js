@@ -8,12 +8,13 @@ var connect = require('connect-ensure-login')
  * Only 1 car ride listing is to be viewed at a time.
  */
 router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next) {
+  const user = req.user
   const driver = req.body.driver
   const date = req.body.date
   const time = req.body.time
   const origin = req.body.origin
   const destination = req.body.destination
-  const bids = await db.bid.listBidsForRide(
+  const bids = await db.bid.listPendingBidsForRide(
     driver,
     date,
     time,
@@ -31,7 +32,7 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
     destination,
     db.exposedInstance
   )
-  res.render('carRide', { ride, bids, highestBid })
+  res.render('carRide', { user, ride, bids, highestBid })
 })
 
 /**
