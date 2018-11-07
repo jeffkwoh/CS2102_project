@@ -38,28 +38,28 @@
 
 {{#unless winningBid}}
   <h3>Current Highest Bid: {{#each highestBid }}{{this.result}}{{/each}}</h3>
-  <table>
-    <tr>
-      <td> Bidder ID </td>
-      <td> Bid amount </td>
-    </tr>
+
+  <div class="row">
     {{#each pendingBids }}
-      <tr>
-        <td>{{this.bidder}}</td>
-        <td>{{this.bidamount}}</td>
-        <td>{{this.date}}</td>
-        <td>
-          <form action="/driver/updateBidStatus" method="post">
-            <input id="bidder_user_id" type="number" name="bidder_user_id" value="{{this.bidder}}" hidden="true">
-            <input id="driver_user_id" type="number" name="driver_user_id" value="{{this.driver}}" hidden="true">
-            <input id="date" type="text" name="date_field" value="{{this.date}}" hidden="true">
-            <input id="time" type="text" name="time_field" value="{{this.time}}" hidden="true">
-            <input id="origin" type="text" name="origin_field" value="{{this.origin}}" hidden="true">
-            <input id="destination" type="text" name="destination_field" value="{{this.destination}}" hidden="true">
-            <input type="submit" value="Select Bidder">
-          </form>
-        </td>
-      </tr>
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-primary">
+          <div class="card-body">
+            <h5 class="card-title">$<b>{{this.bidamount}}</b></h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{this.bidderName}}</h6>
+            <form action="/driver/updateBidStatus" method="post">
+              <input id="bidder_user_id" type="number" name="bidder_user_id" value="{{this.bidder}}" hidden="true">
+              <input id="driver_user_id" type="number" name="driver_user_id" value="{{this.driver}}" hidden="true">
+              <input id="date" type="text" name="date_field" value="{{this.date}}" hidden="true">
+              <input id="time" type="text" name="time_field" value="{{this.time}}" hidden="true">
+              <input id="origin" type="text" name="origin_field" value="{{this.origin}}" hidden="true">
+              <input id="destination" type="text" name="destination_field" value="{{this.destination}}" hidden="true">
+              <div class="input-group mt-3">
+                <button class="btn btn-outline-primary btn-block" type="submit">Select Bidder</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     {{/each}}
-  </table>
+  </div>
 {{/unless}}
