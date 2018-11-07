@@ -9,21 +9,29 @@
 <table class="table">
   <thead class="thead-dark">
     <tr>
-      <td> Datasdfasde </td>
+      <td> Date </td>
       <td> Time </td>
       <td> Trip start Location </td>
       <td> Destination </td>
+      {{#if winningBid}}
+      <td> Rider name </td>
+      <td> Email </td>
+      <td> Contact Number </td>
+      {{/if}}
     </tr>
   </thead>
   <tbody>
-    {{#with ride}}
       <tr>
-        <td>{{date_readable}}</td>
-        <td>{{time_readable}}</td>
-        <td>{{origin}}</td>
-        <td>{{destination}}</td>
+        <td>{{ride.date_readable}}</td>
+        <td>{{ride.time_readable}}</td>
+        <td>{{ride.origin}}</td>
+        <td>{{ride.destination}}</td>
+        {{#if winningBid}}
+        <td>{{winningBid.name}}</td>
+        <td>{{winningBid.email}}</td>
+        <td>{{winningBid.contactnumber}}</td>
+        {{/if}}
       </tr>
-    {{/with}}
   </tbody>
 </table>
 
