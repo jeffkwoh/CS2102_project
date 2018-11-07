@@ -118,12 +118,15 @@ const listPendingBidsForUser = async (user, filters, db) => {
     NATURAL JOIN bid b
     WHERE b.bidder = $1
       AND b.bidStatus = 'pending'
-      AND TO_CHAR(CAST(b.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
+      AND TO_CHAR(CAST(b.date as timestamp), 'DD Month YYYY') LIKE '%${
+        filters.date
+      }%'
       AND CAST(b.time as VARCHAR(25)) LIKE '%${filters.time}%'
       AND b.origin LIKE '%${filters.origin}%'
       AND b.destination LIKE '%${filters.destination}%'
     ORDER BY b.date ASC, b.time ASC;
-      `, [user]
+      `,
+      [user]
     )
     .then(result => {
       console.log(`List bids success:\n${JSON.stringify(result)}`)
@@ -137,7 +140,14 @@ const listPendingBidsForUser = async (user, filters, db) => {
 }
 
 // Return the current highest bid for the ride
-const highestCurrentBid = async (driver, date, time, origin, destination, db) => {
+const highestCurrentBid = async (
+  driver,
+  date,
+  time,
+  origin,
+  destination,
+  db
+) => {
   return db
     .any(
       `
@@ -197,7 +207,12 @@ const winningBid = async (driver, date, time, origin, destination, db) => {
 }
 
 // List all bids a user has made
-const listUnsuccessfulBidsForUser = async (user, currentDate, currentTime, db) => {
+const listUnsuccessfulBidsForUser = async (
+  user,
+  currentDate,
+  currentTime,
+  db
+) => {
   return db
     .any(
       `
@@ -261,7 +276,14 @@ const updateBidStatus = async (
 /*
 List bids available for driver to confirm
  */
-const listPendingBidsForRide = async (driver, date, time, origin, destination, db) => {
+const listPendingBidsForRide = async (
+  driver,
+  date,
+  time,
+  origin,
+  destination,
+  db
+) => {
   return db
     .any(
       `
@@ -298,5 +320,5 @@ module.exports = {
   winningBid,
   listUnsuccessfulBidsForUser,
   deleteUserBid,
-  updateBidStatus
+  updateBidStatus,
 }

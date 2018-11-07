@@ -31,5 +31,5 @@ const addCarToUser = async (
 }
 
 module.exports = {
-  addCarToUser
+  addCarToUser,
 }

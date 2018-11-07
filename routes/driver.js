@@ -4,7 +4,11 @@ var db = require('../model/db.js')
 var connect = require('connect-ensure-login')
 
 /* GET car rides listing page. */
-router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next) {
+router.get('/', connect.ensureLoggedIn('/login'), async function(
+  req,
+  res,
+  next
+) {
   const driverId = req.user
 
   // fetch:
@@ -19,10 +23,7 @@ router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next)
     db.exposedInstance
   )
 
-  const ownedCars = await db.ride.listCarsUserOwns(
-    driverId,
-    db.exposedInstance
-  )
+  const ownedCars = await db.ride.listCarsUserOwns(driverId, db.exposedInstance)
 
   makeReadable(confirmedRides)
   makeReadable(pendingRides)
@@ -73,7 +74,7 @@ router.post('/addCar', async function(req, res, next) {
 })
 
 function makeReadable(rides) {
-  var len = rides.length;
+  var len = rides.length
   for (var i = 0; i < len; i++) {
     rides[i].i = i + 1
     rides[i].date_readable = parseDate(rides[i].date)
@@ -82,12 +83,12 @@ function makeReadable(rides) {
 }
 
 function parseDate(date) {
-  var temp = date.toString().substring(0,10);
-  return temp.substring(0,3) + "," + temp.substring(3,10)
+  var temp = date.toString().substring(0, 10)
+  return temp.substring(0, 3) + ',' + temp.substring(3, 10)
 }
 
 function parseTime(time) {
-  return time.substring(0,5);
+  return time.substring(0, 5)
 }
 
 module.exports = router

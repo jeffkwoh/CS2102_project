@@ -50,7 +50,7 @@ const delAdvertisedRide = async (
       [driver, date, time, origin, destination]
     )
     .then(() => {
-      console.log("Delete Success")
+      console.log('Delete Success')
     })
     .catch(error => {
       console.log(error)
@@ -62,15 +62,23 @@ const delAdvertisedRide = async (
  *
  * @param filters An object containing specific filter options. @see rider router
  */
-const listAvailableAdvertisedCarRidesForRider = async (user, currentDate, currentTime, filters, db) => {
-  console.log("listAvailableAdvertisedCarRidesForRider")
+const listAvailableAdvertisedCarRidesForRider = async (
+  user,
+  currentDate,
+  currentTime,
+  filters,
+  db
+) => {
+  console.log('listAvailableAdvertisedCarRidesForRider')
   return db
     .any(
       `
     -- Car rides the user is not driver for
     SELECT a.driver, a.date, a.time, a.origin, a.destination FROM advertisedCarRide a
     WHERE a.driver <> $1
-      AND TO_CHAR(CAST(a.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
+      AND TO_CHAR(CAST(a.date as timestamp), 'DD Month YYYY') LIKE '%${
+        filters.date
+      }%'
       AND CAST(a.time as VARCHAR(25)) LIKE '%${filters.time}%'
       AND a.origin LIKE '%${filters.origin}%'
       AND a.destination LIKE '%${filters.destination}%'
@@ -86,8 +94,8 @@ const listAvailableAdvertisedCarRidesForRider = async (user, currentDate, curren
     (SELECT b.driver, b.date, b.time, b.origin, b.destination FROM bid b
     WHERE b.bidder = $1 OR b.bidStatus <> 'pending'
     GROUP BY b.driver, b.date, b.time, b.origin, b.destination);
-    `
-      ,[user, currentDate, currentTime]
+    `,
+      [user, currentDate, currentTime]
     )
     .then(result => {
       console.log(`Retrieved all upcoming car rides!`)
@@ -121,7 +129,13 @@ const listCarsUserOwns = async (user, db) => {
  *
  * @param filters An object containing specific filter options. @see rider router
  */
-const listConfirmedRidesForRider = async (user, currentDate, currentTime, filters, db) => {
+const listConfirmedRidesForRider = async (
+  user,
+  currentDate,
+  currentTime,
+  filters,
+  db
+) => {
   return db
     .any(
       `
@@ -130,7 +144,9 @@ const listConfirmedRidesForRider = async (user, currentDate, currentTime, filter
     NATURAL JOIN bid b
     WHERE b.bidStatus = 'successful'
       AND b.bidder = $1
-      AND TO_CHAR(CAST(b.date as timestamp), 'DD Month YYYY') LIKE '%${filters.date}%'
+      AND TO_CHAR(CAST(b.date as timestamp), 'DD Month YYYY') LIKE '%${
+        filters.date
+      }%'
       AND CAST(b.time as varchar(20)) LIKE '%${filters.time}%'
       AND b.origin LIKE '%${filters.origin}%'
       AND b.destination LIKE '%${filters.destination}%'
@@ -221,5 +237,5 @@ module.exports = {
   listConfirmedRidesForDriver,
   listPendingRidesForDriver,
   listCarsUserOwns,
-  delAdvertisedRide
+  delAdvertisedRide,
 }
