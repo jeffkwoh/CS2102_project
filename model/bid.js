@@ -163,7 +163,7 @@ const highestCurrentBid = async (driver, date, time, origin, destination, db) =>
 }
 
 // List all bids a user has made
-const listUnsuccessfulBidsForUser = async (user, db) => {
+const listUnsuccessfulBidsForUser = async (user, currentDate, currentTime, db) => {
   return db
     .any(
       `
@@ -172,8 +172,12 @@ const listUnsuccessfulBidsForUser = async (user, db) => {
     NATURAL JOIN bid b
     WHERE b.bidStatus = 'unsuccessful'
       AND b.bidder = $1
+      AND (a.date > $2
+           OR (a.date = $2
+              AND a.time > $3)
+           )
     ORDER BY a.date DESC;`,
-      [user]
+      [user, currentDate, currentTime]
     )
     .then(result => {
       console.log(`List Unsuccessful Bids:\n${JSON.stringify(result)}`)
