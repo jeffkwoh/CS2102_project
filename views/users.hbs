@@ -32,13 +32,13 @@
     <td>{{this.email}}</td>
     <td>{{this.contactnumber}}</td>
     <td>
-      <form action="/driver" method="get">
+      <form action="/users/assumeUser" method="post">
         <input id="driver_user_id" type="number" name="user_id_field" value="{{this.userid}}" hidden="true">
         <input type="submit" value="Driver">
       </form>
     </td>
     <td>
-      <form action="/rider" method="get">
+      <form action="/users/assumeUser" method="post">
         <input id="rider_user_id" type="number" name="user_id_field" value="{{this.userid}}" hidden="true">
         <input type="submit" value="Rider">
       </form>

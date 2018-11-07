@@ -61,6 +61,27 @@ async function initDb() {
     PRIMARY KEY(bidder, driver, date, time, origin, destination),
     CHECK (bidder <> driver)
   );
+  
+  --
+  -- Convenience view to be used in one of the queries to showcase use of views
+  -- Other places where this view could be used but are not used is deliberate
+  -- to showcase other uses of sql
+  -- TODO: Rename to reflect that this does not include car rides without
+  -- successful bids as intended
+  --
+  CREATE VIEW car_rides_with_capacity 
+  (driver, date, time, origin, destination, maxcapacity, currcapacity) 
+  AS SELECT b.driver, b.date, b.time, b.origin, b.destination ,uCar.numseats, count(*)
+	FROM bid b, advertisedCarRide aCar, userOwnsACar uCar
+	  WHERE b.bidstatus = 'successful'
+	  AND aCar.date = b.date
+	  AND aCar.driver = b.driver
+	  AND aCar.time = b.time
+	  AND aCar.origin = b.origin
+	  AND aCar.destination = b.destination
+	  AND aCar.car = uCar.licensePlate
+	  group by b.driver, b.date, b.time, b.origin, b.destination, uCar.numseats
+	  order by b.driver,b.date,b.time,b.origin,b.destination;  
 
   COMMIT;`
 
@@ -189,7 +210,7 @@ async function createFunctionsAndTriggers() {
         get_available_car_seats(NEW.date, NEW.driver, NEW.time, NEW.origin, NEW.destination)
       ) THEN
 
-        RAISE EXCEPTION 'Number of successful car ride bids cannot except number of available car seats.';
+        RAISE EXCEPTION 'Number of successful car ride bids for a car ride cannot exceed number of available car seats.';
 
       END IF;
 
@@ -220,7 +241,8 @@ async function createFunctionsAndTriggers() {
 async function deinitDb() {
   const query = `
   BEGIN;
-
+  
+  DROP VIEW IF EXISTS car_rides_with_capacity;
   DROP TABLE IF EXISTS bid;
   DROP TABLE IF EXISTS advertisedCarRide;
   DROP TABLE IF EXISTS userOwnsACar;
@@ -241,7 +263,7 @@ async function deinitDb() {
 }
 
 async function populateDb() {
-  await user.createUserAppAccount('one@a.com', '11765432', 'one', 'one_pw', db)
+  await user.createUserAppAccount('admin@a.com', '98765432', 'one', 'admin_pw', db)
   await user.createUserAppAccount('two@a.com', '88765432', 'two', 'two_pw', db)
   await user.createUserAppAccount('thr@a.com', '78765432', 'thr', 'thr_pw', db)
   await user.createUserAppAccount('fou@a.com', '68765432', 'fou', 'fou_pw', db)

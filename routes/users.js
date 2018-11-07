@@ -4,10 +4,14 @@ var db = require('../model/db.js')
 var connect = require('connect-ensure-login')
 
 /* GET users listing page. */
-router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next) {
-  const users = await db.user.listUserAppAccount(db.exposedInstance)
-
-  res.render('users', { users: users })
+router.get('/', connect.ensureLoggedIn('/login'), async function(req, res, next) {
+  console.log(req.user)
+  if (req.user === 1) {
+    const users = await db.user.listUserAppAccount(db.exposedInstance)
+    res.render('users', { users: users })
+  } else {
+    res.redirect('/')
+  }
 })
 
 /* POST user creation. */
@@ -28,6 +32,23 @@ router.post('/create', connect.ensureLoggedIn('/login') ,async function(req, res
   )
 
   res.redirect('/users')
+})
+
+/* Assume the role of a user. */
+router.post('/assumeUser', async function(req, res, next) {
+  const currentUser = req.user;
+  // ensure user is an admin first.
+  if (currentUser !== 1) {
+    res.redirect('/')
+  }
+
+  const targetId = req.body.user_id_field;
+  console.log("Changing user to " + req.body.user_id_field + "...");
+
+  await req.login(targetId, function(err) {
+    if (err) { return next(err); }
+    return res.redirect('/rider');
+  });
 })
 
 /* POST Delete creation. */
