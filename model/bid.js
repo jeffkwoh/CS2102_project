@@ -227,7 +227,7 @@ const updateBidStatus = async (
 /*
 List bids available for driver to confirm
  */
-const listBidsForRide = async (driver, date, time, origin, destination, db) => {
+const listPendingBidsForRide = async (driver, date, time, origin, destination, db) => {
   return db
     .any(
       `
@@ -258,7 +258,7 @@ module.exports = {
   createUserBid,
   updateUserBid,
   listPendingBidsForUser,
-  listBidsForRide,
+  listPendingBidsForRide,
   highestCurrentBid,
   listUnsuccessfulBidsForUser,
   deleteUserBid,

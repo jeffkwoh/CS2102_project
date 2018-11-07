@@ -8,8 +8,9 @@ var connect = require('connect-ensure-login')
  * Only 1 car ride listing is to be viewed at a time.
  */
 router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next) {
-  const user = req.user
-  const driver = req.body.driver
+  const driver = parseInt(req.body.driver)
+  const isCreator = req.user === driver
+  console.log("creator: " + driver + ". current user: " + req.user + ". isCreator: " + isCreator)
   const date = req.body.date
   const time = req.body.time
   const origin = req.body.origin
@@ -33,7 +34,7 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
     db.exposedInstance
   )
   makeReadable(ride)
-  res.render('carRide', { user, ride, bids, highestBid })
+  res.render('carRide', { isCreator, ride, bids, highestBid })
 })
 
 /**

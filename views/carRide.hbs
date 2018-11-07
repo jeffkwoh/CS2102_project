@@ -4,8 +4,6 @@
   </div>
 </div>
 
-<hr />
-
 <table class="table">
   <thead class="thead-dark">
     <tr>
@@ -28,6 +26,8 @@
 </table>
 
 
+{{#if isCreator}}
+<hr />
 
 <h3>Current Highest Bid: {{#each highestBid }}{{this.result}}{{/each}}</h3>
 <table>
@@ -54,3 +54,5 @@
     </tr>
   {{/each}}
 </table>
+
+{{/if}}
