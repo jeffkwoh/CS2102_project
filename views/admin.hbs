@@ -1,0 +1,121 @@
+<div class="d-flex flex-md-row pt-3 pl-2 pr-2  justify-content-start align-items-end">
+  <div class="">
+    <h1>Admin</h1>
+  </div>
+  <div class="ml-auto">
+    <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#filter">Filter Results</button>
+  </div>
+</div>
+
+<!-- CRUD RIDES -->
+
+<div class="row">
+  {{#each rides}}
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-body">
+          <form action="/admin/editRide" method="post">
+            <div class="modal-body">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="licensePlate_field">Car License Plate</label>
+                </div>
+                <input type="text" name="licensePlate_field" placeholder="{{this.car}}" class="form-control">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="date_field">Date</label>
+                </div>
+                <input type="date" name="date_field" class="form-control" placeholder="{{this.date}}">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="time_field">Time</label>
+                </div>
+                <input type="time" name="time_field" class="form-control" placeholder="{{this.time}}">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="origin_field">From</label>
+                </div>
+                <input type="text" name="origin_field" placeholder="{{this.origin}}" class="form-control">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="destination_field">To</label>
+                </div>
+                <input type="text" name="destination_field" placeholder="{{this.destination}}" class="form-control">
+              </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit" value="Edit">Edit</button>
+
+          </form>
+
+          <form action="/admin/deleteRide">
+            <input hidden="true" type="text" name="destination_field" value="{{this.destination}}" class="form-control">
+            <input hidden="true" type="text" name="origin_field" value="{{this.origin}}" class="form-control">
+            <input hidden="true" type="time" name="time_field" class="form-control" value="{{this.time}}">
+            <input hidden="true" type="date" name="date_field" class="form-control" value="{{this.date}}">
+            <input hidden="true" type="text" name="licensePlate_field" value="{{this.car}}" class="form-control">
+            <button class="btn btn-primary" type="submit" value="Delete">Delete</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  {{/each}}
+</div>
+
+<div class="row">
+  {{#each cars}}
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-body">
+          <form action="/admin/editCar" method="post">
+            <div class="modal-body">
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="licensePlate_field">Plate No.</label>
+                </div>
+                <input type="text" name="licensePlate_field" class="form-control" placeholder="{{this.licenseplate}}">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="carBrand_field">Brand</label>
+                </div>
+                <input type="text" name="carBrand_field" class="form-control" placeholder="{{this.brand}}">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="carModel_field">Model</label>
+                </div>
+                <input type="text" name="carModel_field" placeholder="{{this.model}}" class="form-control">
+              </div>
+
+              <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="numAvailSeats_field">Seats Available</label>
+                </div>
+                <input type="number" name="numAvailSeats_field" placeholder="{{this.numseats}}" class="form-control">
+              </div>
+            </div>
+            <button class="btn btn-primary" type="submit" value="Edit">Edit</button>
+          </form>
+
+          <form action="/admin/deleteCar">
+            <input hidden="true" type="text" name="licensePlate_field" class="form-control" placeholder="{{this.licenseplate}}">
+            <button class="btn btn-primary" type="submit" value="Delete">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {{/each}}
+</div>

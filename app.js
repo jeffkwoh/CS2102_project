@@ -14,6 +14,7 @@ var fs = require('fs');
 var db = require('./model/db')
 
 var indexRouter = require('./routes/index')
+var adminRouter = require('./routes/admin')
 var usersRouter = require('./routes/users')
 var driverRouter = require('./routes/driver')
 var riderRouter = require('./routes/rider')
@@ -78,6 +79,7 @@ app.use('/rider', riderRouter)
 app.use('/rides', carRideRouter)
 app.use('/bidding', biddingRouter)
 app.use('/login', loginRouter)
+app.use('/admin', adminRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
