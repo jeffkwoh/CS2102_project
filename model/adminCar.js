@@ -18,7 +18,7 @@ const addACarRide = (driver, car, date, time, origin, dest) => {
 //READ
 const getAllCarRides = () => {
   return db
-  .any(`SELECT * FROM advertisedCarRide;`)
+  .any(`SELECT * FROM carride;`)
   .then((result) => {
     return result
   })
