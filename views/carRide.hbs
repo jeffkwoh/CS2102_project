@@ -1,34 +1,27 @@
-<div class="d-flex flex-md-row pt-3 pl-2 pr-2  justify-content-start align-items-end">
-  <div class="">
-    <h1>Ride</h1>
-  </div>
-</div>
+<h1> Car Ride </h1>
 
 <hr />
 
-<table class="table">
-  <thead class="thead-dark">
+<table>
+  <tr>
+    <td> DriverID </td>
+    <td> Date </td>
+    <td> Time </td>
+    <td> Trip start Location </td>
+    <td> Destination </td>
+  </tr>
+  {{#with ride}}
     <tr>
-      <td> Datasdfasde </td>
-      <td> Time </td>
-      <td> Trip start Location </td>
-      <td> Destination </td>
+      <td>{{driver}}</td>
+      <td>{{date}}</td>
+      <td>{{time}}</td>
+      <td>{{origin}}</td>
+      <td>{{destination}}</td>
     </tr>
-  </thead>
-  <tbody>
-    {{#with ride}}
-      <tr>
-        <td>{{date_readable}}</td>
-        <td>{{time_readable}}</td>
-        <td>{{origin}}</td>
-        <td>{{destination}}</td>
-      </tr>
-    {{/with}}
-  </tbody>
+  {{/with}}
 </table>
 
-
-
+<hr />
 <h3>Current Highest Bid: {{#each highestBid }}{{this.result}}{{/each}}</h3>
 <table>
   <tr>
