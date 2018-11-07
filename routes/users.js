@@ -4,10 +4,14 @@ var db = require('../model/db.js')
 var connect = require('connect-ensure-login')
 
 /* GET users listing page. */
-router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next) {
+router.get('/', connect.ensureLoggedIn('/login'), async function(req, res, next) {
   const users = await db.user.listUserAppAccount(db.exposedInstance)
 
-  res.render('users', { users: users })
+  if (req.userId === 1) {
+    res.render('users', { users: users })
+  } else {
+    res.redirect('/')
+  }
 })
 
 /* POST user creation. */
@@ -32,19 +36,18 @@ router.post('/create', connect.ensureLoggedIn('/login') ,async function(req, res
 
 /* Assume the role of a user. */
 router.post('/assumeUser', async function(req, res, next) {
-  // ensure user is an admin first.
-  // if (req.userId !== 0) {
-  //   res.redirect('/')
-  // }
-
   const currentUser = req.user;
-  console.log(req.user);
-  // TODO check if user is 0
+  // ensure user is an admin first.
+  if (currentUser !== 1) {
+    res.redirect('/')
+  }
+
   const targetId = req.body.user_id_field;
-  console.log(req.body.user_id_field);
+  console.log("Changing user to " + req.body.user_id_field + "...");
+
   await req.login(targetId, function(err) {
     if (err) { return next(err); }
-    return res.redirect('/users/');
+    return res.redirect('/rider');
   });
 })
 
