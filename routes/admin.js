@@ -3,13 +3,18 @@ var router = express.Router()
 var db = require('../model/db.js')
 const connect = require('connect-ensure-login')
 
-/* GET admin page. */
-router.get('/', connect.ensureLoggedIn('/login') ,async function(req, res, next) {
-  if (req.user === 1) {
-    res.render('admin', { rides: [] })
-  } else {
+const ensureAdmin = (req, res, next) => {
+  if (req.user === 1)
+    next()
+  else
     res.redirect('/')
-  }
+}
+
+/* GET admin page. */
+router.get('/', connect.ensureLoggedIn('/login'), ensureAdmin, async function(req, res, next) {
+})
+
+router.get('/editRide', connect.ensureLoggedIn('/login'), ensureAdmin, async function(req, res, next) {
 })
 
 module.exports = router
