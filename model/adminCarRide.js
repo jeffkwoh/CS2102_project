@@ -11,7 +11,7 @@ const addACarRide = (driver, car, date, time, origin, dest) => {
   })
   .catch(error => {
     console.log(error)
-    // error;
+    return error;
   })
 }
 
@@ -24,7 +24,7 @@ const getAllCarRides = () => {
   })
   .catch(error => {
     console.log(error)
-    // error;
+    return error
   })
 }
 
