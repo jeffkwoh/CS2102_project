@@ -210,7 +210,7 @@ async function createFunctionsAndTriggers() {
         get_available_car_seats(NEW.date, NEW.driver, NEW.time, NEW.origin, NEW.destination)
       ) THEN
 
-        RAISE EXCEPTION 'Number of successful car ride bids cannot except number of available car seats.';
+        RAISE EXCEPTION 'Number of successful car ride bids for a car ride cannot exceed number of available car seats.';
 
       END IF;
 
