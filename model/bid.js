@@ -265,14 +265,15 @@ const listPendingBidsForRide = async (driver, date, time, origin, destination, d
   return db
     .any(
       `
-      SELECT *
-      FROM bid b
+      SELECT b.bidAmount, u.name as bidderName
+      FROM bid b, appUserAccount u
       WHERE b.driver = $1
         AND b.date = $2
         AND b.time = $3
         AND b.origin = $4
         AND b.destination = $5
         AND b.bidstatus = 'pending'
+        AND b.bidder = u.userID
       ORDER BY b.bidAmount DESC;
       `,
       [driver, new Date(date), time, origin, destination]

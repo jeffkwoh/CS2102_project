@@ -45,7 +45,7 @@
         <div class="card border-primary">
           <div class="card-body">
             <h5 class="card-title">$<b>{{this.bidamount}}</b></h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{this.bidderName}}</h6>
+            <h6 class="card-subtitle mb-2 text-muted">by {{this.biddername}}</h6>
             <form action="/driver/updateBidStatus" method="post">
               <input id="bidder_user_id" type="number" name="bidder_user_id" value="{{this.bidder}}" hidden="true">
               <input id="driver_user_id" type="number" name="driver_user_id" value="{{this.driver}}" hidden="true">
