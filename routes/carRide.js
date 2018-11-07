@@ -22,7 +22,16 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
     destination,
     db.exposedInstance
   )
-
+  // null | obj
+  const winningBid = await db.bid.winningBid(
+    driver,
+    date,
+    time,
+    origin,
+    destination,
+    db.exposedInstance
+  )
+  console.log(winningBid)
   const ride = { pendingBids, driver, date, time, origin, destination }
   console.log(pendingBids)
   const highestBid = await db.bid.highestCurrentBid(
@@ -34,7 +43,7 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
     db.exposedInstance
   )
   makeReadable(ride)
-  res.render('carRide', { user, ride, bids, highestBid })
+  res.render('carRide', { user, ride, pendingBids, highestBid, winningBid })
 })
 
 /**
