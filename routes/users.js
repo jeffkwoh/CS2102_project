@@ -5,9 +5,9 @@ var connect = require('connect-ensure-login')
 
 /* GET users listing page. */
 router.get('/', connect.ensureLoggedIn('/login'), async function(req, res, next) {
-  const users = await db.user.listUserAppAccount(db.exposedInstance)
-
-  if (req.userId === 1) {
+  console.log(req.user)
+  if (req.user === 1) {
+    const users = await db.user.listUserAppAccount(db.exposedInstance)
     res.render('users', { users: users })
   } else {
     res.redirect('/')
