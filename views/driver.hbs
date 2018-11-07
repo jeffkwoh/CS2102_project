@@ -190,8 +190,13 @@
 
             </div>
             <div class="card-footer p-1">
-              <form action="/rides" method="get">
-                <input id="ride_id" type="number" name="id" value="{{this.id}}" hidden="true">
+              <form action="/rides" method="post">
+                <input id="driver_id" type="number" name="driver" value="{{this.driver}}" hidden="true">
+                <input id="date_id" type="text" name="date" value="{{this.date}}" hidden="true">
+                <input id="time_id" type="text" name="time" value="{{this.time}}" hidden="true">
+                <input id="origin_id" type="text" name="origin" value="{{this.origin}}" hidden="true">
+                <input id="destination_id" type="text" name="destination" value="{{this.destination}}" hidden="true">
+                <input id="car_id" type="text" name="car" value="{{this.car}}" hidden="true">
                 <button class="btn btn-outline-success" type="submit">Details</button>
               </form>
             </div>
