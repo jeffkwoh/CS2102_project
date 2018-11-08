@@ -162,6 +162,40 @@ const highestCurrentBid = async (driver, date, time, origin, destination, db) =>
     })
 }
 
+/**
+ * Gets the winning bid for the particular ride, together
+ * with user information. Returns null if no such
+ * bid exists.
+ *
+ * @return null or object with bid and user information
+ */
+const winningBid = async (driver, date, time, origin, destination, db) => {
+  return db
+    .oneOrNone(
+      `
+      SELECT b.bidAmount, b.driver, b.date, b.time, b.origin, b.destination,
+        u.email, u.contactNumber, u.name
+      FROM bid b, appUserAccount u
+      WHERE b.driver = $1
+      AND b.date = $2
+      AND b.time = $3
+      AND b.origin = $4
+      AND b.destination = $5
+      AND b.bidstatus = 'successful'
+      AND b.bidder = u.userID;`,
+      [driver, new Date(date), time, origin, destination]
+    )
+    .then(result => {
+      console.log('success!')
+      // success;
+      return result
+    })
+    .catch(error => {
+      console.log(error)
+      // error;
+    })
+}
+
 // List all bids a user has made
 const listUnsuccessfulBidsForUser = async (user, currentDate, currentTime, db) => {
   return db
@@ -227,18 +261,19 @@ const updateBidStatus = async (
 /*
 List bids available for driver to confirm
  */
-const listBidsForRide = async (driver, date, time, origin, destination, db) => {
+const listPendingBidsForRide = async (driver, date, time, origin, destination, db) => {
   return db
     .any(
       `
-      SELECT *
-      FROM bid b
+      SELECT b.bidAmount, u.name as bidderName
+      FROM bid b, appUserAccount u
       WHERE b.driver = $1
         AND b.date = $2
         AND b.time = $3
         AND b.origin = $4
         AND b.destination = $5
         AND b.bidstatus = 'pending'
+        AND b.bidder = u.userID
       ORDER BY b.bidAmount DESC;
       `,
       [driver, new Date(date), time, origin, destination]
@@ -258,8 +293,9 @@ module.exports = {
   createUserBid,
   updateUserBid,
   listPendingBidsForUser,
-  listBidsForRide,
+  listPendingBidsForRide,
   highestCurrentBid,
+  winningBid,
   listUnsuccessfulBidsForUser,
   deleteUserBid,
   updateBidStatus
