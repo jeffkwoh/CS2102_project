@@ -32,24 +32,20 @@
   <hr />
   <h2>Successful Bidders</h2>
   <br />
-  <table class="table">
-    <thead class="thead-dark">
-      <tr>
-        <td> Rider name </td>
-        <td> Email </td>
-        <td> Contact Number </td>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each winningBid}}
-        <tr>
-          <td>{{this.name}}</td>
-          <td>{{this.email}}</td>
-          <td>{{this.contactnumber}}</td>
-        </tr>
-      {{/each}}
-    </tbody>
-  </table>
+  <div class="row">
+  {{#each winningBid}}
+  <div class="col-md-6 col-lg-4 mb-4">
+    <div class="card border-success">
+      <div class="card-body">
+        </h6><h2 class="card-title text-success"><b>${{this.bidamount}}</b></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Rider name: {{this.name}}</h6>
+        <h6 class="card-subtitle mb-2 text-muted">{{this.contactnumber}}</h6>
+        <h6 class="card-subtitle mb-2 text-muted">{{this.email}}</h6>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+  </div>
 {{/if}}
 
 <hr />
@@ -61,7 +57,7 @@
 {{#if pendingBids}}
   <div class="row">
     {{#each pendingBids }}
-      <div class="col-md-6 col-lg-4">
+      <div class="col-md-6 col-lg-4 mb-4">
         <div class="card border-primary">
           <div class="card-body">
             <h5 class="card-title">$<b>{{this.bidamount}}</b></h5>
