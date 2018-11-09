@@ -15,11 +15,6 @@
       <td> Time </td>
       <td> Trip start Location </td>
       <td> Destination </td>
-      {{#if winningBid}}
-      <td> Rider name </td>
-      <td> Email </td>
-      <td> Contact Number </td>
-      {{/if}}
     </tr>
   </thead>
   <tbody>
@@ -28,19 +23,34 @@
         <td>{{ride.time_readable}}</td>
         <td>{{ride.origin}}</td>
         <td>{{ride.destination}}</td>
-        {{#if winningBid}}
-        <td>{{winningBid.name}}</td>
-        <td>{{winningBid.email}}</td>
-        <td>{{winningBid.contactnumber}}</td>
-        {{/if}}
       </tr>
   </tbody>
+</table>
+
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        {{#if winningBid}}
+            <td> Rider name </td>
+            <td> Email </td>
+            <td> Contact Number </td>
+        {{/if}}
+    </tr>
+    </thead>
+    <tbody>
+    {{#each winningBid }}
+        <tr>
+            <td>{{this.name}}</td>
+            <td>{{this.email}}</td>
+            <td>{{this.contactnumber}}</td>
+        </tr>
+    {{/each}}
+    </tbody>
 </table>
 
 <hr />
 <br />
 
-{{#unless winningBid}}
   <div class="row">
     {{#each pendingBids }}
       <div class="col-md-6 col-lg-4">
@@ -66,4 +76,3 @@
   </div>
   <br />
   <h4>Current Highest Bid: {{#each highestBid }}{{this.result}}{{/each}}</h4>
-{{/unless}}
