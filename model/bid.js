@@ -164,14 +164,13 @@ const highestCurrentBid = async (driver, date, time, origin, destination, db) =>
 
 /**
  * Gets the winning bid for the particular ride, together
- * with user information. Returns null if no such
- * bid exists.
+ * with user information.
  *
- * @return null or object with bid and user information
+ * @return [] or [object] with bid and user information
  */
 const winningBid = async (driver, date, time, origin, destination, db) => {
   return db
-    .oneOrNone(
+    .any(
       `
       SELECT b.bidAmount, b.driver, b.date, b.time, b.origin, b.destination,
         u.email, u.contactNumber, u.name
@@ -265,7 +264,8 @@ const listPendingBidsForRide = async (driver, date, time, origin, destination, d
   return db
     .any(
       `
-      SELECT b.bidAmount, u.name as bidderName
+      SELECT b.bidAmount, b.bidder, b.driver, b.date, b.time,
+        b.origin, b.destination, u.name as bidderName
       FROM bid b, appUserAccount u
       WHERE b.driver = $1
         AND b.date = $2

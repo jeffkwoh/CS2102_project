@@ -15,11 +15,6 @@
       <td> Time </td>
       <td> Trip start Location </td>
       <td> Destination </td>
-      {{#if winningBid}}
-      <td> Rider name </td>
-      <td> Email </td>
-      <td> Contact Number </td>
-      {{/if}}
     </tr>
   </thead>
   <tbody>
@@ -28,22 +23,41 @@
         <td>{{ride.time_readable}}</td>
         <td>{{ride.origin}}</td>
         <td>{{ride.destination}}</td>
-        {{#if winningBid}}
-        <td>{{winningBid.name}}</td>
-        <td>{{winningBid.email}}</td>
-        <td>{{winningBid.contactnumber}}</td>
-        {{/if}}
       </tr>
   </tbody>
 </table>
 
+
+{{#if winningBid}}
+  <hr />
+  <h2>Successful Bidders</h2>
+  <br />
+  <div class="row">
+  {{#each winningBid}}
+  <div class="col-md-6 col-lg-4 mb-4">
+    <div class="card border-success">
+      <div class="card-body">
+        </h6><h2 class="card-title text-success"><b>${{this.bidamount}}</b></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Rider name: {{this.name}}</h6>
+        <h6 class="card-subtitle mb-2 text-muted">{{this.contactnumber}}</h6>
+        <h6 class="card-subtitle mb-2 text-muted">{{this.email}}</h6>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+  </div>
+{{/if}}
+
 <hr />
 <br />
 
-{{#unless winningBid}}
+
+<h2>Pending bids</h2>
+<br />
+{{#if pendingBids}}
   <div class="row">
     {{#each pendingBids }}
-      <div class="col-md-6 col-lg-4">
+      <div class="col-md-6 col-lg-4 mb-4">
         <div class="card border-primary">
           <div class="card-body">
             <h5 class="card-title">$<b>{{this.bidamount}}</b></h5>
@@ -66,4 +80,12 @@
   </div>
   <br />
   <h4>Current Highest Bid: {{#each highestBid }}{{this.result}}{{/each}}</h4>
-{{/unless}}
+{{else}}
+    <div class="col-12">
+      <div class="pl-4 pb-4 d-flex justify-content-start align-items-baseline">
+        <div class="text-muted">
+          No pending bids
+        </div>
+      </div>
+    </div>
+{{/if}}

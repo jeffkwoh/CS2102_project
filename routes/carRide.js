@@ -22,7 +22,7 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
     destination,
     db.exposedInstance
   )
-  // null | obj
+  // [] | [obj]
   const winningBid = await db.bid.winningBid(
     driver,
     date,
