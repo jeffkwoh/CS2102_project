@@ -7,8 +7,8 @@ var session = require('express-session')
 var passport = require('./config/passport')
 var logger = require('morgan')
 var sassMiddleware = require('node-sass-middleware')
-var hbs = require('hbs');
-var fs = require('fs');
+var hbs = require('hbs')
+var fs = require('fs')
 
 // db
 var db = require('./model/db')
@@ -27,29 +27,28 @@ var app = express()
 app.locals = {
   ...app.locals,
   title: 'Hitch',
-  description: 'A website to list and go on shared car rides!'
-};
+  description: 'A website to list and go on shared car rides!',
+}
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'hbs')
 // adding partials
-var partialsDir = __dirname + '/views/partials';
-var filenames = fs.readdirSync(partialsDir);
-filenames.forEach(function (filename) {
-  var matches = /^([^.]+).hbs$/.exec(filename);
+var partialsDir = __dirname + '/views/partials'
+var filenames = fs.readdirSync(partialsDir)
+filenames.forEach(function(filename) {
+  var matches = /^([^.]+).hbs$/.exec(filename)
   if (!matches) {
-    return;
+    return
   }
-  var name = matches[1];
-  var template = fs.readFileSync(partialsDir + '/' + filename, 'utf8');
-  hbs.registerPartial(name, template);
-});
+  var name = matches[1]
+  var template = fs.readFileSync(partialsDir + '/' + filename, 'utf8')
+  hbs.registerPartial(name, template)
+})
 // adding JSON helper
 hbs.registerHelper('getJsonContext', function(data, options) {
-  return options.fn(JSON.parse(data));
-});
-
+  return options.fn(JSON.parse(data))
+})
 
 app.use(logger('dev'))
 app.use(express.json())
@@ -66,7 +65,7 @@ app.use(
 app.use(express.static(path.join(__dirname, 'public')))
 
 //passport
-app.use(session({ secret:"outer-joins-are-useless" }))
+app.use(session({ secret: 'outer-joins-are-useless' }))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(passport.initialize())
 app.use(passport.session())
@@ -106,6 +105,7 @@ dbDriver()
 // Updates the db every one second ot ensure that all expired bids are
 // unsuccessful.
 setInterval(
-    ()=>db.admin.updateBidsToUnsuccessfulIfOverdue(db.exposedInstance),
-    1000);
+  () => db.admin.updateBidsToUnsuccessfulIfOverdue(db.exposedInstance),
+  1000
+)
 module.exports = app

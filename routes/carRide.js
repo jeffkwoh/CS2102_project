@@ -7,7 +7,11 @@ var connect = require('connect-ensure-login')
  * GET car rides listing page.
  * Only 1 car ride listing is to be viewed at a time.
  */
-router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next) {
+router.post('/', connect.ensureLoggedIn('/login'), async function(
+  req,
+  res,
+  next
+) {
   const user = req.user
   const driver = req.body.driver
   const date = req.body.date
@@ -51,7 +55,11 @@ router.post('/', connect.ensureLoggedIn('/login'), async function(req, res, next
  *
  * To be called by driver view.
  */
-router.post('/create', connect.ensureLoggedIn('/login'), async function(req, res, next) {
+router.post('/create', connect.ensureLoggedIn('/login'), async function(
+  req,
+  res,
+  next
+) {
   const params = [
     req.body.driver_field,
     req.body.licensePlate_field,
@@ -87,17 +95,17 @@ router.post('/delete', async function(req, res, next) {
 })
 
 function makeReadable(ride) {
-    ride.date_readable = parseDate(ride.date)
-    ride.time_readable = parseTime(ride.time)
+  ride.date_readable = parseDate(ride.date)
+  ride.time_readable = parseTime(ride.time)
 }
 
 function parseDate(date) {
-  var temp = date.toString().substring(0,15);
-  return temp.substring(0,3) + "," + temp.substring(3,15)
+  var temp = date.toString().substring(0, 15)
+  return temp.substring(0, 3) + ',' + temp.substring(3, 15)
 }
 
 function parseTime(time) {
-  return time.substring(0,5);
+  return time.substring(0, 5)
 }
 
 module.exports = router

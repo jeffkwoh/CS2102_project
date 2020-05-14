@@ -80,10 +80,7 @@ const addCarToUser = async (
 }
 
 // Deletes a car froma a specific user
-const delCarFromUser = async (
-  licensePlate,
-  db
-) => {
+const delCarFromUser = async (licensePlate, db) => {
   return db
     .none(
       `
@@ -103,10 +100,7 @@ const delCarFromUser = async (
 }
 
 // Deletes a user account
-const delUserAcct = async (
-  userID,
-  db
-) => {
+const delUserAcct = async (userID, db) => {
   return db
     .none(
       `
@@ -155,25 +149,25 @@ const listCarUserOwns = async (owner, db) => {
 }
 
 const getValidUserid = (username, password, db) => {
-  return db.any(
+  return db
+    .any(
       `
       SELECT a.userID
       FROM appUserAccount a
       WHERE 
         a.email = $1 AND
         a.password = $2
-      `
-      ,
+      `,
       [username, password]
-  )
-  .then(result => {
-    console.log(`Successful login for userID: ${JSON.stringify(result)}`)
-    return result
-  })
-  .catch(error => {
-    console.log(error)
-    return error
-  })
+    )
+    .then(result => {
+      console.log(`Successful login for userID: ${JSON.stringify(result)}`)
+      return result
+    })
+    .catch(error => {
+      console.log(error)
+      return error
+    })
 }
 
 module.exports = {
@@ -182,5 +176,5 @@ module.exports = {
   addCarToUser,
   delUserAcct,
   listCarUserOwns,
-  getValidUserid
+  getValidUserid,
 }

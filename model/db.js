@@ -86,15 +86,15 @@ async function initDb() {
   COMMIT;`
 
   return db
-  .none(query)
-  .then(() => {
-    // success;
-    console.log('Initialised tables!')
-  })
-  .catch(error => {
-    // error;
-    console.log(error)
-  })
+    .none(query)
+    .then(() => {
+      // success;
+      console.log('Initialised tables!')
+    })
+    .catch(error => {
+      // error;
+      console.log(error)
+    })
 }
 
 /**
@@ -251,73 +251,121 @@ async function deinitDb() {
   COMMIT;`
 
   return db
-  .none(query)
-  .then(() => {
-    // success;
-    console.log('Dropped all tables!')
-  })
-  .catch(error => {
-    // error;
-    console.log(error)
-  })
+    .none(query)
+    .then(() => {
+      // success;
+      console.log('Dropped all tables!')
+    })
+    .catch(error => {
+      // error;
+      console.log(error)
+    })
 }
 
 async function populateDb() {
-  await user.createUserAppAccount('admin@a.com', '98765432', 'one', 'admin_pw', db)
+  await user.createUserAppAccount(
+    'admin@a.com',
+    '98765432',
+    'one',
+    'admin_pw',
+    db
+  )
   await user.createUserAppAccount('two@a.com', '88765432', 'two', 'two_pw', db)
   await user.createUserAppAccount('thr@a.com', '78765432', 'thr', 'thr_pw', db)
   await user.createUserAppAccount('fou@a.com', '68765432', 'fou', 'fou_pw', db)
   await user.createUserAppAccount('fiv@a.com', '58765432', 'fiv', 'fiv_pw', db)
-  await user.createUserAppAccount('alpha@a.com', '98213212', 'six', 'six_pw', db)
-  await user.createUserAppAccount('bravo@a.com', '95513212', 'sev', 'sev_pw', db)
-  await user.createUserAppAccount('charlie@a.com', '94765432', 'eig', 'eig_pw', db)
-  await user.createUserAppAccount('delta@a.com', '93765432', 'nin', 'nin_pw', db)
+  await user.createUserAppAccount(
+    'alpha@a.com',
+    '98213212',
+    'six',
+    'six_pw',
+    db
+  )
+  await user.createUserAppAccount(
+    'bravo@a.com',
+    '95513212',
+    'sev',
+    'sev_pw',
+    db
+  )
+  await user.createUserAppAccount(
+    'charlie@a.com',
+    '94765432',
+    'eig',
+    'eig_pw',
+    db
+  )
+  await user.createUserAppAccount(
+    'delta@a.com',
+    '93765432',
+    'nin',
+    'nin_pw',
+    db
+  )
   await user.createUserAppAccount('echo@a.com', '92765432', 'ten', 'ten_pw', db)
-  await user.createUserAppAccount('foxtrot@a.com', '88565432', 'ele', 'ele_pw', db)
+  await user.createUserAppAccount(
+    'foxtrot@a.com',
+    '88565432',
+    'ele',
+    'ele_pw',
+    db
+  )
   await user.createUserAppAccount('golf@a.com', '81165432', 'twe', 'twe_pw', db)
-  await user.createUserAppAccount('hotel@a.com', '81155432', 'thir', 'thir_pw', db)
   await user.createUserAppAccount(
-      'india@a.com',
-      '82335432',
-      'fourt',
-      'fourt_pw',
-      db
+    'hotel@a.com',
+    '81155432',
+    'thir',
+    'thir_pw',
+    db
   )
   await user.createUserAppAccount(
-      'juliett@a.com',
-      '82565432',
-      'fivt',
-      'fivt_pw',
-      db
-  )
-  await user.createUserAppAccount('kilo@a.com', '82869932', 'sixt', 'sixt_pw', db)
-  await user.createUserAppAccount(
-      'lima@a.com',
-      '82865432',
-      'sevent',
-      'sevent_pw',
-      db
+    'india@a.com',
+    '82335432',
+    'fourt',
+    'fourt_pw',
+    db
   )
   await user.createUserAppAccount(
-      'mike@a.com',
-      '82135432',
-      'eighteen',
-      'eighteen_pw',
-      db
+    'juliett@a.com',
+    '82565432',
+    'fivt',
+    'fivt_pw',
+    db
   )
   await user.createUserAppAccount(
-      'november@a.com',
-      '89005432',
-      'ninet',
-      'ninet_pw',
-      db
+    'kilo@a.com',
+    '82869932',
+    'sixt',
+    'sixt_pw',
+    db
   )
   await user.createUserAppAccount(
-      'oscar@a.com',
-      '80754372',
-      'twent',
-      'twent_pw',
-      db
+    'lima@a.com',
+    '82865432',
+    'sevent',
+    'sevent_pw',
+    db
+  )
+  await user.createUserAppAccount(
+    'mike@a.com',
+    '82135432',
+    'eighteen',
+    'eighteen_pw',
+    db
+  )
+  await user.createUserAppAccount(
+    'november@a.com',
+    '89005432',
+    'ninet',
+    'ninet_pw',
+    db
+  )
+  await user.createUserAppAccount(
+    'oscar@a.com',
+    '80754372',
+    'twent',
+    'twent_pw',
+    db
   )
 
   await user.addCarToUser('1', 'SAA0000A', 'BrandA', 'ModelA', '1', db)
